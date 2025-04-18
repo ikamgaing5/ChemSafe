@@ -7,21 +7,24 @@
     }
 	
 	// require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../utilities/session.php';
+	// require_once __DIR__. '/../../utilities/session.php';
 	require_once __DIR__. '/../../models/produit.php';
 	require_once __DIR__. '/../../models/package.php';
 	require_once __DIR__. '/../../models/atelier.php';
-	require_once __DIR__. '/../../core/connexion.php';
+	// require_once __DIR__. '/../../core/connexion.php';
+	require_once __DIR__ . '/../../models/connexion.php';
 	require_once __DIR__. '/../../models/danger.php';
-	$conn = getConnection();
+	
+	$conn = Database::getInstance()->getConnection();
 
 	$danger = new Danger();
 	$produit = new Produit();
 	$package = new Package();
 	$atelier = new Atelier();
 	
+	$idusine = $_SESSION['idusine'];
 
-	$allAtelier = $atelier->AllAtelier($conn);
+	$allAtelier = $atelier->AllAtelier($conn,$idusine);
 	$allDanger = $danger->all($conn);
 
 	
@@ -43,7 +46,7 @@
 		
 
 	}
-
+// die();
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -90,11 +93,43 @@
             direction: ltr;
             -webkit-font-smoothing: antialiased;
             }
-        </style>
+			html,body{
+				height: auto !important;
+				overflow-y: auto !important;
+			}
+			*{
+				overflow: visible;
+			}
+			::-webkit-scrollbar{
+				width: 8px;
+			}
+			::-webkit-scrollbar-thumb {
+				background: #888;
+				border-radius: 4px;
+			}
+			::-webkit-scrollbar-thumb:hover{
+				background: #555;
+			}
 
 
-        
-    </head>
+
+
+		</style>
+			
+		</head>
+		<script>
+			window.addEventListener('load', ()=>{
+				document.body.style.overflowY = 'auto';
+				document.documentElement.style.overflow = 'auto';
+				document.querySelectorAll('*').forEach(el=>{
+					const style = getComputedStyle(el);
+					if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
+						el.style.overflow = 'visible';
+						el.style.overflowY = 'auto';
+					}
+				});
+			});
+		</script>
 <body>
 
 	<div id="preloader">

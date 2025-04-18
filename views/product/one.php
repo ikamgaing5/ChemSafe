@@ -91,10 +91,44 @@
                 direction: ltr;
                 -webkit-font-smoothing: antialiased;
                 }
-            </style>
+                html,body{
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+    *{
+        overflow: visible;
+    }
+    ::-webkit-scrollbar{
+        width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+        background: #555;
+    }
+
+
+
+        </style>
             
-        </head>
-        <di>
+    </head>
+        <script>
+            window.addEventListener('load', ()=>{
+                document.body.style.overflowY = 'auto';
+                document.documentElement.style.overflow = 'auto';
+                document.querySelectorAll('*').forEach(el=>{
+                    const style = getComputedStyle(el);
+                    if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
+                        el.style.overflow = 'visible';
+                        el.style.overflowY = 'auto';
+                    }
+                });
+            });
+        </script>
+        <body>
+        <div>
     
             <div id="preloader">
                 <div class="loader">
@@ -150,7 +184,7 @@
                                         <div class="row align-items-center">
                                             <!-- Image du produit -->
                                             <div class="col-md-7">
-                                                <img src="../../uploads/photo/<?=$prod['photo']?>" alt="Produit" class="img-fluid rounded shadow">
+                                                <img src="../../uploads/photo/<?=$prod['photo']?>" alt="Produit"  class="img-fluid rounded shadow">
                                             </div>
 
                                             <!-- Détails du produit -->
@@ -303,6 +337,8 @@
                                             
              <!-- Fin main-wrapper -->
 
+        </div>
+        </body>
 
 
 
@@ -337,23 +373,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                    <script src="/../../vendor/global/global.min.js"></script>
+    <script src="/../../vendor/global/global.min.js"></script>
 	<script src="/../../vendor/chart.js/Chart.bundle.min.js"></script>
 	<script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 	<script src="/../../vendor/apexchart/apexchart.js"></script>

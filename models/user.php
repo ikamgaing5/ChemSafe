@@ -94,6 +94,13 @@
             }
         }
 
+        public function getOne($conn,$id){
+            $req = $conn -> prepare("SELECT * FROM user WHERE iduser = :iduser");
+            $req -> bindParam(':iduser', $id);
+            $req -> execute();
+            return $req -> fetch();
+        }
+
         public function getIDbynom($conn,$nom){
             $req = $conn -> prepare("SELECT * FROM user WHERE nomuser = :nomuser");
             $req -> bindParam(':nomuser', $nom);

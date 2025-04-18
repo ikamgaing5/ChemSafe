@@ -10,10 +10,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=experiment" />
 <div class="nav-header">
             <a href="/dashboard" class="brand-logo">
-				<svg class="logo-abbr" width="40" height="40" viewBox="0 0 48 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<rect y="3" width="48" height="48" rx="16" fill="#FB7D5B"/>
-					<path d="M28.964 35.536H19.532L18.02 40H11.576L20.72 14.728H27.848L36.992 40H30.476L28.964 35.536ZM27.38 30.784L24.248 21.532L21.152 30.784H27.38Z" fill="white"/>
-				</svg>
+			<svg class="logo-abbr" width="40" height="40" viewBox="0 0 48 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<rect y="3" width="48" height="48" rx="16" fill="#FB7D5B"/>
+				<path d="M32 36C30 38 27.5 39 24.5 39C18.5 39 14 34.5 14 27C14 19.5 18.5 15 24.5 15C27.5 15 30 16 32 18V22.5C30.2 20.5 28 19.5 25.5 19.5C21.5 19.5 19 22.5 19 27C19 31.5 21.5 34.5 25.5 34.5C28 34.5 30.2 33.5 32 31.5V36Z" fill="white"/>
+			</svg>
+
+
 				<div class="brand-title">
 					<h3 style="color: #fff;">ChemSafe</h3>
 				</div> 

@@ -64,8 +64,9 @@
             return $req -> execute();
         }
 
-        public function AllAtelier($conn){
-            $req = $conn -> prepare("SELECT * FROM atelier ORDER BY nomatelier ASC");
+        public function AllAtelier($conn,$idusine){
+            $req = $conn -> prepare("SELECT * FROM atelier WHERE idusine = :idusine ORDER BY nomatelier ASC");
+            $req->bindParam(':idusine',$idusine);
             $req -> execute();
             return $req -> fetchAll();
         } 

@@ -21,8 +21,15 @@
 			</li>
 
 			<li>
-				<a href="/workshop/all-workshop" >
+				<a href="/factory/all-factory" >
 					<i class="bi bi-buildings-fill"></i>
+					<span class="nav-text">Liste des Usines</span>
+				</a>		
+			</li>
+
+			<li>
+				<a href="/workshop/all-workshop" >
+					<i class="bi bi-building-fill-gear"></i>
 					<span class="nav-text">Liste des Ateliers</span>
 				</a>		
 			</li>
@@ -59,7 +66,7 @@
 					<span class="nav-text" >Produits</span>
 				</a>
 				<ul aria-expanded="false">
-					<li><a href="#">Liste des produits</a></li>
+					<li><a href="/product/all-product">Liste des produits</a></li>
 					<li><a href="/product/new-product">Ajouter un produit</a></li>
 				</ul>
 			</li>

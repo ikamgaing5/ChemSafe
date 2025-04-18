@@ -301,46 +301,70 @@
 
         }
 
-        // Dans ProductController.php
-    // public function getProductDangersByAtelier($params) {
-    //     $idChiffre = $params['idatelier'];
-    //     $idatelier = IdEncryptor::decode($idChiffre);
-        
-    //     if (!$idatelier || !is_numeric($idatelier)) {
-    //         http_response_code(400);
-    //         echo json_encode(['error' => 'ID atelier invalide']);
-    //         return;
-    //     }
-        
-    //     // Instanciez votre modèle et récupérez les données
-    //     $productModel = new Produit();
-    //     $dangers = $productModel->getDangerStatsByAtelier($this->conn,$idatelier);
-        
-    //     // Renvoyer les données au format JSON
-    //     header('Content-Type: application/json');
-    //     echo json_encode($dangers);
-    // }
+        // Cette nouvelle méthode est uniquement pour l'API et renvoie du JSON
+        public function getProductDangersByAtelier($params) {
+            
+            $idChiffre = $params['idatelier'];
+            $idatelier = IdEncryptor::decode($idChiffre);
+            
+            if (!$idatelier || !is_numeric($idatelier)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID atelier invalide']);
+                return;
+            }
+            
+            // Récupération des données via le modèle
+            $productModel = new Produit();
+            $dangers = $productModel->getDangerStatsByAtelier($this->conn,$idatelier);
+            
+            // Envoi des données en JSON
+            header('Content-Type: application/json');
+            echo json_encode($dangers);
+            // Pas de require_once ici car nous envoyons directement du JSON
 
-    // Cette nouvelle méthode est uniquement pour l'API et renvoie du JSON
-    public function getProductDangersByAtelier($params) {
-        $idChiffre = $params['idatelier'];
-        $idatelier = IdEncryptor::decode($idChiffre);
-        
-        if (!$idatelier || !is_numeric($idatelier)) {
-            http_response_code(400);
-            echo json_encode(['error' => 'ID atelier invalide']);
-            return;
         }
-        
-        // Récupération des données via le modèle
-        $productModel = new Produit();
-        $dangers = $productModel->getDangerStatsByAtelier($this->conn,$idatelier);
-        
-        // Envoi des données en JSON
-        header('Content-Type: application/json');
-        echo json_encode($dangers);
-        // Pas de require_once ici car nous envoyons directement du JSON
-    }
+
+        public function getDangerProducts($params) {
+            $idChiffre = $params['idatelier'];
+            $idatelier = IdEncryptor::decode($idChiffre);
+            
+            if (!$idatelier || !is_numeric($idatelier)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'ID atelier invalide']);
+                return;
+            }
+            
+            $dangerStats = $this->danger->getDangerStatsByAtelier($this->conn, $idatelier);
+            
+            // Récupérer les produits par danger
+            $productsData = $this->danger->getProductsByDanger($this->conn, $idatelier);
+            
+            // Organiser les produits par danger
+            $productsByDanger = [];
+            foreach ($productsData as $product) {
+                if (!isset($productsByDanger[$product['iddanger']])) {
+                    $productsByDanger[$product['iddanger']] = [
+                        'iddanger' => $product['iddanger'],
+                        'nomdanger' => $product['nomdanger'],
+                        'products' => []
+                    ];
+                }
+                $productsByDanger[$product['iddanger']]['products'][] = $product['nomprod'];
+            }
+            
+            // Ajouter la liste des produits à chaque danger dans les statistics
+            foreach ($dangerStats as &$stat) {
+                $stat['products'] = isset($productsByDanger[$stat['iddanger']]) 
+                                ? $productsByDanger[$stat['iddanger']]['products'] 
+                                : [];
+            }
+            
+            header('Content-Type: application/json');
+            echo json_encode($dangerStats);
+        }
+
+
+    
 
 
 
@@ -392,5 +416,9 @@
         public function oneprod($params){
             $id = $params['idprod'];
             require_once __DIR__. '/../views/product/one.php';
+        }
+
+        public function all(){
+            require_once __DIR__. '/../views/product/all-product.php';
         }
     }

@@ -13,7 +13,14 @@
 						</button>
 			</div> ';
 
-
+			if(isset($_SESSION['info'])){
+				$alerterror = '<div class="mx-3 alert alert-secondary alert-dismissible fade show">
+						<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+						<strong>Une erreur est survenue!</strong> nom d\'utilisateur ou mot de passe incorrect.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+						</button>
+			</div> ';
+			}
 
 
 ?>
@@ -47,7 +54,7 @@
 					<!-- <img src="images/logo-whit.png" alt=""> -->
 				</div>
 				<h3 class="mb-2 text-white">Bon retour!</h3>
-				<p class="mb-4">Utilisez l'experience et l'interface ergonomique de <br> pour gerer les produits chimiques! l'application dispose de toutes les fonctionnalités requises pour gerer votre école! </br><b>matricule=admin , password = admin99</b></p>
+				<p class="mb-4">Utilisez l'experience et l'interface ergonomique de <br> pour gerer les produits chimiques! l'application dispose de toutes les fonctionnalités requises pour gerer votre usine! </br><b>matricule=admin , password = admin99</b></p>
 			</div>
 			<!-- <div class="aside-image position-relative" style="background-image:url(images/background/pic-2.png);">
 				<img class="img1 move-1" src="images/background/pic3.png" alt="">
@@ -74,7 +81,7 @@
 									
 									echo '<div class="alert alert-success alert-dismissible fade show">
 									<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>	
-									<strong>Succès!</strong> Vous etes maintenant deconnecté! Veuillez vous reconnecter pour continuer à  utiliser Notewise
+									<strong>Succès!</strong> Vous etes maintenant deconnecté! Veuillez vous reconnecter pour continuer à  utiliser ChemSafe
 									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
 									</button>
 								</div>';
@@ -88,7 +95,7 @@
 									
 									<div class="mb-3 mx-3">
 										<label style="font-weight: 700;" for="exampleFormControlInput1" class="form-label mb-2 fs-13 label-color font-w500">Nom d'utilisateur</label>
-									  <input type="text" class="form-control" name="nom" id="exampleFormControlInput1" value="<?php if(isset($_SESSION['login_failed'])){ echo $_SESSION['login_failed']['info']['nom'];} ?>">
+									  <input type="text" class="form-control" name="nom" id="exampleFormControlInput1" value="<?php if(isset($_SESSION['login_failed'])){ echo $_SESSION['login_failed']['info']['nom'];} if(isset($_SESSION['info'])){echo $_SESSION['info']['nom'];} ?>">
 									  
 									</div>
 									<div class="mb-3 mx-3">
@@ -112,6 +119,11 @@
 		</div>
 	</div>
 
+	<script>
+		function OnSubmit(){
+
+		}
+	</script>
 
     
     

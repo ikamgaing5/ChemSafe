@@ -91,10 +91,16 @@ class UserControllers {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $nom = htmlspecialchars($_POST['nom']);
                 $password = htmlspecialchars($_POST['password']);
+                if ($nom == '' || $password == "") {
+                    $_SESSION['info'] = $_POST;
+                    Route::redirect('/');
+                }
                 if ($this -> user -> loginWithUser($this->conn,$nom,$password)) {
                     $id = $this -> user -> getIDbynom($this->conn,$nom);
+                    $infoUser = $this->user->getOne($this->conn,$id);
                     $_SESSION['role'] = $role = $this -> user -> getRole($this -> conn, $id);
                     // $this -> historique -> Insert($this->conn, $id);
+                    $_SESSION['idusine'] = $infoUser['idusine'];
                     $_SESSION['log'] = [];
                     $_SESSION['log']['type'] = 'user';
                     $_SESSION['id'] = $id;

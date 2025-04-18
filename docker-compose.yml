@@ -1,0 +1,55 @@
+# version: '3.8'
+
+# services:
+#   web:
+#     build: .
+#     ports:
+#       - "8080:80"
+#     volumes:
+#       - .:/var/www/html
+#       - ./data/db:/var/lib/mysql
+
+#     environment:
+#       DB_HOST: db
+#       DB_PORT: 3306
+#       DB_NAME: chemsafe
+#       DB_USERNAME: root
+#       DB_PASSWORD: ""  # Pas de mot de passe, donc vide
+#     depends_on:
+#       - db
+
+#   db:
+#     image: mysql:8.0
+#     environment:
+#       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # Permet l'absence de mot de passe
+#       MYSQL_DATABASE: chemsafe
+#     ports:
+#       - "3307:3306"
+
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - chemsafe-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: host.docker.internal
+      PMA_USER: user
+      PMA_PASSWORD: 
+    networks:
+      - chemsafe-network
+
+networks:
+  chemsafe-network:

@@ -53,5 +53,41 @@
             return json_encode(['labels' => $labels, 'values' => $values]);
 
         }
+
+        public function getDangerStatsByAtelier($conn, $idatelier) {
+            // Requête SQL pour obtenir le nombre de produits par danger pour un atelier spécifique
+            $sql = "SELECT d.iddanger, d.nomdanger, COUNT(p.idprod) as count 
+                    FROM Danger d
+                    JOIN Possede po ON d.iddanger = po.iddanger
+                    JOIN Produit p ON po.idprod = p.idprod
+                    JOIN Contenir c ON p.idprod = c.idprod
+                    WHERE c.idatelier = :idatelier
+                    GROUP BY d.iddanger, d.nomdanger
+                    ORDER BY count DESC";
+            
+            $req = $conn->prepare($sql);
+            $req->bindParam(':idatelier', $idatelier, PDO::PARAM_INT);
+            $req->execute();
+            
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
+        // Nouvelle méthode pour récupérer les produits par danger
+        public function getProductsByDanger($conn, $idatelier) {
+            // Requête SQL pour obtenir les produits par danger pour un atelier spécifique
+            $sql = "SELECT d.iddanger, d.nomdanger, p.idprod, p.nomprod 
+                    FROM Danger d
+                    JOIN Possede po ON d.iddanger = po.iddanger
+                    JOIN Produit p ON po.idprod = p.idprod
+                    JOIN Contenir c ON p.idprod = c.idprod
+                    WHERE c.idatelier = :idatelier
+                    ORDER BY d.nomdanger, p.nomprod";
+            
+            $req = $conn->prepare($sql);
+            $req->bindParam(':idatelier', $idatelier, PDO::PARAM_INT);
+            $req->execute();
+            
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
         
     }

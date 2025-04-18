@@ -19,16 +19,16 @@
     $package = new Package();
     // $idatelier = $_GET['workshop'];
     // $idatelier = $params['idatelier'];
-
-    $nomatelier = $atelier ->getName($conn,$idatelier);
+    
+    // $nomatelier = $atelier ->getName($conn,$idatelier);
 
     $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
     if (strpos($current_page, 'product/all-product') === 0) {
-        $message = "Produits de l'atelier $nomatelier.";
+        $message = "Produits de l'atelier.";
     }
 
-    $produitsNonAssocies =$produit->getProduitsNonAssocies($conn, $idatelier);
+    // $produitsNonAssocies =$produit->getProduitsNonAssocies($conn, $idatelier);
 
     if (isset($_SESSION['add-success']) && $_SESSION['add-success']['type'] == true && isset($_SESSION['add-success']['info'])) {
         $prodAdd = $_SESSION['add-success']['info']['produit'];
@@ -43,9 +43,24 @@
         }
     }
 
-    $_SESSION['idatelier'] = IdEncryptor::encode($idatelier);
+    $produits = $produit->getProduitByWorkshop($conn);
+    $parAtelier = [];
+    $communs = [];
+    foreach ($produits as $key) {
+        if ($key['nb_ateliers'] > 1) {
+            $communs[] = $key;
+        }else {
+            $ateliers = $key['ateliers'];
+            if (!isset($parAtelier[$ateliers])) {
+                $parAtelier[$ateliers] = [];
+            }
+            $parAtelier[$ateliers][] = $key;
+        }
+    }
+
+    // $_SESSION['idatelier'] = IdEncryptor::encode($idatelier);
    
-                                             
+                                           
 ?>
 
 <!DOCTYPE html>
@@ -94,9 +109,43 @@
             direction: ltr;
             -webkit-font-smoothing: antialiased;
             }
+            html,body{
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+    *{
+        overflow: visible;
+    }
+    ::-webkit-scrollbar{
+        width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+        background: #555;
+    }
+
+
+
+
         </style>
-        
+            
     </head>
+        <script>
+            window.addEventListener('load', ()=>{
+                document.body.style.overflowY = 'auto';
+                document.documentElement.style.overflow = 'auto';
+                document.querySelectorAll('*').forEach(el=>{
+                    const style = getComputedStyle(el);
+                    if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
+                        el.style.overflow = 'visible';
+                        el.style.overflowY = 'auto';
+                    }
+                });
+            });
+        </script>
     <body>
 
         <div id="preloader">
@@ -153,10 +202,8 @@
                                     <div>
                                         <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
                                         <i class="bi bi-caret-right-fill"></i>
-                                        <u><a href="/workshop/all-workshop" class="text-primary fw-bold fs-5">Nos Ateliers</a></u>
-                                        <i class="bi bi-caret-right-fill"></i>
                                         <span  class="card-title fw-bold fs-5">
-                                            <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
+                                           Tous nos produits
                                         </span>
                                     </div>
                                 </div>
@@ -170,32 +217,110 @@
                             </div>
                     </div>
 
+                    <?php  if(count($communs) > 0): ?>
+                    <div class="container-fluid pt-0 ps-0 pe-lg-4 pe-0">		
+                        <div class="shadow-lg card" id="accordion-one">
+                            <div class="card-header flex-wrap px-3">
+                                <div>
+                                    <h6 class="card-title">Produits / Liste des Produits</h6>
+                                    <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans plusieurs ateliers </p>
+                                </div>
+                                <div class="d-flex">
+                                    <ul class="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item " role="presentation">
+                                            <div class="d-flex">
+                                                <?php require_once __DIR__.'/add-product.php'; ?>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!--tab-content-->
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="Preview" role="tabpanel" aria-labelledby="home-tab">
+                                    <div class="shadow-lg card-body p-0">
+                                        <div class="table-responsive">
+                                            <table id="basic-btn"  class="display table table-striped" style="min-width: 845px">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nom du produit</th>
+                                                        <th>Type d'emballage</th>
+                                                        <th>Vol/Poids</th>
+                                                        <th>Plus d'info</th>
+                                                        <th>Médias</th>
+                                                        <th>Ateliers</th>
+                                                        <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                            <th class="text-end">Action</th>    
+                                                        <?php   } ?>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($communs as $prod) {?>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="trans-list">
+                                                                <?php	
+                                                                // echo "<img src='./upload/".$row['name']."' alt='' class='avatar me-3'>";
+                                                                    ?>
+                                                                <h4><?=$prod['nomprod']?></h4>
+                                                            </div>
+                                                        </td>
+                                                        <td><span class="text-primary font-w600"><?=$prod['type_emballage']?></span></td>
+                                                        <td>
+                                                            <div class="mb-0"><?=$prod['poids']?></div>
+                                                        </td>
+                                                        
+                                                        <td><a href="/product/more-detail/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-secondary shadow btn-xs sharp me-1"><i class="bi bi-info-circle-fill"></i></a></td>
+                                                        
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <?php require __DIR__. '/photo.php'?>
+                                                                <?php require __DIR__. '/fds.php'?>
+                                                            </div>
+                                                        </td>
+                                                        <td><span class="text-primary font-w600"><?=$prod['ateliers']?></span></td>
+                                                        <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                            <td>
+                                                                <div class="d-flex">
+                                                                    <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </a>
+                                                                    
+                                                                </div>
+                                                            </td>
+                                                        <?php } ?>
+                                            
+
+                                                    </tr>
+                                                    <?php } ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </div>	
+
+                    <?php endif; ?>
+
+                    <?php  foreach ($parAtelier as $key => $liste) { ?>
 						<div class="container-fluid pt-0 ps-0 pe-lg-4 pe-0">		
                             <div class="shadow-lg card" id="accordion-one">
                                 <div class="card-header flex-wrap px-3">
                                     <div>
-                                        
                                         <h6 class="card-title">Produits / Liste des Produits</h6>
-                                        <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans l'atelier <strong><?=$nomatelier?></strong></p>
+                                        <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans l'atelier <strong><?=$key?></strong></p>
                                     </div>
                                     <div class="d-flex">
-                                        
-                                        
-                                            <ul class="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
-                                            
-                                                <li class="nav-item " role="presentation">
-                                                    
-                                                    <div class="d-flex">
-                                                        <button type="submit" name="supprimeretudiant" class="btn btn-danger" value="tout supprimer" >tout supprimer	</button>
-                                                        <?php require_once __DIR__.'/add-product.php'; ?>
-                                                    </div>
-                                                    
-                                                
-                                                </li>
-
-                                               
-                                            </ul>
-                                       
+                                        <ul class="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item " role="presentation">
+                                                <div class="d-flex">
+                                                   
+                                                </div>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                                 <!--tab-content-->
@@ -218,23 +343,10 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-
-                                                        <?php 
-                                                            $produitParAtelier = $contenir -> getProduitByAtelier($conn, $idatelier);
-                                                            if (count($produitParAtelier) <= 0) { ?>
-                                                               <tr>
-                                                                    <td colspan='6'>Aucun résultat trouvé</td>
-                                                                </tr>
-                                                          <?php  }else {
-                                                            foreach ($produitParAtelier as $keys) {
-                                                                $prod = $produit -> OneProduct($conn, $keys['idprod']);
-                                                        ?>
+                                                        <?php  foreach ($liste as $prod) {     ?>
                                                         <tr>
                                                             <td>
                                                                 <div class="trans-list">
-                                                                    <?php	
-                                                                    // echo "<img src='./upload/".$row['name']."' alt='' class='avatar me-3'>";
-                                                                        ?>
                                                                     <h4><?=$prod['nomprod']?></h4>
                                                                 </div>
                                                             </td>
@@ -255,14 +367,14 @@
                                                                         <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
                                                                             <i class="fa fa-pencil"></i>
                                                                         </a>
-                                                                        <?php require __DIR__. '/delete.php' ?>
+                                                                        
                                                                     </div>
                                                                 </td>
                                                             <?php } ?>
                                                 
 
                                                         </tr>
-                                                        <?php }} ?>
+                                                        <?php  } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -271,11 +383,11 @@
                                 </div>
                             
                             </div>
-								
-								
+                         </div>		
+					<?php } ?>		
 							
 					
-				</div>
+				
 				</div>
 					
 				

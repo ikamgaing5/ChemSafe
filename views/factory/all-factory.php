@@ -2,17 +2,16 @@
 	require_once __DIR__. '/../../utilities/session.php';
         $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
-        if ($current_page == 'workshop/all-workshop') {
-            $message = 'Liste des Ateliers.';
+        if ($current_page == 'factory/all-factory') {
+            $message = 'Liste des Usines.';
         }
         
 
         // require_once __DIR__. '/../../core/connexion.php';
         require_once __DIR__. '/../../models/atelier.php';
         require_once __DIR__. '/../../models/package.php';
-        require_once __DIR__. '/../../models/produit.php';
         require_once __DIR__. '/../../models/user.php';
-        require_once __DIR__. '/../../models/contenir.php';
+        // require_once __DIR__. '/../../models/usine.php';
 		require_once __DIR__. '/../../utilities/session.php';
 		require_once __DIR__. '/../../models/connexion.php';
 		$conn = Database::getInstance()->getConnection();
@@ -21,11 +20,11 @@
         $atelier = new Atelier();
         $produit = new Produit();
         $user = new User($conn);
-        $contenir = new Contenir();
+        // $usine = new Usine();
 		$package = new Package();
 		$idusine = $_SESSION['idusine'];
 
-       $allAtelier =  $atelier -> AllAtelier($conn,$idusine);
+       $AllFactory =  Usine::AllFactory($conn);
 
 ?>
 
@@ -173,7 +172,7 @@
         <div class="content-body">
 			<div class="container-fluid">
 				
-			<?php require __DIR__. '/new-workshop.php'; ?>
+			<?php require __DIR__. '/new-factory.php'; ?>
 				<!-- Row -->
 				<div class="row">
 					<?php 
@@ -218,11 +217,11 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                                     <div>
                                         <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-                                        <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
-                                        <span class="card-title fw-bold fs-5">Nos Ateliers</span>
+                                        <span class="fs-4"><i class="bi bi-caret-ruight-fill"></i></span>
+                                        <span class="card-title fw-bold fs-5">Nos Usines</span>
                                     </div>
 									<div class="fs-5">
-											Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelier($conn)?></strong>
+											Nombre d'Usine : <strong class="card-title fw-bold fs-5"><?=Usine::NbresUsine($conn)?></strong>
 									</div>
                                 </div>
                             </div>
@@ -233,7 +232,7 @@
                                     Tableau de bord
                                 </a></u>
 								<div class="fs-5">
-									Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelier($conn)?></strong>
+                                Nombre d'Usine : <strong class="card-title fw-bold fs-5"><?=Usine::NbresUsine($conn)?></strong>
 								</div>
                             </div>
                     </div>
@@ -251,20 +250,7 @@
                                 <div class="main">
 								<div class="scrollable-row ">
 
-									<?php foreach ($allAtelier as $key) { 
-
-									$infoprodbyatelier = $contenir -> getProduitByAtelier($conn,$key['idatelier']);	
-
-									$nbreProduitSansFds = 0;
-									$nombre = $contenir->NbreProduitParAtelier($conn,$key['idatelier']);
-									foreach ($infoprodbyatelier as $keys) {
-											
-											if ($produit -> ifProduitSansFDS($conn,$keys['idprod'])) {
-												$nbreProduitSansFds +=1;
-											}
-									}
-
-									?>
+									<?php foreach ($AllFactory as $key) { ?>
 									<div class="col-xl-3 col-lg-4 col-sm-6 px-3">
 										<div class=" card contact_list text-center">
 											<div class="card-body">
@@ -272,20 +258,13 @@
 													<div class="user-info">
 														<div class="user-details">
 															<p style="font-weight: 700;">Atelier nommé</p>
-															<h4 class="user-name mb-0"><?=$key['nomatelier'] ?></h4>
+															<h4 class="user-name mb-0"><?=$key['nom'] ?></h4>
 															
 														</div>
 													</div>
 												
 												</div>
-												<div class="contact-icon">
-												<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre de produit:</label><span class="badge badge-success light"><?=$nombre?></span>
-
-												<br>
-												<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span>
 												
-												
-												</div>
 												<div class="d-flex mb-3 justify-content-center align-items-center">
 													<center>
 													<?php require __DIR__. '/edit.php'; ?>
@@ -294,7 +273,7 @@
 
 												</div>
 												<div class="d-flex align-items-center">
-													<a href="/all-products/<?= IdEncryptor::encode($key['idatelier']) ?>" class="btn btn-secondary btn-sm w-100 me-2">Voir les produits</a>
+													<a href="/workshop/all-workshop" class="btn btn-secondary btn-sm w-100 me-2">Voir les ateliers</a>
 												</div>
 											</div>
 										</div>

@@ -25,6 +25,12 @@
             }
            
         }
+        public function getProduitByWorkshop($conn){
+            $sql = "SELECT p.idprod,p.nomprod,p.type_emballage,p.poids,p.nature,p.utilisation, p.fabriquant, p.photo,p.fds, p.danger,p.risque, GROUP_CONCAT(a.nomatelier ORDER BY a.nomatelier SEPARATOR ', ') AS ateliers, COUNT(DISTINCT a.idatelier) AS nb_ateliers FROM produit p JOIN contenir c ON p.idprod = c.idprod JOIN atelier a ON a.idatelier = c.idatelier GROUP BY p.idprod";
+            $req = $conn->prepare($sql);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
 
         public function Exist($conn, $nom){
             $req = $conn -> prepare("SELECT * FROM produit WHERE nomprod = :nom");
@@ -80,6 +86,8 @@
         
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
 
 
     public function AddFds($conn,$fds,$idprod){

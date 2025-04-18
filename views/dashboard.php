@@ -25,6 +25,7 @@
         $req = $user->getUserById($conn,$iduser);
         $nom = $req['nomuser'];
         $allProductFDS = $produit -> ProduitFDS($conn);
+        $idusine = $_SESSION['idusine'];
 
 
 ?>
@@ -69,7 +70,7 @@
         <link rel="stylesheet" href="/../vendor/jquery-nice-select/css/nice-select.css">
         <link href="/../vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
+        <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" /> -->
         
         <link href="/../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         
@@ -109,6 +110,23 @@
          /* background-color: #dc3545 !important;  */
          /* rouge bootstrap */
     }
+    html,body{
+        height: auto !important;
+        overflow-y: auto !important;
+    }
+    *{
+        overflow: visible;
+    }
+    ::-webkit-scrollbar{
+        width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+        background: #555;
+    }
 
 
 
@@ -116,6 +134,19 @@
 </style>
 	
 </head>
+<script>
+    window.addEventListener('load', ()=>{
+        document.body.style.overflowY = 'auto';
+        document.documentElement.style.overflow = 'auto';
+        document.querySelectorAll('*').forEach(el=>{
+            const style = getComputedStyle(el);
+            if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
+                el.style.overflow = 'visible';
+                el.style.overflowY = 'auto';
+            }
+        });
+    });
+</script>
 <body>
 
     
@@ -192,7 +223,7 @@
                                                 </thead>
                                                 <tbody>
                                                 <?php
-                                                    $raw = $atelier->AllAtelier($conn);
+                                                    $raw = $atelier->AllAtelier($conn, $idusine);
 
                                                     foreach ($raw as $key) {
                                                         $id = $key['idatelier'];

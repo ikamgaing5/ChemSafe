@@ -1,0 +1,50 @@
+Je travaille sur un produit devant recenser les produits chimiques d'une usine en fonction des ateliers et le site web doit présenter les dangers des produits.
+
+Je souhaiterais ajouter des graphes dynamiques qui s'actualiseront en fonction des informations de la base de données.
+
+Dans notre base de données nous avons les tables suivantes:
+Produit(idprod,nomprod...)
+Atelier(idatelier, nomatelier)
+Danger(iddanger, nomdanger)
+Contenir(idatelier, idprod)
+Possede(iddanger, idprod)
+
+Structure de notre projet
+ChemSafe
+	-Controllers
+	-Models
+	-Views
+	  -product
+		all-product.php
+	-Cores
+	  Route.php
+	index.php
+
+Les routes sont définis comme suit dans le fichier index.php
+    Route::add('GET', '/product/new-product', [$ProductController, 'Insert']);
+    Route::add('POST', '/product/new-product', [$ProductController, 'Insert']);
+
+j'ai déjà gérer les grandes lignes mais je bloque sur l'insertion des graphes
+J'ai fait des recherches et j'ai eu ce code js qui permet de gérer des graphes mais celui-ci est statique.
+Je veux que ce soit gérer de manière dynamique. Dans notre table contenir comme tu as pu le remarquer nous avons l'id d'un atelier et d'un produit, donc un atelier peut avoir plusieurs produits.
+Il en va de même pour les dangers dans la table possede.
+Ce que je veux c'est afficher un graphe de préference avec des colonnes qui présentera les dangers des produits d'un atelier concerné.
+
+Voici comment nous envoyons les informations 
+    Route::add('GET', '/product/all-product/{idatelier}', [$ProductController, 'allss']);
+idatelier ici fait réference à l'id de l'atelier concerné et il faut noter que cet id est chiffré 
+
+Voici comment nous passons l'id en paramètre au controller pour que la vue puisse l'utiliser
+        public function allss($params){
+            $idChiffre = $params['idatelier'];
+            $id = IdEncryptor::decode($idChiffre);
+        
+            if (!$id || !is_numeric($id)) {
+                require_once __DIR__ . '/../views/404.php';
+                return;
+            }
+            $idatelier = $id;
+            require_once __DIR__. '/../views/product/all-product.php';
+        }
+
+Nos vues utilisent du jQuery, propose moi une solution pour afficher les graphes sans problème ou si tu as besoin d'information supplémentaire tu me les poses
