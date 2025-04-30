@@ -25,7 +25,8 @@
     $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
     if (strpos($current_page, 'product/all-product') === 0) {
-        $message = "Produits de l'atelier.";
+        $message = "Produits de l'".Usine::getNameById($conn,$_SESSION['idusine']);
+        $chemin = "product/all-product";
     }
 
     // $produitsNonAssocies =$produit->getProduitsNonAssocies($conn, $idatelier);
@@ -84,7 +85,7 @@
         
         <link rel="stylesheet" href="/../../vendor/swiper/css/swiper-bundle.min.css">
         
-        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link href="/../css/style.css" rel="stylesheet">
 
         <style>
@@ -146,6 +147,21 @@
                 });
             });
         </script>
+
+
+
+        <?php if (isset($_SESSION['insert']['openModal'])): ?>
+        <script>
+            $(document).ready(function () {
+            $('#modalFDS<?= $_SESSION['insert']['openModal'] ?>').modal('show');
+            });
+        </script>
+        <?php 
+        unset($_SESSION['insert']['openModal']); // pour ne pas réouvrir à chaque reload
+        endif; ?>
+
+
+
     <body>
 
         <div id="preloader">
@@ -218,97 +234,93 @@
                     </div>
 
                     <?php  if(count($communs) > 0): ?>
-                    <div class="container-fluid pt-0 ps-0 pe-lg-4 pe-0">		
-                        <div class="shadow-lg card" id="accordion-one">
-                            <div class="card-header flex-wrap px-3">
-                                <div>
-                                    <h6 class="card-title">Produits / Liste des Produits</h6>
-                                    <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans plusieurs ateliers </p>
-                                </div>
-                                <div class="d-flex">
-                                    <ul class="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item " role="presentation">
-                                            <div class="d-flex">
-                                                <?php require_once __DIR__.'/add-product.php'; ?>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <!--tab-content-->
-                            <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="Preview" role="tabpanel" aria-labelledby="home-tab">
-                                    <div class="shadow-lg card-body p-0">
-                                        <div class="table-responsive">
-                                            <table id="basic-btn"  class="display table table-striped" style="min-width: 845px">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nom du produit</th>
-                                                        <th>Type d'emballage</th>
-                                                        <th>Vol/Poids</th>
-                                                        <th>Plus d'info</th>
-                                                        <th>Médias</th>
-                                                        <th>Ateliers</th>
-                                                        <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
-                                                            <th class="text-end">Action</th>    
-                                                        <?php   } ?>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php foreach ($communs as $prod) {?>
-                                                    <tr>
-                                                        <td>
-                                                            <div class="trans-list">
-                                                                <?php	
-                                                                // echo "<img src='./upload/".$row['name']."' alt='' class='avatar me-3'>";
-                                                                    ?>
-                                                                <h4><?=$prod['nomprod']?></h4>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="text-primary font-w600"><?=$prod['type_emballage']?></span></td>
-                                                        <td>
-                                                            <div class="mb-0"><?=$prod['poids']?></div>
-                                                        </td>
-                                                        
-                                                        <td><a href="/product/more-detail/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-secondary shadow btn-xs sharp me-1"><i class="bi bi-info-circle-fill"></i></a></td>
-                                                        
-                                                        <td>
-                                                            <div class="d-flex">
-                                                                <?php require __DIR__. '/photo.php'?>
-                                                                <?php require __DIR__. '/fds.php'?>
-                                                            </div>
-                                                        </td>
-                                                        <td><span class="text-primary font-w600"><?=$prod['ateliers']?></span></td>
-                                                        <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
-                                                            <td>
-                                                                <div class="d-flex">
-                                                                    <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
-                                                                        <i class="fa fa-pencil"></i>
-                                                                    </a>
-                                                                    
-                                                                </div>
-                                                            </td>
-                                                        <?php } ?>
-                                            
-
-                                                    </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                        <div class="container-fluid pt-0 ps-0  pe-0">		
+                            <div class="shadow-lg card" id="accordion-one">
+                                <div class="card-header flex-wrap px-3">
+                                    <div>
+                                        <h6 class="card-title">Produits / Liste des Produits</h6>
+                                        <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans plusieurs ateliers </p>
                                     </div>
                                 </div>
+                            
+                                <!--tab-content-->
+                                <div class="tab-content" id="myTabContent">
+                                    <!-- <div class="tab-pane fade show active" id="Preview" role="tabpanel" aria-labelledby="home-tab"> -->
+                                        <div class="container-fluid pt-0 ps-0 pe-0">		
+                                            <div class="shadow-lg card" id="accordion-one">
+                                                
+                                                    <div class="table-responsive">
+                                                        <table id="basic-btn"  class="display table table-striped" style="min-width: 845px">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nom du produit</th>
+                                                                    <th>Type d'emballage</th>
+                                                                    <th>Vol/Poids</th>
+                                                                    <th>Plus d'info</th>
+                                                                    <th>Médias</th>
+                                                                    <th>Ateliers</th>
+                                                                    <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                                        <th class="text-end">Action</th>    
+                                                                    <?php   } ?>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php foreach ($communs as $prod) {?>
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="trans-list">
+                                                                            <?php	
+                                                                            // echo "<img src='./upload/".$row['name']."' alt='' class='avatar me-3'>";
+                                                                                ?>
+                                                                            <h4><?=$prod['nomprod']?></h4>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td><span class="text-primary font-w600"><?=$prod['type_emballage']?></span></td>
+                                                                    <td>
+                                                                        <div class="mb-0"><?=$prod['poids']?></div>
+                                                                    </td>
+                                                                    
+                                                                    <td><a href="/product/more-detail/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-secondary shadow btn-xs sharp me-1"><i class="bi bi-info-circle-fill"></i></a></td>
+                                                                    
+                                                                    <td>
+                                                                        <div class="d-flex">
+                                                                            <?php require __DIR__. '/photo.php'?>
+                                                                            <?php require __DIR__. '/fds.php'?>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td><span class="text-primary font-w600"><?=$prod['ateliers']?></span></td>
+                                                                    <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                                        <td>
+                                                                            <div class="d-flex">
+                                                                                <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
+                                                                                    <i class="bi bi-pencil-square"></i>
+                                                                                </a>
+                                                                                <?php require __DIR__. '/deleteall.php'; ?>
+                                                                            </div>
+                                                                        </td>
+                                                                    <?php } ?>
+                                                        
+
+                                                                </tr>
+                                                                <?php } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                
+                                            <!-- </div>     -->
+                                        </div>
+                                    <!-- </div> -->
+                                </div>
                             </div>
-                        
                         </div>
-                    </div>	
+                    	
 
                     <?php endif; ?>
 
                     <?php  foreach ($parAtelier as $key => $liste) { ?>
-						<div class="container-fluid pt-0 ps-0 pe-lg-4 pe-0">		
+						<div class="container-fluid pt-0 ps-0 pe-0">		
                             <div class="shadow-lg card" id="accordion-one">
-                                <div class="card-header flex-wrap px-3">
+                                <div class="card-header flex-wrap ">
                                     <div>
                                         <h6 class="card-title">Produits / Liste des Produits</h6>
                                         <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans l'atelier <strong><?=$key?></strong></p>
@@ -362,13 +374,12 @@
                                                                 </div>
                                                             </td>
                                                             <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
-                                                                <td>
-                                                                    <div class="d-flex">
+                                                                <td class="d-flex">
                                                                         <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
-                                                                            <i class="fa fa-pencil"></i>
+                                                                            <i class="bi bi-pencil-square"></i>
                                                                         </a>
-                                                                        
-                                                                    </div>
+                                                                        <?php require __DIR__. '/deleteall.php'; ?>
+                                                                    
                                                                 </td>
                                                             <?php } ?>
                                                 

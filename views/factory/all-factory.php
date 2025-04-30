@@ -5,7 +5,7 @@
         if ($current_page == 'factory/all-factory') {
             $message = 'Liste des Usines.';
         }
-        
+       
 
         // require_once __DIR__. '/../../core/connexion.php';
         require_once __DIR__. '/../../models/atelier.php';
@@ -22,9 +22,11 @@
         $user = new User($conn);
         // $usine = new Usine();
 		$package = new Package();
-		$idusine = $_SESSION['idusine'];
+		// $idusine = $_SESSION['idusine'];
 
        $AllFactory =  Usine::AllFactory($conn);
+
+	//    $nombre = Atelier::NbreAtelierByFactory($conn,$idusine);
 
 ?>
 
@@ -178,29 +180,29 @@
 					<?php 
 						// echo $message_succes;
 						if (isset($_SESSION['error']['inbd']) && $_SESSION['error']['inbd'] == true) { 
-							$message = "L'atelier <strong> ".$_SESSION['error']['data']['nom']."</strong>  existe déjà";
+							$message = "L'<strong> ".$_SESSION['error']['data']['nom']."</strong>  existe déjà";
 							$type = "danger";
 							echo $package -> message($message,$type);
 							unset($_SESSION['error']);
 						
 						}elseif (isset($_SESSION['error']['success']) && $_SESSION['error']['success'] == true) {
-							$message = "L'atelier ".$_SESSION['error']['data']['oldvalue']." a été remplacé par  <strong>".$_SESSION['error']['data']['nom']."</strong> ";
+							$message = "L'".$_SESSION['error']['data']['oldvalue']." a été remplacé par  <strong>".$_SESSION['error']['data']['nom']."</strong> ";
 							echo $package->message($message, "success");
 							unset($_SESSION['error']);
 						}elseif (isset($_SESSION['error']['errorInsert']) && $_SESSION['error']['errorInsert'] == true) {
-							$message = "L'atelier ".$_SESSION['error']['data']['oldvalue']." a été remplacé par  <strong>".$_SESSION['error']['data']['nom']."</strong> ";
+							$message = "L'".$_SESSION['error']['data']['oldvalue']." a été remplacé par  <strong>".$_SESSION['error']['data']['nom']."</strong> ";
 							echo $package->message($message, "success");
 							unset($_SESSION['error']);
 						}elseif (isset($_SESSION['delete']['errorDelete'])) {
-							$message = "L'atelier <strong>".$_SESSION['delete']['data']['nom']."</strong> contient au moins un produit et ne peut être suprrimé ";
+							$message = "L'<strong>".$_SESSION['delete']['data']['nom']."</strong> contient au moins un produit et ne peut être suprrimé ";
 							echo $package->message($message, "danger");
 							unset($_SESSION['delete']);
 						}elseif (isset($_SESSION['delete']['deleteok'])) {
-							$message = "L'atelier <strong>".$_SESSION['delete']['data']['nom']."</strong> a bien été suprrimé ";
+							$message = "L'<strong>".$_SESSION['delete']['data']['nom']."</strong> a bien été suprrimé ";
 							echo $package->message($message, "success");
 							unset($_SESSION['delete']);
 						}elseif (isset($_SESSION['insertok'] )) {
-							$message = "L'atelier a été bien <strong>".mb_strtoupper($_SESSION['insertok']['data']['nom'])."</strong> ajouté ";
+							$message = "L'<strong>".mb_strtoupper($_SESSION['insertok']['data']['nom'])."</strong>a été bien ajouté ";
 							echo $package->message($message, "success");
 							unset($_SESSION['insertok']);
 						}
@@ -217,7 +219,7 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                                     <div>
                                         <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-                                        <span class="fs-4"><i class="bi bi-caret-ruight-fill"></i></span>
+                                        <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
                                         <span class="card-title fw-bold fs-5">Nos Usines</span>
                                     </div>
 									<div class="fs-5">
@@ -250,7 +252,10 @@
                                 <div class="main">
 								<div class="scrollable-row ">
 
-									<?php foreach ($AllFactory as $key) { ?>
+									<?php 
+										foreach ($AllFactory as $key) {
+											$nombre = Atelier::NbreAtelierByFactory($conn,$key['idusine']);
+									?>
 									<div class="col-xl-3 col-lg-4 col-sm-6 px-3">
 										<div class=" card contact_list text-center">
 											<div class="card-body">
@@ -258,13 +263,18 @@
 													<div class="user-info">
 														<div class="user-details">
 															<p style="font-weight: 700;">Atelier nommé</p>
-															<h4 class="user-name mb-0"><?=$key['nom'] ?></h4>
+															<h4 class="user-name mb-0"><?=$key['nom'] ?></h4><br>
 															
 														</div>
 													</div>
 												
 												</div>
-												
+												<div class="contact-icon">
+													<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre d'atelier :</label><span class="badge badge-success light"><?=$nombre?></span>
+
+													<br>
+													<!-- <label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span> -->
+												</div>
 												<div class="d-flex mb-3 justify-content-center align-items-center">
 													<center>
 													<?php require __DIR__. '/edit.php'; ?>
@@ -273,7 +283,7 @@
 
 												</div>
 												<div class="d-flex align-items-center">
-													<a href="/workshop/all-workshop" class="btn btn-secondary btn-sm w-100 me-2">Voir les ateliers</a>
+													<a href="/workshop/all-workshop/<?=IdEncryptor::encode($key['idusine'])?>" class="btn btn-secondary btn-sm w-100 me-2">Voir les ateliers</a>
 												</div>
 											</div>
 										</div>

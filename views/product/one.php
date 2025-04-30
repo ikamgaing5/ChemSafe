@@ -8,16 +8,19 @@
 	require_once __DIR__. '/../../models/atelier.php';
 	require_once __DIR__. '/../../core/connexion.php';
 	require_once __DIR__. '/../../models/danger.php';
-	$conn = getConnection();
+    require_once __DIR__. '/../../models/fds.php';
+	$conn = Database::getInstance()->getConnection();
 
 	$danger = new Danger();
 	$produit = new Produit();
 	$package = new Package();
 	$atelier = new Atelier();
+    $fds = new FDS();
 
    
     $idprod = IdEncryptor::decode($id);
     $nomproduit = $produit->getNameById($conn,$idprod);
+    $infoFDS = $fds->getInfoByProd($conn,$idprod);
     
     $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
@@ -157,7 +160,7 @@
                                         <i class="bi bi-caret-right-fill"></i>
                                         <u><a href="/workshop/all-workshop" class="text-primary fw-bold fs-5">Nos Ateliers</a></u>
                                         <i class="bi bi-caret-right-fill"></i>
-                                        <u><a href="/product/all-product/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5">
+                                        <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5">
                                             <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
                                         </a></u>
                                         <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
@@ -168,7 +171,7 @@
 
                             <div class="shadow-lg page-title d-xl-none text-center py-2">
                             
-                                <u><a href="/product/all-product/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
+                                <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
                                     <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
                                 </a></u>
                             </div>
@@ -262,33 +265,33 @@
 											<div class="col-xl-6 col-sm-6">
 												<div class="mb-3">
                                                     <h6 class="text-primary">Risque Physique : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['physique'] ?></span>
 												</div>
 												
                                                 <div class="mb-3">
                                                     <h6 class="text-primary">Danger pour la santé : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['sante'] ?></span>
 												</div>
                                                                                                 
-                                                <div class="mb-3">
+                                                <!-- <div class="mb-3">
                                                     <h6 class="text-primary">Danger pour la santé : </h6>
                                                     <span class="text-danger fw-bold"><?=$nomdanger?></span>
-												</div>
+												</div> -->
 
 												<div class="mb-3">
                                                     <h6 class="text-primary">Caractéristiques des PPT chimiques: </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['ppt'] ?></span>
 												</div>
 												
 
 												<div class="mb-3">
                                                     <h6 class="text-primary">Stabilité: </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['stabilite'] ?></span>
 												</div>
 
                                                 <div class="mb-3">
                                                     <h6 class="text-primary">Conditions à éviter: </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['eviter'] ?></span>
 												</div>
 
 											</div>
@@ -297,27 +300,27 @@
 
 												<div class="mb-3">
                                                     <h6 class="text-primary">Matériaux incompatibles: </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['incompatible'] ?></span>
 												</div>
 
 												<div class="mb-3">
                                                     <h6 class="text-primary">Réactivité : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['reactivite'] ?></span>
 												</div>
 
 												<div class="mb-3">
                                                     <h6 class="text-primary">Manipulation Stockage : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['stockage'] ?></span>
                                                 </div>
 
                                                 <div class="mb-3">
                                                     <h6 class="text-primary">Premiers secours : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['secours'] ?></span>
                                                 </div>
 
                                                 <div class="mb-3">
                                                     <h6 class="text-primary">EPI : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <span class="text-danger fw-bold"><?=$infoFDS['epi'] ?></span>
                                                 </div>
 
                                                 

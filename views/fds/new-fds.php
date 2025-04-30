@@ -1,21 +1,26 @@
 <?php 
     require_once __DIR__. '/../../utilities/session.php';
-    $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+    $nom = "";
 
-    if ($current_page == 'info-fds/new-info-fds') {
-        $message = 'Ajouter un nouveau produit.';
-    }
+
 	
 	require_once __DIR__. '/../../utilities/session.php';
 	require_once __DIR__. '/../../models/produit.php';
 	require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../core/connexion.php';
-	$conn = getConnection();
+	require_once __DIR__. '/../../models/connexion.php';
+    $conn = Database::getInstance()->getConnection();
 
 
 	$produit = new Produit();
 	$package = new Package();
-	
+    
+    $nom = $produit->getNameById($conn, $idprod);
+    
+    $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+
+    if (strpos($current_page, 'info-fds/new-info-fds') === 0) {
+        $message = "Informations de la FDS du produit $nom.";
+    }
 
 ?>
 <!DOCTYPE html>
@@ -117,24 +122,27 @@
         <?php require_once __DIR__. '/../../layouts/dlabnav.php'; ?>
 
 
-		<form action="/product/new-product" enctype="multipart/form-data" method="POST">
+		<form action="/fds/add-info" enctype="multipart/form-data" method="POST">
         <div class="content-body">
 		
-
+        <?=$idprod?>
 			<div class="container-fluid">
 				<div class="row">
 				<?php 
-					if (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] =="insertfalse") { 
+					if (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] === "insertfalse") { 
 						$message = "Problème lors de l'insertion";
 						echo $package -> message($message,"danger");
-					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "insertok") {
+					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] === "insertok") {
 						$message = "Le produit a été ajoutée";
 						echo $package -> message($message,"success");
-					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "doublonProduit") {
+					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] === "doublonProduit") {
 						$message = "Ce Produit existe déjà ";
 						echo $package->message($message, "danger");
 						// 
 						// echo $package -> message($message,$type);
+					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] === true) {
+						$message = "La FDS a bien été enregistrée, veuillez enregistrer ses informations";
+						echo $package -> message($message,"success");
 					}
 				?>
 
@@ -252,7 +260,7 @@
 								<!-- <input type="submit" id="submitBtn" disabled class="btn btn-primary"> -->
 							</div>
 							<div class="text-end mt-4">
-							<button type="submit" id="submitBtn" class="btn btn-primary" disabled>Soumettre</button>
+							<button type="submit" id="submitBtn" class="btn btn-primary" >Soumettre</button>
 							
 						</div>
 						</div>
@@ -264,7 +272,7 @@
 		</form>
 	   
 	</div>
-
+    <?php unset($_SESSION['insert']); ?>
 
 
     <script src="/../../vendor/global/global.min.js"></script>

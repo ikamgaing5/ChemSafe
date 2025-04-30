@@ -19,22 +19,35 @@
                     <i class="bi bi-house-door-fill"></i> <span class="nav-text">Tableau de Bord</span>
 				</a>
 			</li>
-
+			<?php if($_SESSION['log']['type'] === 'superadmin'){ ?>
 			<li>
 				<a href="/factory/all-factory" >
 					<i class="bi bi-buildings-fill"></i>
 					<span class="nav-text">Liste des Usines</span>
 				</a>		
 			</li>
-
+			<?php }	
+			 if($_SESSION['log']['type'] == 'admin' ){ ?>		
 			<li>
-				<a href="/workshop/all-workshop" >
+				<a href="/workshop/all-workshop/<?=IdEncryptor::encode($idusine)?>" >
 					<i class="bi bi-building-fill-gear"></i>
 					<span class="nav-text">Liste des Ateliers</span>
 				</a>		
 			</li>
+			<?php } ?>
+
+
+			<?php if($_SESSION['log']['type'] === 'superadmin' ){ ?>		
+			<li>
+				<a href="/workshop/all-workshop/" >
+					<i class="bi bi-building-fill-gear"></i>
+					<span class="nav-text">Liste des Ateliers</span>
+				</a>		
+			</li>
+			<?php } ?>
+
 			
-					
+			<?php if($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin' ){ ?>		
 			<li>
                 <a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
                     <i class="bi bi-watch"></i>
@@ -45,20 +58,7 @@
                     <li><a href="#">Ajouter une matière</a></li>
                 </ul>
 			</li>
-
-			<li>
-                <a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-					<i class="bi bi-info-circle-fill"></i>
-                    <span class="nav-text">Informations FDS</span>
-			    </a>
-                <ul aria-expanded="false">
-                    <li><a href="#">Liste des matières</a></li>
-                    <li><a href="/info-fds/new-info-fds">Ajouter une matière</a></li>
-                </ul>
-			</li>
-
-			
-
+			<?php } ?>
 			<li>
 				<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 					<!-- <i class="bi bi-virus2"></i> -->
@@ -66,11 +66,14 @@
 					<span class="nav-text" >Produits</span>
 				</a>
 				<ul aria-expanded="false">
+					<?php if($_SESSION['log']['type']=='admin'||$_SESSION['log']['type']=='superadmin'){ ?>		
+						<li><a href="/product/new-product">Ajouter un produit</a></li>
+					<?php } ?>
+
 					<li><a href="/product/all-product">Liste des produits</a></li>
-					<li><a href="/product/new-product">Ajouter un produit</a></li>
 				</ul>
 			</li>
-
+			<?php if($_SESSION['log']['type'] == 'admin' ||$_SESSION['log']['type'] == 'superadmin' ){ ?>		
 			<li>
 				<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
                     <i class="bi bi-person-fill"></i>
@@ -80,7 +83,8 @@
 					<li><a href="#">Liste des Utilisateurs</a></li>	
 					<li><a href="/admin/new-user">Ajouter un etudiant</a></li>
 				</ul>
-			</li>			
+			</li>
+			<?php } ?>			
 		</ul>
 
 		<div class="copyright">

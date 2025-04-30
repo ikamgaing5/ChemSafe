@@ -1,0 +1,70 @@
+        
+        @font-face {
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-weight: 400;
+            src: url("flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format('woff2');
+            }
+    
+            .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            }
+    
+            .dot {
+                /* background-color: #dc3545 !important;  */
+                /* rouge bootstrap */
+            }
+            html,body{
+                height: auto !important;
+                overflow-y: auto !important;
+            }
+            *{
+                overflow: visible;
+            }
+            ::-webkit-scrollbar{
+                width: 8px;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+            ::-webkit-scrollbar-thumb:hover{
+                background: #555;
+            }
+
+            
+            .scrollable-row {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 1rem; /* espace entre les cartes */
+                padding-bottom: 1rem;
+                }
+            
+                .scrollable-row::-webkit-scrollbar {
+                height: 8px;
+                }
+            
+                .scrollable-row::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+                }
+            
+                .scrollable-row > .col-xl-3 {
+                flex: 0 0 auto;
+                scroll-snap-align: start;
+                width: 300px; /* ou la taille que tu veux pour chaque carte */
+                }
+            

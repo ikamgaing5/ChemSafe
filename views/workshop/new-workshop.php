@@ -14,6 +14,7 @@
                 <div class="modal-body">
                     <label class="form-label text-secondary">Nom de l'atelier: </label>
                     <input type="text" class="form-control" name="nom" id="" value="">
+                    <input type="hidden" name="idusine" value="<?=$_SESSION['idusine']?>" >
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>

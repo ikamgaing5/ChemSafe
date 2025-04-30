@@ -232,27 +232,6 @@
 										            </div>
                                                     <!-- <span class="fw-bold text-danger" id="messageDanger" style="display: none;"></span> -->
 												</div>
-
-												<div class="mb-3">
-													<label style="font-weight: 700;" for="exampleFormControlInput1" class="form-label text-primary">Atelier d'utilisation<span class="required">*</span></label>
-													<div class="mb-3">
-														<select multiple class="form-control" name="atelier[]" id="atelier">
-															<?php foreach ($allAtelier as $atelier): ?>
-																<?php if (in_array($atelier['idatelier'], $selectedAtelierIds)) { ?>
-																	<option value="<?= $atelier['idatelier'] ?>" selected>
-																		<?= htmlspecialchars($atelier['nomatelier']) ?>
-																	</option>
-																<?php } else { ?>
-																	<option value="<?= $atelier['idatelier'] ?>">
-																		<?= htmlspecialchars($atelier['nomatelier']) ?>
-																	</option>
-																<?php } ?>
-															<?php endforeach; ?>
-														</select>
-                                                        <span id="messageAtelier" class="text-danger fw-bold" style="display:none;"></span>
-										            </div>
-
-												</div>
 												
 
 												<div class="mb-3">

@@ -1,3 +1,6 @@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
 <button type="button" class="btn btn-primary shadow  mx-1" href="#add-product" data-bs-toggle="modal" data-bs-target="#add-product">+ Ajout produit(s)</button>
 
 
@@ -13,7 +16,7 @@
                 <div class="modal-footer">
                     <input type="hidden" name="idatelier" value="<?=$idatelier?>">
                     <span class="text-danger fs-6 fw-bold d-flex justify-md-between justify-md-start" id="messageProduit" style="display:none;"></span>
-                    <select multiple name="produit[]" class="default-select form-control wide form-control-sm mb-3" id="produit">
+                    <select name="produit[]" multiple class=" form-control wide form-control-sm" id="produit">
                         <?php 
                             foreach ($produitsNonAssocies as $produits) { 
                                 echo "<option value=\"{$produits['idprod']}\">" . htmlspecialchars($produits['nomprod']) . "</option>";
@@ -28,3 +31,5 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+

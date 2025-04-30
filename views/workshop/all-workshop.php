@@ -1,11 +1,21 @@
 <?php 
 	require_once __DIR__. '/../../utilities/session.php';
         $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+		$conn = Database::getInstance()->getConnection();
+		
+	
+			
+			if (strpos($current_page, 'workshop/all-workshop') === 0) {
+				$nom = Usine::getNameById($conn,$idusine);
+				$message = "Liste des Ateliers de l'$nom.";
+			}	
+			if ($current_page == 'workshop/all-workshop') {
+				$message = 'Liste des Ateliers de toutes les Usines.';
+			}
+		
 
-        if ($current_page == 'workshop/all-workshop') {
-            $message = 'Liste des Ateliers.';
-        }
-        
+
+
 
         // require_once __DIR__. '/../../core/connexion.php';
         require_once __DIR__. '/../../models/atelier.php';
@@ -14,8 +24,8 @@
         require_once __DIR__. '/../../models/user.php';
         require_once __DIR__. '/../../models/contenir.php';
 		require_once __DIR__. '/../../utilities/session.php';
-		require_once __DIR__. '/../../models/connexion.php';
-		$conn = Database::getInstance()->getConnection();
+		// require_once __DIR__. '/../../models/connexion.php';
+		
 
         // $conn = getConnection();
         $atelier = new Atelier();
@@ -23,9 +33,13 @@
         $user = new User($conn);
         $contenir = new Contenir();
 		$package = new Package();
-		$idusine = $_SESSION['idusine'];
+		// $idusine = $_GET['idusine'];
 
-       $allAtelier =  $atelier -> AllAtelier($conn,$idusine);
+	    // if($_SESSION['log']['type'] == 'admin'){ 	
+		// 	$allAtelier =  $atelier -> AllAtelier($conn,$idusine);
+		// }
+
+
 
 ?>
 
@@ -34,16 +48,8 @@
 <head>
     <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="author" content="DexignLab" >
-	<meta name="robots" content="" >
-	<meta name="keywords" content="school, school admin, education, academy, admin dashboard, college, college management, education management, institute, school management, school management system, student management, teacher management, university, university management" >
-	<meta name="format-detection" content="telephone=no">
-
-	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	
-	
 		<link href="/../../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
         <link href="/../../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/../../vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
@@ -54,98 +60,15 @@
         
         <link href="/../../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         
-        <link rel="stylesheet" href="/../../vendor/swiper/css/swiper-bundle.min.css">
+        <link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
         
         
         <link href="/../css/style.css" rel="stylesheet">
 		<link href="/../css/all-workshop.css" rel="stylesheet">
-
-<style>
-
-	.scrollable-row {
-	display: flex;
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	-webkit-overflow-scrolling: touch;
-	gap: 1rem; /* espace entre les cartes */
-	padding-bottom: 1rem;
-	}
-
-	.scrollable-row::-webkit-scrollbar {
-	height: 8px;
-	}
-
-	.scrollable-row::-webkit-scrollbar-thumb {
-	background: #888;
-	border-radius: 4px;
-	}
-
-	.scrollable-row > .col-xl-3 {
-	flex: 0 0 auto;
-	scroll-snap-align: start;
-	width: 300px; /* ou la taille que tu veux pour chaque carte */
-	}
-
-
-    @font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: url("flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format('woff2');
-    }
-
-    .material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased;
-    }
-
-    html,body{
-        height: auto !important;
-        overflow-y: auto !important;
-    }
-    *{
-        overflow: visible;
-    }
-    ::-webkit-scrollbar{
-        width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover{
-        background: #555;
-    }
-
-
-
-
-</style>
+		<link rel="stylesheet" href="/css/all.css">
+		<script src="/js/all.js"></script>
 	
 </head>
-<script>
-    window.addEventListener('load', ()=>{
-        document.body.style.overflowY = 'auto';
-        document.documentElement.style.overflow = 'auto';
-        document.querySelectorAll('*').forEach(el=>{
-            const style = getComputedStyle(el);
-            if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
-                el.style.overflow = 'visible';
-                el.style.overflowY = 'auto';
-            }
-        });
-    });
-</script>
 <body>
 
     
@@ -172,8 +95,9 @@
 		
         <div class="content-body">
 			<div class="container-fluid">
-				
-			<?php require __DIR__. '/new-workshop.php'; ?>
+			<?php if($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin' ){  
+				require __DIR__. '/new-workshop.php';
+			} ?>
 				<!-- Row -->
 				<div class="row">
 					<?php 
@@ -201,48 +125,81 @@
 							echo $package->message($message, "success");
 							unset($_SESSION['delete']);
 						}elseif (isset($_SESSION['insertok'] )) {
-							$message = "L'atelier a été bien <strong>".mb_strtoupper($_SESSION['insertok']['data']['nom'])."</strong> ajouté ";
+							$message = "L'atelier <strong>".mb_strtoupper($_SESSION['insertok']['data']['nom'])."</strong> a été bien ajouté ";
 							echo $package->message($message, "success");
 							unset($_SESSION['insertok']);
 						}
 						
 					?>
-					
 					<div class="col-xl-12">
-                        <!-- Row -->
-						<div class="row">
-                            <!--column-->
+						<div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
+							<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+								<div>
+									<u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
+									<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
+									<u><a class="text-primary fw-bold fs-5" href="/factory/all-factory" >Nos Usines</a></u>
 
-							<div class="col-xl-12">
-                            <div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                    <div>
-                                        <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-                                        <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
-                                        <span class="card-title fw-bold fs-5">Nos Ateliers</span>
-                                    </div>
-									<div class="fs-5">
-											Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelier($conn)?></strong>
-									</div>
-                                </div>
-                            </div>
+									<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
+									<span class="card-title fw-bold fs-5">Nos Ateliers</span>
+								</div>
+							</div>
+						</div>
 
-                            <div class="shadow-lg page-title d-xl-none text-center py-2">
-                            
-                                <u><a href="/dashboard" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
-                                    Tableau de bord
-                                </a></u>
+						<div class="shadow-lg page-title d-xl-none text-center py-2">
+						
+							<u><a href="/dashboard" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
+								Tableau de bord
+							</a></u>
+							<?php if ($_SESSION['log']['type'] === 'admin') { ?>
+								<div class="fs-5">
+									Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelierByFactory($conn,$idusine)?></strong>
+								</div>
+							<?php }
+								if ($_SESSION['log']['type'] === 'superadmin') { ?>
 								<div class="fs-5">
 									Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelier($conn)?></strong>
 								</div>
-                            </div>
-                    </div>
+							<?php } ?>
+						</div>
+					</div>
+					<?php 
+						$allFactory = Usine::AllFactory($conn);
+						foreach ($allFactory as $key) {
+							$idusine = $key['idusine'];
 
+							// Cas pour l'admin : on vérifie si c'est bien l'usine de l'admin
+							if ($_SESSION['log']['type'] === 'admin' && $idusine != $_SESSION['idusine']) {
+								continue; // On saute les usines qui ne correspondent pas
+							}
 
+							if ($_SESSION['log']['type'] === 'superadmin' && $idusine != IdEncryptor::decode($params['idusine'])) {
+								continue; // On saute les usines qui ne correspondent pas
+							}
 
+							$allAtelier = $atelier->AllAtelier($conn, $idusine);
+					?>
+					<div class="col-xl-12">
+						<div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
+							<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+								<div>
+									<div class="fs-5">Atelier de l'<?=Usine::getNameById($conn,$idusine)?></div>
+								</div>
+								<div class="fs-5">
+										Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelierByFactory($conn,$idusine)?></strong>
+									</div>
+								
+							</div>
+						</div>
 
-                            <!--/column-->
-                            <!--column-->
+						<div class="shadow-lg page-title d-xl-none text-center py-2">
+							<u>
+								<div class="fs-5">Atelier de l'<?=Usine::getNameById($conn,$idusine)?></div>
+							</u>
+						</div>
+					</div>
+					<div class="col-xl-12">
+                        <!-- Row -->
+						<div class="row">
 							<?php 
 							// echo $message_succes;
 							 ?>
@@ -279,19 +236,18 @@
 												
 												</div>
 												<div class="contact-icon">
-												<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre de produit:</label><span class="badge badge-success light"><?=$nombre?></span>
+													<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre de produit:</label><span class="badge badge-success light"><?=$nombre?></span>
 
-												<br>
-												<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span>
-												
-												
+													<br>
+													<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span>
 												</div>
 												<div class="d-flex mb-3 justify-content-center align-items-center">
-													<center>
-													<?php require __DIR__. '/edit.php'; ?>
-													<?php require __DIR__. '/delete.php'; ?>
-													</center>
-
+													<?php if($_SESSION['log']['type'] != 'user'){ ?>
+														<center>
+															<?php require __DIR__. '/edit.php'; ?>
+															<?php require __DIR__. '/delete.php'; ?>
+														</center>
+													<?php } ?>
 												</div>
 												<div class="d-flex align-items-center">
 													<a href="/all-products/<?= IdEncryptor::encode($key['idatelier']) ?>" class="btn btn-secondary btn-sm w-100 me-2">Voir les produits</a>
@@ -312,8 +268,20 @@
 								</div>
 							</div>
 
+						</div>
 					</div>
-				</div>
+					<?php
+						if ($_SESSION['log']['type'] === 'admin') {
+							break;
+						}
+						
+						if ($_SESSION['log']['type'] === 'superadmin' && $idusine == IdEncryptor::decode($params['idusine'])) {
+							break; 
+						}
+
+
+						} 
+					?>
 			</div>
 		</div>
 		

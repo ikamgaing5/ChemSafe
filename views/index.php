@@ -6,14 +6,7 @@
 	$alerterror = "";
     
 
-			$alerterror = '<div class="mx-3 alert alert-secondary alert-dismissible fade show">
-						<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-						<strong>Une erreur est survenue!</strong> nom d\'utilisateur ou mot de passe incorrect.
-						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
-						</button>
-			</div> ';
-
-			if(isset($_SESSION['info'])){
+			if(isset($_SESSION['login_failed']['type'])){
 				$alerterror = '<div class="mx-3 alert alert-secondary alert-dismissible fade show">
 						<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
 						<strong>Une erreur est survenue!</strong> nom d\'utilisateur ou mot de passe incorrect.
@@ -39,7 +32,16 @@
 	<title>ChemSafe</title>
 
 
-	<!-- <link rel="shortcut icon" type="image/png" href="images/favicon.png" > -->
+	 <!-- <link rel="shortcut icon" type="image/png" href="images/favicon.png" >  -->
+	 <!-- Icône classique -->
+	<link rel="icon" type="image/png" href="/images/favicon.png" />
+
+	<!-- Pour Apple (optionnel mais recommandé) -->
+	<link rel="apple-touch-icon" href="/images/favion.png">
+
+	<!-- Pour navigateur Microsoft (optionnel) -->
+	<meta name="msapplication-TileImage" content="/images/favicon.png">
+
 	<link href="/../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0">
     <link href="/../css/style.css" rel="stylesheet">
@@ -72,7 +74,7 @@
 								<form action="/" method="POST">
 									<div class="text-center mb-4">
 
-									<?php if (isset($_SESSION['login_failed'])) {echo $alerterror;}	?>
+									<?php if (isset($_SESSION['login_failed']['type'])) {echo $alerterror;}	 ?>
 
                                  <?php	
 								 
@@ -82,6 +84,16 @@
 									echo '<div class="alert alert-success alert-dismissible fade show">
 									<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>	
 									<strong>Succès!</strong> Vous etes maintenant deconnecté! Veuillez vous reconnecter pour continuer à  utiliser ChemSafe
+									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
+									</button>
+								</div>';
+								}
+
+								if(isset($_SESSION['offff'])){
+									
+									echo '<div class="alert alert-danger alert-dismissible fade show">
+									<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+									<strong>Inactivité!</strong> Vous avez été deconnecté! Veuillez vous reconnecter pour continuer à  utiliser ChemSafe
 									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="btn-close">
 									</button>
 								</div>';
@@ -134,6 +146,5 @@
 </body>
 
 <?php 
-	if (session_status() != PHP_SESSION_NONE) {
-		session_destroy();
-	}
+	session_destroy();
+	// unset($_SESSION['login_failed']);

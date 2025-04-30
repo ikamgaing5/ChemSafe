@@ -1,10 +1,9 @@
 <?php 
 
     // require_once __DIR__. '/../core/connexion.php';
-    
     require_once __DIR__. '/../models/package.php';
     require_once __DIR__. '/../models/atelier.php';
-    require_once __DIR__. '/../utilities/session.php';
+    // require_once __DIR__. '/../utilities/session.php';
     require_once __DIR__. '/../models/contenir.php';
     require_once __DIR__. '/../models/connexion.php';
     
@@ -25,7 +24,17 @@
         }
 
 
-        public function all(){
+        public function all($params){
+            $idusine = IdEncryptor::decode($params['idusine']);
+            require_once __DIR__. '/../models/atelier.php';
+            require_once __DIR__. '/../models/produit.php';
+            $atelier = new Atelier();
+            $produit = new Produit();
+            require_once __DIR__. '/../views/workshop/all-workshop.php';
+        }
+
+        public function alls(){
+            // $idusine = IdEncryptor::decode($params['idusine']);
             require_once __DIR__. '/../models/atelier.php';
             require_once __DIR__. '/../models/produit.php';
             $atelier = new Atelier();
@@ -93,8 +102,9 @@
         }
 
         public function add(){
+            $idusine = $this -> package -> filtrer($_POST['idusine']);
             $nom = $this -> package -> filtrer($_POST['nom']);
-            $req = $this -> atelier -> newAtelier($this->conn,$nom);
+            $req = $this -> atelier -> newAtelier($this->conn,$idusine,$nom);
             if ($req == -1) {
                 echo "déjà en bd";
                 $_SESSION['error'] = [];
@@ -137,5 +147,15 @@
             
             // $this -> atelier -> Delete($this-> conn,$id);
         }
+
+        public function dashboard(){
+            $idusine = $_SESSION['idusine'];
+            $resultats = $this->atelier->getAteliers($this->conn,$idusine);
+        
+            // Envoi des données au format JSON
+            header('Content-Type: application/json');
+            echo json_encode($resultats);
+        }
+
         
     }

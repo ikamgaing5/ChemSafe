@@ -14,7 +14,7 @@
 	// require_once __DIR__. '/../../core/connexion.php';
 	require_once __DIR__ . '/../../models/connexion.php';
 	require_once __DIR__. '/../../models/danger.php';
-	
+
 	$conn = Database::getInstance()->getConnection();
 
 	$danger = new Danger();
@@ -162,7 +162,7 @@
 						$message = "Problème lors de l'insertion";
 						echo $package -> message($message,"danger");
 					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "insertok") {
-						$message = "Le produit a été ajoutée, cliquez ici si vous voulez directement ajouter les informations de sa FDS";
+						$message = "Le produit a été ajoutée, n'oubliez pas d'enregistrer sa FDS dès que possible";
 						echo $package -> message($message,"success");
 					}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "doublonProduit") {
 						$message = "Ce Produit existe déjà ";
@@ -329,43 +329,13 @@
 								</div>
 							</div>
 						</div>
+						<div class="text-end ">
+					<button type="submit" id="submitBtn" class="btn btn-primary my-3" disabled>Soumettre</button>	
+				</div>
 					</div>
 				</div>
-				<div class="col-xl-12">
-					<div class="shadow-lg card" >
-						<div class="card-header">
-							<h5 class="mb-0">Details de l'authentification</h5>
-						</div>
-						<div class="card-body" >
-							<div class="row">
-								<div class="col-xl-6 col-sm-6">
-									<div class="mb-3">
-										<label style="font-weight: 700;" for="exampleFormControlInput8" class="form-label text-primary">Nom d'utilisateur<span class="required">*</span></label>
-										<input type="text" class="form-control" id="username" name="username" placeholder="Votre nom d'utilisateur">
-									  </div>
-								
-								</div>
-								<div class="col-xl-6 col-sm-6">
-									<div class="mb-3">
-										<label style="font-weight: 700;" for="exampleFormControlInput8" class="form-label text-primary">Mot de passe<span class="required">*</span></label>
-										<input type="text" class="form-control" id="password" name="password" placeholder="Votre mot de passe" maxlenght="6">
-									  </div>
-						
-								</div>
-							</div>
-							<div class="float-end">
-								<!-- <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Soumettre</button> -->
+				
 
-								<!-- <input type="submit" id="submitBtn" disabled class="btn btn-primary"> -->
-							</div>
-							<div class="text-end mt-4">
-							<button type="submit" id="submitBtn" class="btn btn-primary" disabled>Soumettre</button>
-							
-						</div>
-						</div>
-					</div>
-					
-				</div>
 			</div>
 		</div>
 		</form>

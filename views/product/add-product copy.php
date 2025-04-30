@@ -26,9 +26,10 @@
 
     if (strpos($current_page, 'all-product') === 0) {
         $message = "Produits de l'atelier $nomatelier.";
+        $chemin = "all-product/".IdEncryptor::encode($idatelier);
     }
 
-    $produitsNonAssocies =$produit->getProduitsNonAssocies($conn, $idatelier);
+    $produitsNonAssocies=$produit->getProduitsNonAssocies($conn, $idatelier);
 
     if (isset($_SESSION['add-success']) && $_SESSION['add-success']['type'] == true && isset($_SESSION['add-success']['info'])) {
         $prodAdd = $_SESSION['add-success']['info']['produit'];
@@ -56,13 +57,17 @@
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link href="/../../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
+        <link href="/../../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/../../vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
+        <link rel="stylesheet" href="/../../vendor/jquery-nice-select/css/nice-select.css">
+        <link href="/../../vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
         
-        <!-- <link href="/../../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet"> -->
+        <link href="/../../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         
         <link rel="stylesheet" href="/../../vendor/swiper/css/swiper-bundle.min.css">
-        
-        
 
          <link rel="stylesheet" href="/css/style.css">
          <link rel="stylesheet" href="/css/all-product.css">
@@ -149,28 +154,39 @@
             <div class="content-body"> 
                 <!-- container starts -->
                 <div class="container-fluid">
-                    
                     <?php 
-                    if (isset($_SESSION['info']['type']) && $_SESSION['info']['type'] = 'deletesuccess') {
-                        $message = "Le produit <strong> ".$_SESSION['info']['nomprod']."</strong> et ses fichiers ont été supprimé de l'atelier <strong> ".$_SESSION['info']['nomatelier']."</strong>";
-                                $type = "danger";
-                                echo $package -> message($message,"success");
-                                unset($_SESSION['info']);
-                    }elseif (isset($_SESSION['info']['type']) && $_SESSION['info']['type'] = 'deletefailed') {
-                        $message = "Un problème est survenu lors de la suppression";
-                        echo $package -> message($message,"danger");
-                        unset($_SESSION['info']);
-                    }elseif (isset( $_SESSION['add-success']['type'] ) &&  $_SESSION['add-success']['type']  = true) {
-                        if ($nombre>1) {
-                            $message = "Les produits $nom ont été ajouté avec succès";
-                        }else {
-                            $message = "Le produit $nom a été ajouté avec succès";
+                        if (isset($_SESSION['info']['type']) && $_SESSION['info']['type'] === 'deletesuccess') {
+                            $message = "Le produit <strong> ".$_SESSION['info']['nomprod']."</strong> et ses fichiers ont été supprimé de l'atelier <strong> ".$_SESSION['info']['nomatelier']."</strong>";
+                                    $type = "danger";
+                                    echo $package -> message($message,"success");
+                                    unset($_SESSION['info']);
+                        }elseif (isset($_SESSION['info']['type']) && $_SESSION['info']['type'] === 'deletefailed') {
+                            $message = "Un problème est survenu lors de la suppression";
+                            echo $package -> message($message,"danger");
+                            unset($_SESSION['info']);
+                        }elseif (isset( $_SESSION['add-success']['type'] ) &&  $_SESSION['add-success']['type']  === true) {
+                            if ($nombre>1) {
+                                $message = "Les produits $nom ont été ajouté avec succès";
+                            }else {
+                                $message = "Le produit $nom a été ajouté avec succès";
+                            }
+                            $package -> message($message,"success");
+                            unset($_SESSION['add-success']);
+                        }elseif (isset($_SESSION['add-fds']) && $_SESSION['add-fds'] === true) {
+                            $message = "La FDS a été ajoutée avec succès";
+                            echo $package -> message($message,"success");
+                            unset($_SESSION['add-fds']);
+                        }elseif (isset($_SESSION['add-fds']) && $_SESSION['add-fds'] === false) {
+                            $message = "Problème lors de l'insertion de la FDS";
+                            echo $package -> message($message,"danger");
+                            unset($_SESSION['add-fds']);
+                        }elseif (isset($_SESSION['insertinfoFDS']) && $_SESSION['insertinfoFDS'] === true) {
+                            $message = "Les informations de la FDS ont été enregistrée";
+                            echo $package -> message($message,"success");
+                            unset($_SESSION['insertinfoFDS']);
                         }
-                        
-                        echo $package -> message($message,"success");
-                        unset($_SESSION['add-success']);
-                    }
                     ?>
+                   
 
                     <div class="demo-view">
                         <div class="col-xl-12">
@@ -235,28 +251,24 @@
                                 <div class="shadow-lg card" id="accordion-one">
                                     <div class="card-header flex-wrap px-3">
                                         <div>
-                                            
                                             <h6 class="card-title">Produits / Liste des Produits</h6>
                                             <p class="m-0 subtitle">Ici vous pouvez voir tous les produits enregistrés dans l'atelier <strong><?=$nomatelier?></strong></p>
                                         </div>
                                         <div class="d-flex">
+                                            <ul class="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
                                             
-                                            
-                                                <ul class="nav nav-tabs dzm-tabs" id="myTab" role="tablist">
-                                                
-                                                    <li class="nav-item " role="presentation">
-                                                        
-                                                        <div class="d-flex">
-                                                            <button type="submit" name="supprimeretudiant" class="btn btn-danger" value="tout supprimer" >tout supprimer	</button>
-                                                            <?php require_once __DIR__.'/add-product.php'; ?>
-                                                        </div>
-                                                        
+                                                <li class="nav-item " role="presentation">
                                                     
-                                                    </li>
-
+                                                    <div class="d-flex">
+                                                        <button type="submit" name="supprimeretudiant" class="btn btn-danger" value="tout supprimer" >tout supprimer	</button>
+                                                        <?php require_once __DIR__.'/add-product.php'; ?>
+                                                    </div>
+                                                    
                                                 
-                                                </ul>
-                                        
+                                                </li>
+
+                                            
+                                            </ul>
                                         </div>
                                     </div>
                                     <!--tab-content-->
@@ -313,9 +325,6 @@
                                                                 <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
                                                                     <td>
                                                                         <div class="d-flex">
-                                                                            <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
-                                                                                <i class="fa fa-pencil"></i>
-                                                                            </a>
                                                                             <?php require __DIR__. '/delete.php' ?>
                                                                         </div>
                                                                     </td>
@@ -330,7 +339,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                
                                 </div>
                                     
                                     
@@ -343,15 +351,24 @@
             </div>
         </div>
     </body>
-	<!-- <script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script> -->
-
-    <script src="/vendor/chart.js/Chart.bundle.min.js"></script>
-
-    <script src="/vendor/global/global.min.js"></script>
-    <script src="/js/dlabnav-init.js"></script>
-    <script src="/js/cha.js"></script>
-    <script src="/js/chartt.js"></script>
-    <script src="/js/custom.min.js"></script>
+    
+    <script src="/../../vendor/global/global.min.js"></script>
+	<script src="/../../vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+	<script src="/../../vendor/apexchart/apexchart.js"></script>
+    <script src="/../../vendor/peity/jquery.peity.min.js"></script>
+	<script src="/../../vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script>
+	<script src="/../../vendor/swiper/js/swiper-bundle.min.js"></script>
+    <script src="/../../vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="/../../js/plugins-init/datatables.init.js"></script>
+	<script src="/../../js/dashboard/dashboard-1.js"></script>
+	<script src="/../../vendor/wow-master/dist/wow.min.js"></script>
+	<script src="/../../vendor/bootstrap-datetimepicker/js/moment.js"></script>
+	<script src="/../../vendor/datepicker/js/bootstrap-datepicker.min.js"></script>
+	<script src="/../../vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script>
+	<script src="/../../js/dlabnav-init.js"></script>
+    <script src="/../../js/custom.min.js"></script>
+	<script src="/../../js/demo.js"></script>
     <!-- <script src="/../../js/chart.js"></script> -->
     <script>
                 

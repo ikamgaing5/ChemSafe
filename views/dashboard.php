@@ -1,5 +1,5 @@
 <?php 
-    require_once __DIR__. '/../utilities/session.php';
+    // require_once __DIR__. '/../utilities/session.php';
         $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
         if ($current_page == 'dashboard') {
@@ -26,7 +26,8 @@
         $nom = $req['nomuser'];
         $allProductFDS = $produit -> ProduitFDS($conn);
         $idusine = $_SESSION['idusine'];
-
+        $_SESSION['chemin'] = "dashboard";
+        $nomUsine = Usine::getNameById($conn,$idusine);
 
 ?>
 
@@ -39,15 +40,15 @@
 	<meta name="robots" content="" >
 	<meta name="keywords" content="school, school admin, education, academy, admin dashboard, college, college management, education management, institute, school management, school management system, student management, teacher management, university, university management" >
 	<meta name="format-detection" content="telephone=no">
+	<link rel="icon" type="image/png" href="/images/favicon.png" />
 
+    <!-- Pour Apple (optionnel mais recommandé) -->
+    <link rel="apple-touch-icon" href="/images/favion.png">
+
+    <!-- Pour navigateur Microsoft (optionnel) -->
+    <meta name="msapplication-TileImage" content="/images/favicon.png">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-        <script>
-            if (!sessionStorage.getItem("reloaded")) {
-                sessionStorage.setItem("reloaded", "true");
-                location.reload();
-            }
-        </script>
 		
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css" rel="stylesheet">
@@ -61,8 +62,11 @@
         
         <link href="/../css/style.css" rel="stylesheet">
 	
-
-
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script> -->
+    
+        <script src="/js/chart.umd.js"></script>
+        <script src="/js/jsquery.min.js"></script>
 	
         <link href="/../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
         <link href="/../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
@@ -78,6 +82,7 @@
         
         
         <link href="/../css/style.css" rel="stylesheet">
+        <link href="/css/dashboard.css" rel="stylesheet">
 	
 	
     <!-- <link href="/../css/style.css" rel="stylesheet"> -->
@@ -128,25 +133,9 @@
         background: #555;
     }
 
-
-
-
-</style>
+    </style>
 	
 </head>
-<script>
-    window.addEventListener('load', ()=>{
-        document.body.style.overflowY = 'auto';
-        document.documentElement.style.overflow = 'auto';
-        document.querySelectorAll('*').forEach(el=>{
-            const style = getComputedStyle(el);
-            if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
-                el.style.overflow = 'visible';
-                el.style.overflowY = 'auto';
-            }
-        });
-    });
-</script>
 <body>
 
     
@@ -169,141 +158,273 @@
 		<?php require_once __DIR__. '/../layouts/nav.php' ?>
         
 		<?php require_once __DIR__. '/../layouts/dlabnav.php'; ?>
-        
-		
-	
-		
 		<div class="wallet-bar-close"></div>
 		
-        
 		<div class="content-body">
 			<div class="container-fluid">
 				<div class="row">
                     <?php require_once __DIR__. '/../layouts/info.php' ?>
-                        <div class="col-xl-12">
-							<div class="shadow-lg page-titles">
-								<div class="d-flex align-items-center flex-wrap ">
-									<h2 class="heading" >Bienvenue dans ChemSafe! <span style="color: red;"> <?=$nom?> .</span></h2>
-								</div>
-							</div>
-						</div>
-					
-                        <!-- Calendrier -->
+                    <div class="col-xl-12">
+                        <div class="shadow-lg page-titles">
+                            <div class="d-flex align-items-center flex-wrap ">
+                                <h2 class="heading" >Bienvenue dans ChemSafe! <span style="color: red;"> <?=$nom?> .</span></h2>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Calendrier -->
+                    <div class="d-flex">
+                        <div class="col-xl-5 wow fadeInUp" style="margin-right: 15px;" data-wow-delay="1.5s">
+                            <div class="shadow-lg card">
+                                <div class="card-header pb-0 border-0 flex-wrap">
+                                    <div>
+                                        <div class="mb-0">
+                                            <h2 class="heading mb-0">Calendrier de ChemSafe</h2>	
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body text-center event-calender py-0 px-1">
+                                    <input type='text' class="form-control d-none" id='datetimepicker1'>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
-                            <div class="col-xl-4 wow fadeInUp" data-wow-delay="1.5s">
+                            <div class="col-xl-12 wow fadeInUp" data-wow-delay="2s" style="margin-bottom:-10px;" >
                                 <div class="shadow-lg card">
-                                    <div class="card-header pb-0 border-0 flex-wrap">
-                                        <div>
-                                            <div class="mb-3">
-                                                <h2 class="heading mb-0">Calendrier de </h2>	
+                                    <div class="card-header border-0 ">
+                                        <h6 class="heading fs-6">Maintenez le curseur sur un zone du graphe pour afficher ses informations</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 wow fadeInUp" data-wow-delay="2s">
+                                <div class="shadow-lg card">
+                                    <div class="card-header border-0 px-3">
+                                        <h4 class="heading m-0">Atelier de l'<?=Usine::getNameById($conn,$idusine)?> </h4>
+                                        
+                                    </div>
+                                    <div class="container" style="margin-top: -10px;" >
+                                        <div class="row" id="graphRow">
+                                            <div class="col-12">
+                                                <div class="card-body">
+                                                    <canvas id="atelierChart"></canvas>
+                                                </div>
+                                                
+                                                <!-- <h5 class="legend-title px-1">Légende des ateliers</h5>
+                                                <div class="legend-container px-1" id="legendContainer"></div> -->
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card-body text-center event-calender  py-0 px-1">
-                                        <input type='text' class="form-control d-none" id='datetimepicker1'>
-                                    </div>
                                 </div>
                             </div>
-                            
-                            <div class="col-xl-8">
+
+                            <div class="col-xl-6 wow fadeInUp" data-wow-delay="2s">
                                 <div class="shadow-lg card">
-                                    <div class="card-header py-3 border-0 px-3">
-                                        <h4 class="heading m-0">Liste des Atelier de ChemSafe</h4>
+                                    <div class="card-header border-0 px-3">
+                                        <h4 class="heading m-0">Liste des Atelier de l'<?=Usine::getNameById($conn,$idusine)?> </h4>
+                                        
                                     </div>
-                                    <div class="card-body p-0">
-                                        <div class="table-responsive basic-tbl">
-                                            <table id="teacher-table" class="tech-data" style="min-width: 798px">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nom de l'atelier</th>
-                                                        <th>Nombre de produits</th>
-                                                        <th>Nombre de produit avec FDS</th>
-                                                        <th class="text-end">email</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                <?php
-                                                    $raw = $atelier->AllAtelier($conn, $idusine);
-
-                                                    foreach ($raw as $key) {
-                                                        $id = $key['idatelier'];
-
-                                                        $produitParAtelier = $contenir -> getProduitByAtelier($conn,$id);
-                                                        $nombre  = 0;
-                                                        foreach ($produitParAtelier as $keys) {
-                                                          $test = $produit -> ifProduitsFDS($conn,$keys['idprod']);
-                                                            if ($test > 0) {
-                                                                $nombre +=1;
-                                                            }
-                                                        }   
-
-                                                        ?>
-
-                                                    <tr>
-                                                        <td style="font-weight: 700;"><?=$key['nomatelier']?></td>
-                                                        <td style="font-weight: 700;"><?=$contenir->NbreProduitParAtelier($conn,$id)?></td>
-                                                        <td style="font-weight: 700;"><?=$nombre?></td>
-                                                         <td><span class="badge badge-dark"><?=$key['idatelier']?></span></td>
-                                                        <!--<td>info</td>
-                                                        <td><span class="badge badge-success">info</span></td>
-                                                        <td class="text-end"><span class="badge badge-sm light badge-danger">info</span></td> -->
-                                                    </tr>
-                                                    
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
+                                    <div class="container py-3" style="margin-top: -10px;" >
+                                        <div class="row" id="graphRow">
+                                            <div class="col-12">
+                                                <div class="card-body">
+                                                    <canvas  id="atelierChart"></canvas>
+                                                </div>
+                                                
+                                                <!-- <h5 class="legend-title px-1">Légende des ateliers</h5>
+                                                <div class="legend-container px-1" id="legendContainer"></div> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
                         </div>
-				
-				
-			    </div>
-		    </div>
-		
-        
-		
+                    </div>
+                </div>
+	        </div>
+        </div>
 
-	    </div>
-
-	
-    
-
-
-
-		
-	
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>  -->
-    
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js" integrity="sha512-SuxO9djzjML6b9w9/I07IWnLnQhgyYVSpHZx0JV97kGBfTIsUYlWflyuW4ypnvhBrslz1yJ3R+S14fdCWmSmSA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-	 <script src="/../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script> 
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js" integrity="sha512-yDlE7vpGDP7o2eftkCiPZ+yuUyEcaBwoJoIhdXv71KZWugFqEphIS3PU60lEkFaz8RxaVsMpSvQxMBaKVwA5xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-	
-	
-    <!-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/4.5.0/apexcharts.min.js" integrity="sha512-yMnvLee1a5S9nemgCoMth5YvOchnQMFMOSao/bH6SLAXZnauuHs1gd92DnE9+sVQ5aglei3LZDelg8LauSlWkw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    
-	
-    <!-- <script src="https://cdn.jsdelivr.net/npm/peity@3.3.0/jquery.peity.min.js"></script> -->
-	<!-- <script src="/../vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script> -->
-     <!-- Intégration de jQuery -->    
-    <!-- -->
-    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select-country@4.2.0/dist/js/bootstrap-select-country.min.js"></script> -->
-
-	
-	
-	
-	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha512-NqYds8su6jivy1/WLoW8x1tZMRD7/1ZfhWG/jcRQLOzV1k1rIODCpMgoBnar5QXshKJGV7vi0LXLNXPoFsM5Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    
-    <!-- <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
-    <script src="/../js/plugins-init/datatables.init.js"></script> -->
-
-	
+    </div>
+        <script>
+        $(function() {
+            // Vérifier si l'appareil est mobile
+            const isMobile = window.innerWidth < 768;
+            
+            // ID de l'usine (à récupérer dynamiquement si nécessaire)
+            const idUsine = <?=$idusine?>; // Exemple statique
+            
+            // Appel AJAX pour récupérer les données
+            $.ajax({
+                url: '/showgraph', // Votre script PHP
+                method: 'GET',
+                data: { idusine: idUsine },
+                dataType: 'json',
+                success: function(data) {
+                    if (data && data.length > 0) {
+                        // Rendre le graphique
+                        renderAtelierChart(data);
+                    } else {
+                        // Message si pas de données
+                        $('<div class="alert alert-warning mt-3">Aucune donnée disponible pour cette usine</div>').insertAfter('#graphRow');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erreur lors de la récupération des données:', error);
+                    // Afficher un message d'erreur
+                    $('<div class="alert alert-danger mt-3">Erreur lors du chargement des données</div>').insertAfter('#graphRow');
+                }
+            });
+            
+            function renderAtelierChart(data) {
+                const nomAteliers = data.map(item => item.nom_atelier);
+                const totalProduits = data.map(item => item.total_produits);
+                
+                // Utiliser des couleurs prédéfinies pour un meilleur contraste visuel
+                const colors = generatePredefinedColors(nomAteliers.length);
+                
+                const chartData = {
+                    labels: nomAteliers,
+                    datasets: [{
+                        data: totalProduits,
+                        backgroundColor: colors.backgroundColors,
+                        borderColor: colors.borderColors,
+                        borderWidth: 1,
+                        borderRadius: 2,
+                        hoverOffset: 10
+                    }]
+                };
+                
+                const options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '45%',
+                    plugins: {
+                        legend: {
+                            display: false // Nous utilisons une légende personnalisée
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333',
+                            bodyColor: '#555',
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 5,
+                            borderColor: '#ddd',
+                            borderWidth: 1,
+                            callbacks: {
+                                title: function(context) {
+                                    return nomAteliers[context[0].dataIndex];
+                                },
+                                label: function(context) {
+                                    const dataIndex = context.dataIndex;
+                                    const atelier = data[dataIndex];
+                                    
+                                    // Créer un tableau de lignes pour l'info-bulle
+                                    const result = [
+                                        `Total: ${atelier.total_produits} produit(s)`,
+                                        `Avec FDS: ${atelier.produits_avec_fds} produit(s)`,
+                                        `Sans FDS: ${atelier.produits_sans_fds} produit(s)`
+                                    ];
+                                    
+                                    return result;
+                                }
+                            }
+                        }, 
+                        // Contrôler l'animation au survol
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true,
+                            // Réduire la distance d'expansion au survol
+                            hoverOffset: 5  // Réduire cette valeur (était à 10)
+                        }
+                    }
+                };
+                // Dans les options du graphique
+                options.radius = '90%';  // Réduire légèrement la taille du donut de base
+                
+                var ctx = document.getElementById('atelierChart').getContext('2d');
+                var atelierChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: chartData,
+                    options: options
+                });
+                
+                // Générer la légende personnalisée
+                generateCustomLegend(data, nomAteliers, colors.backgroundColors);
+            }
+            
+            // Fonction pour générer des couleurs prédéfinies visuellement distinctes
+            function generatePredefinedColors(count) {
+                // Palette de couleurs prédéfinies avec une meilleure distinction visuelle
+                const colors = [
+                    { bg: '#E57373', border: '#EF9A9A' }, // rouge
+                    { bg: '#64B5F6', border: '#90CAF9' }, // bleu
+                    { bg: '#FFF176', border: '#FFF59D' }, // jaune
+                    { bg: '#81C784', border: '#A5D6A7' }, // vert
+                    { bg: '#BA68C8', border: '#CE93D8' }, // violet
+                    { bg: '#FF8A65', border: '#FFAB91' }, // orange
+                    { bg: '#E6A970', border: '#F0C6A2' }, // marron clair
+                    { bg: '#4DB6AC', border: '#80CBC4' }, // sarcelle
+                    { bg: '#7986CB', border: '#9FA8DA' }, // indigo
+                    { bg: '#A1887F', border: '#BCAAA4' }, // brun
+                    { bg: '#90A4AE', border: '#B0BEC5' }, // bleu-gris
+                    { bg: '#DCE775', border: '#E6EE9C' }  // vert citron
+                ];
+                
+                const backgroundColors = [];
+                const borderColors = [];
+                
+                for (let i = 0; i < count; i++) {
+                    const colorIndex = i % colors.length;
+                    backgroundColors.push(colors[colorIndex].bg);
+                    borderColors.push(colors[colorIndex].border);
+                }
+                
+                return {
+                    backgroundColors: backgroundColors,
+                    borderColors: borderColors
+                };
+            }
+            
+            // Générer la légende personnalisée horizontale
+            function generateCustomLegend(data, labels, colors) {
+                const legendContainer = document.getElementById('legendContainer');
+                legendContainer.innerHTML = '';
+                
+                // Créer les éléments de légende
+                labels.forEach((label, index) => {
+                    const legendItem = document.createElement('div');
+                    legendItem.className = 'legend-item';
+                    legendItem.setAttribute('data-index', index);
+                    
+                    const colorBox = document.createElement('div');
+                    colorBox.className = 'legend-color';
+                    colorBox.style.backgroundColor = colors[index];
+                    
+                    const labelText = document.createElement('span');
+                    labelText.className = 'legend-text';
+                    labelText.textContent = label;
+                    
+                    legendItem.appendChild(colorBox);
+                    legendItem.appendChild(labelText);
+                    legendContainer.appendChild(legendItem);
+                });
+            }
+            
+            // Fonction pour afficher les informations d'un atelier
+            function afficherInfosAtelier(atelier) {
+                $('#nomAtelier').text(atelier.nom_atelier);
+                $('#totalProduits').text(atelier.total_produits);
+                $('#produitsAvecFds').text(atelier.produits_avec_fds);
+                $('#produitsSansFds').text(atelier.produits_sans_fds);
+                $('#infoAtelier').slideDown(300);
+            }
+        });
+        </script>
+    <title>ChemSafe</title>
+	<script src="/../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script> 
+	<script src="/js/all.js"></script>
+    <!-- <script src="/../../vendor/chart.js/Chart.bundle.min.js"></script> -->
 	<script src="/../vendor/global/global.min.js"></script>
 	<script src="/../vendor/chart.js/Chart.bundle.min.js"></script>
 	<script src="/../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>

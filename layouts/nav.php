@@ -5,6 +5,13 @@
 
 ?>
 
+	<link rel="icon" type="image/png" href="/images/favicon.png" />
+
+<!-- Pour Apple (optionnel mais recommandé) -->
+<link rel="apple-touch-icon" href="/images/favion.png">
+
+<!-- Pour navigateur Microsoft (optionnel) -->
+<meta name="msapplication-TileImage" content="/images/favicon.png">
 <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" /> -->
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=experiment" />

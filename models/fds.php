@@ -6,8 +6,8 @@
 // donner la possibilité à l'utilisateur de saisir ces informations à la création du produit ou plus tard
 
         public function create($conn,$idprod,$physique,$sante,$ppt,$stabilite,$eviter,$incompatible,$reactivite,$stockage,$secours,$epi){
-            if ($this -> Exist($conn, $idprod)) {
-                $req = $conn -> prepare("INSERT INTO infofds(idprod, physique, sante, ppt, stabilite, eviter, incompatible,reactivite, stockage,secours, epi) VALUES(:nom, :emballage, :sante, :ppt, stabilite, :eviter, :incompatible, :reactivite, :stockage, :secours, :epi)");
+            if ($this->Exist(conn: $conn, id: $idprod) == 0) {
+                $req = $conn -> prepare("INSERT INTO infofds (idprod, physique, sante, ppt, stabilite, eviter, incompatible,reactivite, stockage,secours, epi) VALUES (:idprod, :physique, :sante, :ppt, :stabilite, :eviter, :incompatible, :reactivite, :stockage, :secours, :epi)");
                 $req -> bindParam(':idprod', $idprod);
                 $req -> bindParam(':physique', $physique);
                 $req -> bindParam(':sante', $sante);
@@ -37,7 +37,7 @@
             return $req -> rowCount();
         }
 
-        public function ProduitSansInfoFDS($conn){
+        public static function ProduitSansInfoFDS($conn){
             $req = $conn->prepare("SELECT p.idprod FROM produit p WHERE idprod NOT IN (SELECT idprod FROM infofds)");
             $req->execute();
             return $req->fetchAll();
@@ -45,21 +45,28 @@
 
 
 
-        public function AllInfo($conn,){
+        public static function AllInfo($conn,){
             $req = $conn -> prepare("SELECT * FROM infofds");
             $req -> execute();
             return $req -> fetchAll();
         }
 
-        public function OneInfo($conn, $id){
+        public static function OneInfo($conn, $id){
             $req = $conn -> prepare("SELECT * FROM infofds WHERE idinfo = :id");
             $req -> bindParam(':id', $id);
             $req -> execute();
             return $req -> fetch();
         }
 
+        public static function getInfoByProd($conn, $id){
+            $req = $conn -> prepare("SELECT * FROM infofds WHERE idprod = :id");
+            $req -> bindParam(':id', $id);
+            $req -> execute();
+            return $req -> fetch();
+        }
 
-        public function Delete($conn, $id){
+
+        public  function Delete($conn, $id){
             $req = $conn -> prepare("DELETE FROM infofds WHERE idinfo = :id");
             $req -> bindParam(':id',$id);
             $req -> execute();
