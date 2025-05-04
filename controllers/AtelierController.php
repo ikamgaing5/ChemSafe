@@ -102,20 +102,22 @@
         }
 
         public function add(){
-            $idusine = $this -> package -> filtrer($_POST['idusine']);
+            $idusine = ($_POST['idusine']);
             $nom = $this -> package -> filtrer($_POST['nom']);
+            $chemin = $_POST['chemin'];
             $req = $this -> atelier -> newAtelier($this->conn,$idusine,$nom);
             if ($req == -1) {
                 echo "déjà en bd";
+                echo $idusine;
                 $_SESSION['error'] = [];
                 $_SESSION['error']['data'] = $_POST;
                 $_SESSION['error']['inbd'] = true;
-                Route::redirect('/workshop/all-workshop');
+                Route::redirect($chemin);
             }elseif ($req == 1) {
                 $_SESSION['insertok'] = [];
                 $_SESSION['insertok']['temoin'] = true;
                 $_SESSION['insertok']['data'] = $_POST;
-                Route::redirect('/workshop/all-workshop');
+                Route::redirect($chemin);
             }else {
                 echo "problème d'insertion";
             }

@@ -3,43 +3,34 @@
         $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 		$conn = Database::getInstance()->getConnection();
 		
-	
-			
-			if (strpos($current_page, 'workshop/all-workshop') === 0) {
-				$nom = Usine::getNameById($conn,$idusine);
-				$message = "Liste des Ateliers de l'$nom.";
-			}	
-			if ($current_page == 'workshop/all-workshop') {
-				$message = 'Liste des Ateliers de toutes les Usines.';
-			}
+		if ($current_page == 'workshop/all-workshop' && $_SESSION['log']['type'] == 'superadmin') {
+			// Cas du superadmin sans usine spécifique
+			$message = 'Liste des Ateliers de toutes les Usines.';
+			$chemin = '/workshop/all-workshop';
+		} elseif (strpos($current_page, 'workshop/all-workshop/') === 0 && isset($params['idusine'])) {
+			// Cas de tout utilisateur accédant à un atelier d'une usine spécifique
+			$idusine = IdEncryptor::decode($params['idusine']);
+			$nom = Usine::getNameById($conn, $idusine);
+			$message = "Liste des Ateliers de l'$nom.";
+			$chemin = '/workshop/all-workshop/' . $params['idusine'];
+		}
+		
 		
 
-
-
-
-        // require_once __DIR__. '/../../core/connexion.php';
         require_once __DIR__. '/../../models/atelier.php';
         require_once __DIR__. '/../../models/package.php';
         require_once __DIR__. '/../../models/produit.php';
         require_once __DIR__. '/../../models/user.php';
         require_once __DIR__. '/../../models/contenir.php';
 		require_once __DIR__. '/../../utilities/session.php';
-		// require_once __DIR__. '/../../models/connexion.php';
 		
 
-        // $conn = getConnection();
         $atelier = new Atelier();
         $produit = new Produit();
         $user = new User($conn);
         $contenir = new Contenir();
 		$package = new Package();
-		// $idusine = $_GET['idusine'];
-
-	    // if($_SESSION['log']['type'] == 'admin'){ 	
-		// 	$allAtelier =  $atelier -> AllAtelier($conn,$idusine);
-		// }
-
-
+// die();
 
 ?>
 
@@ -50,23 +41,26 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<link href="/../../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
-        <link href="/../../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/../../vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
-        <link rel="stylesheet" href="/../../vendor/jquery-nice-select/css/nice-select.css">
-        <link href="/../../vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+		<link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
+        <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
+        <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
+        <link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
         
-        <link href="/../../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         
         <link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
         
         
-        <link href="/../css/style.css" rel="stylesheet">
-		<link href="/../css/all-workshop.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
+		<link href="/css/all-workshop.css" rel="stylesheet">
 		<link rel="stylesheet" href="/css/all.css">
 		<script src="/js/all.js"></script>
+		<script>
+			document.title = "ChemSafe";
+		</script>
 	
 </head>
 <body>
@@ -95,7 +89,7 @@
 		
         <div class="content-body">
 			<div class="container-fluid">
-			<?php if($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin' ){  
+			<?php if(($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin') && strpos($current_page, 'workshop/all-workshop/') === 0 && isset($params['idusine']) ){  
 				require __DIR__. '/new-workshop.php';
 			} ?>
 				<!-- Row -->
@@ -136,8 +130,10 @@
 							<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 								<div>
 									<u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-									<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
-									<u><a class="text-primary fw-bold fs-5" href="/factory/all-factory" >Nos Usines</a></u>
+									<?php if ($_SESSION['log']['type'] == 'superadmin') { ?>
+										<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
+										<u><a class="text-primary fw-bold fs-5" href="/factory/all-factory" >Nos Usines</a></u>
+									<?php } ?>
 
 									<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
 									<span class="card-title fw-bold fs-5">Nos Ateliers</span>
@@ -168,12 +164,14 @@
 							$idusine = $key['idusine'];
 
 							// Cas pour l'admin : on vérifie si c'est bien l'usine de l'admin
-							if ($_SESSION['log']['type'] === 'admin' && $idusine != $_SESSION['idusine']) {
+							if (($_SESSION['log']['type'] === 'admin' || $_SESSION['log']['type'] === 'user') && $idusine != IdEncryptor::decode($params['idusine'])) {
 								continue; // On saute les usines qui ne correspondent pas
 							}
 
-							if ($_SESSION['log']['type'] === 'superadmin' && $idusine != IdEncryptor::decode($params['idusine'])) {
-								continue; // On saute les usines qui ne correspondent pas
+							if (isset($params['idusine'])) {
+								if ($_SESSION['log']['type'] === 'superadmin' && $idusine != IdEncryptor::decode($params['idusine'])) {
+									continue; // On saute les usines qui ne correspondent pas
+								}
 							}
 
 							$allAtelier = $atelier->AllAtelier($conn, $idusine);
@@ -230,10 +228,8 @@
 														<div class="user-details">
 															<p style="font-weight: 700;">Atelier nommé</p>
 															<h4 class="user-name mb-0"><?=$key['nomatelier'] ?></h4>
-															
 														</div>
 													</div>
-												
 												</div>
 												<div class="contact-icon">
 													<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre de produit:</label><span class="badge badge-success light"><?=$nombre?></span>
@@ -267,64 +263,43 @@
 									</div>
 								</div>
 							</div>
-
 						</div>
 					</div>
 					<?php
-						if ($_SESSION['log']['type'] === 'admin') {
+						if ($_SESSION['log']['type'] === 'admin' || $_SESSION['log']['type'] === 'user') {
 							break;
 						}
 						
-						if ($_SESSION['log']['type'] === 'superadmin' && $idusine == IdEncryptor::decode($params['idusine'])) {
-							break; 
-						}
+						// if ($_SESSION['log']['type'] === 'superadmin' && $idusine == IdEncryptor::decode($params['idusine'])) {
+						// 	break; 
+						// }
 
 
 						} 
 					?>
 			</div>
-		</div>
-		
-        
-
-		
-       
-
-		
-		
-        
-
-
+		</div>	
 	</div>
     
-
-	
-	
-
-
-
-		
-	
     
-    
-	<script src="/../../vendor/global/global.min.js"></script>
-	<!-- <script src="/../../vendor/chart.js/Chart.bundle.min.js"></script> -->
-	<script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-	<!-- <script src="/../../vendor/apexchart/apexchart.js"></script> -->
-    <!-- <script src="/../../vendor/peity/jquery.peity.min.js"></script> -->
-	<!-- <script src="/../../vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script> -->
-	<!-- <script src="/../../vendor/swiper/js/swiper-bundle.min.js"></script> -->
-    <!-- <script src="/../../vendor/datatables/js/jquery.dataTables.min.js"></script> -->
-    <!-- <script src="/../../js/plugins-init/datatables.init.js"></script> -->
-	<!-- <script src="/../../js/dashboard/dashboard-1.js"></script> -->
-	<!-- <script src="/../../vendor/wow-master/dist/wow.min.js"></script> -->
-	<!-- <script src="/../../vendor/bootstrap-datetimepicker/js/moment.js"></script> -->
-	<!-- <script src="/../../vendor/datepicker/js/bootstrap-datepicker.min.js"></script> -->
-	<!-- <script src="/../../vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script> -->
-	<script src="/../../js/dlabnav-init.js"></script>
-	<script src="/../../js/all-workshop.js"></script>
-    <script src="/../../js/custom.min.js"></script>
-	<!-- <script src="/../../js/demo.js"></script> -->
+	<script src="/vendor/global/global.min.js"></script>
+	<!-- <script src="/vendor/chart.js/Chart.bundle.min.js"></script> -->
+	<script src="/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+	<!-- <script src="/vendor/apexchart/apexchart.js"></script> -->
+    <!-- <script src="/vendor/peity/jquery.peity.min.js"></script> -->
+	<!-- <script src="/vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script> -->
+	<!-- <script src="/vendor/swiper/js/swiper-bundle.min.js"></script> -->
+    <!-- <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script> -->
+    <!-- <script src="/js/plugins-init/datatables.init.js"></script> -->
+	<!-- <script src="/js/dashboard/dashboard-1.js"></script> -->
+	<!-- <script src="/vendor/wow-master/dist/wow.min.js"></script> -->
+	<!-- <script src="/vendor/bootstrap-datetimepicker/js/moment.js"></script> -->
+	<!-- <script src="/vendor/datepicker/js/bootstrap-datepicker.min.js"></script> -->
+	<!-- <script src="/vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script> -->
+	<script src="/js/dlabnav-init.js"></script>
+	<script src="/js/all-workshop.js"></script>
+    <script src="/js/custom.min.js"></script>
+	<!-- <script src="/js/demo.js"></script> -->
 
 
 

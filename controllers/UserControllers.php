@@ -42,7 +42,12 @@
 
             public function logout(){
                 unset($_SESSION['log']);
+                unset($_SESSION['info']);
                 $_SESSION['deconnect'] = true;
+                $id = $_SESSION['infos']['iduser'];
+                $idusine = $_SESSION['infos']['idusine'];
+                $created_at = date("Y-m-d H:i:s");
+                Historique::insert($this->conn,$id,null,null,$idusine,"Deconnexion",$created_at,null);
                 Route::redirect('/');
             }
 
@@ -100,11 +105,15 @@
                         $infoUser = $this->user->getOne($this->conn,$id);
                         $_SESSION['role'] = $role = $this -> user -> getRole($this -> conn, $id);
                         // $this -> historique -> Insert($this->conn, $id);
+                        $_SESSION['info'] = [];
                         $_SESSION['idusine'] = $infoUser['idusine'];
                         $_SESSION['log'] = [];
-                        $_SESSION['log']['type'] = 'user';
                         $_SESSION['id'] = $id;
+                        $_SESSION['infos'] = $infoUser;
                         $_SESSION['log']['type'] = $infoUser['role'];
+                        $created_at = date("Y-m-d H:i:s");
+                        $vide = "";
+                        Historique::insert($this->conn,$id,null,null,$infoUser['idusine'],"Connexion",$created_at,null);
                         Route::redirect('/dashboard');
                     }else {
                         $_SESSION['login_failed'] = [];

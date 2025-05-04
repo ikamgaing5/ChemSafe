@@ -54,80 +54,24 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- <link rel="shortcut icon" type="image/png" href="images/favicon.png" > -->
-        <link href="/../../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
-        <link href="/../../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/../../vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
-        <link rel="stylesheet" href="/../../vendor/jquery-nice-select/css/nice-select.css">
-        <link href="/../../vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+        <link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
+        <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
+        <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
+        <link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
         
-        <link href="/../../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         
-        <link rel="stylesheet" href="/../../vendor/swiper/css/swiper-bundle.min.css">
+        <link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
         
         
-        <link href="/../css/style.css" rel="stylesheet">
-
-        <style>
-            @font-face {
-            font-family: 'Material Icons';
-            font-style: normal;
-            font-weight: 400;
-            src: url(flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
-            }
-
-            .material-icons {
-            font-family: 'Material Icons';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
-            display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            -webkit-font-smoothing: antialiased;
-            }
-			html,body{
-        height: auto !important;
-        overflow-y: auto !important;
-    }
-    *{
-        overflow: visible;
-    }
-    ::-webkit-scrollbar{
-        width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover{
-        background: #555;
-    }
-
-
-
-
-		</style>
+        <link href="/css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="/css/all.css">
+		<script src="/js/all.js"></script>
 			
-		</head>
-		<script>
-			window.addEventListener('load', ()=>{
-				document.body.style.overflowY = 'auto';
-				document.documentElement.style.overflow = 'auto';
-				document.querySelectorAll('*').forEach(el=>{
-					const style = getComputedStyle(el);
-					if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
-						el.style.overflow = 'visible';
-						el.style.overflowY = 'auto';
-					}
-				});
-			});
-		</script>
+	</head>
     <body>
 
         <div id="preloader">

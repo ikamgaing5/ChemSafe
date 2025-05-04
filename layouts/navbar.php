@@ -184,7 +184,7 @@
 											</div>
 											<form action="/logout" method="POST">
 											<div class="card-footer text-center p-3">
-												
+												<input type="text" name="id" value="" id="">
 												
 												<input type="submit" name="deconnecter" class="dropdown-item ai-icon btn btn-primary light" value="Se deconnecter">
 	

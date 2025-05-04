@@ -45,136 +45,49 @@
 
 	
 	
-		<link href="/../../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
-        <link href="/../../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/../../vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
-        <link rel="stylesheet" href="/../../vendor/jquery-nice-select/css/nice-select.css">
-        <link href="/../../vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+		<link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
+        <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
+        <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
+        <link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
         
-        <link href="/../../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         
-        <link rel="stylesheet" href="/../../vendor/swiper/css/swiper-bundle.min.css">
+        <link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
         
         
-        <link href="/../css/style.css" rel="stylesheet">
-		<link href="/../css/all-workshop.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
+		<link href="/css/all-workshop.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/all.css">
 
-<style>
-
-	.scrollable-row {
-	display: flex;
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	-webkit-overflow-scrolling: touch;
-	gap: 1rem; /* espace entre les cartes */
-	padding-bottom: 1rem;
-	}
-
-	.scrollable-row::-webkit-scrollbar {
-	height: 8px;
-	}
-
-	.scrollable-row::-webkit-scrollbar-thumb {
-	background: #888;
-	border-radius: 4px;
-	}
-
-	.scrollable-row > .col-xl-3 {
-	flex: 0 0 auto;
-	scroll-snap-align: start;
-	width: 300px; /* ou la taille que tu veux pour chaque carte */
-	}
-
-
-    @font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: url("flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2") format('woff2');
-    }
-
-    .material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased;
-    }
-
-    html,body{
-        height: auto !important;
-        overflow-y: auto !important;
-    }
-    *{
-        overflow: visible;
-    }
-    ::-webkit-scrollbar{
-        width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover{
-        background: #555;
-    }
-
-
-
-
-</style>
 	
 </head>
-<script>
-    window.addEventListener('load', ()=>{
-        document.body.style.overflowY = 'auto';
-        document.documentElement.style.overflow = 'auto';
-        document.querySelectorAll('*').forEach(el=>{
-            const style = getComputedStyle(el);
-            if (style.overflow === 'hidden' ||style.overflowY === 'hidden' ) {
-                el.style.overflow = 'visible';
-                el.style.overflowY = 'auto';
-            }
-        });
-    });
-</script>
-<body>
 
-    
+<body>
 	<div id="preloader">
-	  <div class="loader">
-		<div class="dots">
-			  <div class="dot mainDot"></div>
-			  <div class="dot"></div>
-			  <div class="dot"></div>
-			  <div class="dot"></div>
-			  <div class="dot"></div>
-		</div>
-			
+		<div class="loader">
+			<div class="dots">
+				<div class="dot mainDot"></div>
+				<div class="dot"></div>
+				<div class="dot"></div>
+				<div class="dot"></div>
+				<div class="dot"></div>
+			</div>
 		</div>
 	</div>
     
     <div id="main-wrapper">
-	
         
-	<?php require_once __DIR__. '/../../layouts/navbar.php' ?>
-            
-	<?php require_once __DIR__. '/../../layouts/dlabnav.php'; ?>
+		<?php require_once __DIR__. '/../../layouts/navbar.php' ?>
+				
+		<?php require_once __DIR__. '/../../layouts/dlabnav.php'; ?>
 
-		
         <div class="content-body">
 			<div class="container-fluid">
 				
-			<?php require __DIR__. '/new-factory.php'; ?>
+				<?php require __DIR__. '/new-factory.php'; ?>
 				<!-- Row -->
 				<div class="row">
 					<?php 
@@ -215,80 +128,71 @@
                             <!--column-->
 
 							<div class="col-xl-12">
-                            <div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                    <div>
-                                        <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-                                        <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
-                                        <span class="card-title fw-bold fs-5">Nos Usines</span>
-                                    </div>
-									<div class="fs-5">
-											Nombre d'Usine : <strong class="card-title fw-bold fs-5"><?=Usine::NbresUsine($conn)?></strong>
+								<div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
+									<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+										<div>
+											<u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
+											<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
+											<span class="card-title fw-bold fs-5">Nos Usines</span>
+										</div>
+										<div class="fs-5">
+												Nombre d'Usine : <strong class="card-title fw-bold fs-5"><?=Usine::NbresUsine($conn)?></strong>
+										</div>
 									</div>
-                                </div>
-                            </div>
-
-                            <div class="shadow-lg page-title d-xl-none text-center py-2">
-                            
-                                <u><a href="/dashboard" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
-                                    Tableau de bord
-                                </a></u>
-								<div class="fs-5">
-                                Nombre d'Usine : <strong class="card-title fw-bold fs-5"><?=Usine::NbresUsine($conn)?></strong>
 								</div>
-                            </div>
-                    </div>
 
-
-
-
-                            <!--/column-->
-                            <!--column-->
-							<?php 
-							// echo $message_succes;
-							 ?>
+								<div class="shadow-lg page-title d-xl-none text-center py-2">
+								
+									<u><a href="/dashboard" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
+										Tableau de bord
+									</a></u>
+									<div class="fs-5">
+									Nombre d'Usine : <strong class="card-title fw-bold fs-5"><?=Usine::NbresUsine($conn)?></strong>
+									</div>
+								</div>
+                    		</div>
                             <div class="col-xl-12">
                                  <!-- Row -->
                                 <div class="main">
-								<div class="scrollable-row ">
+									<div class="scrollable-row ">
 
-									<?php 
-										foreach ($AllFactory as $key) {
-											$nombre = Atelier::NbreAtelierByFactory($conn,$key['idusine']);
-									?>
-									<div class="col-xl-3 col-lg-4 col-sm-6 px-3">
-										<div class=" card contact_list text-center">
-											<div class="card-body">
-												<div class="user-content">
-													<div class="user-info">
-														<div class="user-details">
-															<p style="font-weight: 700;">Atelier nommé</p>
-															<h4 class="user-name mb-0"><?=$key['nom'] ?></h4><br>
-															
+										<?php 
+											foreach ($AllFactory as $key) {
+												$nombre = Atelier::NbreAtelierByFactory($conn,$key['idusine']);
+										?>
+										<div class="col-xl-3 col-lg-4 col-sm-6 px-3">
+											<div class=" card contact_list text-center">
+												<div class="card-body">
+													<div class="user-content">
+														<div class="user-info">
+															<div class="user-details">
+																<p style="font-weight: 700;">Atelier nommé</p>
+																<h4 class="user-name mb-0"><?=$key['nom'] ?></h4><br>
+																
+															</div>
 														</div>
+													
 													</div>
-												
-												</div>
-												<div class="contact-icon">
-													<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre d'atelier :</label><span class="badge badge-success light"><?=$nombre?></span>
+													<div class="contact-icon">
+														<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Nombre d'atelier :</label><span class="badge badge-success light"><?=$nombre?></span>
 
-													<br>
-													<!-- <label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span> -->
-												</div>
-												<div class="d-flex mb-3 justify-content-center align-items-center">
-													<center>
-													<?php require __DIR__. '/edit.php'; ?>
-													<?php require __DIR__. '/delete.php'; ?>
-													</center>
+														<br>
+														<!-- <label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span> -->
+													</div>
+													<div class="d-flex mb-3 justify-content-center align-items-center">
+														<center>
+														<?php require __DIR__. '/edit.php'; ?>
+														<?php require __DIR__. '/delete.php'; ?>
+														</center>
 
-												</div>
-												<div class="d-flex align-items-center">
-													<a href="/workshop/all-workshop/<?=IdEncryptor::encode($key['idusine'])?>" class="btn btn-secondary btn-sm w-100 me-2">Voir les ateliers</a>
+													</div>
+													<div class="d-flex align-items-center">
+														<a href="/workshop/all-workshop/<?=IdEncryptor::encode($key['idusine'])?>" class="btn btn-secondary btn-sm w-100 me-2">Voir les ateliers</a>
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-									<?php } ?>
+										<?php } ?>
 									</div>
 									<div class="scroll-indicator">
 										<div class="scroll-indicator-text">Faites défiler pour voir plus</div>
@@ -300,61 +204,18 @@
 									</div>
 								</div>
 							</div>
-
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		
-        
-
-		
-       
-
-		
-		
-        
-
-
+    
 	</div>
-    
-
 	
-	
-
-
-
-		
-	
-    
-    
-	<script src="/../../vendor/global/global.min.js"></script>
-	<!-- <script src="/../../vendor/chart.js/Chart.bundle.min.js"></script> -->
-	<script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-	<!-- <script src="/../../vendor/apexchart/apexchart.js"></script> -->
-    <!-- <script src="/../../vendor/peity/jquery.peity.min.js"></script> -->
-	<!-- <script src="/../../vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script> -->
-	<!-- <script src="/../../vendor/swiper/js/swiper-bundle.min.js"></script> -->
-    <!-- <script src="/../../vendor/datatables/js/jquery.dataTables.min.js"></script> -->
-    <!-- <script src="/../../js/plugins-init/datatables.init.js"></script> -->
-	<!-- <script src="/../../js/dashboard/dashboard-1.js"></script> -->
-	<!-- <script src="/../../vendor/wow-master/dist/wow.min.js"></script> -->
-	<!-- <script src="/../../vendor/bootstrap-datetimepicker/js/moment.js"></script> -->
-	<!-- <script src="/../../vendor/datepicker/js/bootstrap-datepicker.min.js"></script> -->
-	<!-- <script src="/../../vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script> -->
-	<script src="/../../js/dlabnav-init.js"></script>
+	<?php require_once __DIR__. '/../../utilities/all-js.php' ?>
 	<script src="/../../js/all-workshop.js"></script>
     <script src="/../../js/custom.min.js"></script>
 	<!-- <script src="/../../js/demo.js"></script> -->
-
-
-
-	
-
-
-    
-	
-
 </body>
 
 

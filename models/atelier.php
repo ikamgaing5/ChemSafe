@@ -20,16 +20,17 @@
         }
 
 
-        public function ifAtelierExist($conn, $nomatelier){
-            $req = $conn -> prepare("SELECT * FROM atelier WHERE nomatelier = :nomatelier ");
+        public function ifAtelierExist($conn, $nomatelier,$idusine){
+            $req = $conn -> prepare("SELECT * FROM atelier WHERE nomatelier = :nomatelier AND idusine = :idusine");
             $req -> bindParam(':nomatelier', $nomatelier);
+            $req -> bindParam(':idusine', $idusine);
             $req -> execute();
             return $req -> rowCount();
         }
 
 
         public function newAtelier($conn,$idusine,$nomatelier){
-            if ($this ->ifAtelierExist($conn, $nomatelier) >= 1 ) {
+            if ($this ->ifAtelierExist($conn, $nomatelier, $idusine) >= 1 ) {
                 return -1; // déjà dans la bd
             }else {
                 $req = $conn -> prepare("INSERT INTO atelier(idusine,nomatelier) VALUES(:idusine,:nomatelier)");
@@ -126,6 +127,58 @@
             $req = $conn->prepare($sql);
             $req->execute(['idusine' => $idusine]);
             return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        public static function gettAtelierss($conn,$isSuperAdmin,$idusine){
+            if ($isSuperAdmin) {
+                // Pas de filtre par usine
+                $sql = "
+                    SELECT 
+                        a.idatelier,
+                        a.nomatelier AS nom_atelier,
+                        COUNT(DISTINCT c.idprod) AS total_produits,
+                        SUM(CASE WHEN p.fds IS NOT NULL AND p.fds != '' THEN 1 ELSE 0 END) AS produits_avec_fds,
+                        SUM(CASE WHEN p.fds IS NULL OR p.fds = '' THEN 1 ELSE 0 END) AS produits_sans_fds
+                    FROM 
+                        atelier a
+                    LEFT JOIN 
+                        contenir c ON a.idatelier = c.idatelier
+                    LEFT JOIN 
+                        produit p ON c.idprod = p.idprod
+                    GROUP BY 
+                        a.idatelier, a.nomatelier
+                    ORDER BY 
+                        a.nomatelier
+                ";
+                $req = $conn->prepare($sql);
+                $req->execute();
+            } else {
+                // Filtrage classique par usine
+                $sql = "
+                    SELECT 
+                        a.idatelier,
+                        a.nomatelier AS nom_atelier,
+                        COUNT(DISTINCT c.idprod) AS total_produits,
+                        SUM(CASE WHEN p.fds IS NOT NULL AND p.fds != '' THEN 1 ELSE 0 END) AS produits_avec_fds,
+                        SUM(CASE WHEN p.fds IS NULL OR p.fds = '' THEN 1 ELSE 0 END) AS produits_sans_fds
+                    FROM 
+                        atelier a
+                    LEFT JOIN 
+                        contenir c ON a.idatelier = c.idatelier
+                    LEFT JOIN 
+                        produit p ON c.idprod = p.idprod
+                    WHERE 
+                        a.idusine = :idusine
+                    GROUP BY 
+                        a.idatelier, a.nomatelier
+                    ORDER BY 
+                        a.nomatelier
+                ";
+                $req = $conn->prepare($sql);
+                $req->execute(['idusine' => $idusine]);
+            }
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+            
         }
 
 

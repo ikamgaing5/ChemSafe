@@ -28,6 +28,10 @@
         $idusine = $_SESSION['idusine'];
         $_SESSION['chemin'] = "dashboard";
         $nomUsine = Usine::getNameById($conn,$idusine);
+        $isSuperAdmin = false;
+        if ($req['role'] == 'superadmin') {
+            $isSuperAdmin = true;
+        }
 
 ?>
 
@@ -48,20 +52,20 @@
         <!-- Pour navigateur Microsoft (optionnel) -->
         <meta name="msapplication-TileImage" content="/images/favicon.png">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/../css/style.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
         <script src="/js/chart.umd.js"></script>
         <script src="/js/jsquery.min.js"></script>
-        <link href="/../vendor/wow-master/css/libs/animate.css" rel="stylesheet">
-        <link href="/../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/../vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
-        <link rel="stylesheet" href="/../vendor/jquery-nice-select/css/nice-select.css">
-        <link href="/../vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+        <link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
+        <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
+        <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
+        <link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
 
         <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" /> -->
         
-        <link href="/../vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/../vendor/swiper/css/swiper-bundle.min.css">
-        <link href="/../css/style.css" rel="stylesheet">
+        <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
+        <link href="/css/style.css" rel="stylesheet">
         <link href="/css/dashboard.css" rel="stylesheet">
         <link rel="stylesheet" href="/css/all.css">
 	
@@ -88,7 +92,7 @@
     <div id="main-wrapper" class="wallet-open active">
 	       
 			
-		<?php require_once __DIR__. '/../layouts/nav.php' ?>
+		<?php require_once __DIR__. '/../layouts/nav.php'; ?>
         
 		<?php require_once __DIR__. '/../layouts/dlabnav.php'; ?>
 		<div class="wallet-bar-close"></div>
@@ -100,7 +104,7 @@
                     <div class="col-xl-12">
                         <div class="shadow-lg page-titles">
                             <div class="d-flex align-items-center flex-wrap ">
-                                <h2 class="heading" >Bienvenue dans ChemSafe! <span style="color: red;"> <?=$nom?>.</span></h2>
+                                <h2 class="heading" >Bienvenue dans ChemSafe! <span style="color: red;"> <?=$nom?></span>.</h2>
                             </div>
                         </div>
                     </div>
@@ -159,9 +163,9 @@
                                                     <h6 class="mb-0">Répartition des dangers des produits</h6>
                                                 </div>
                                                
-                                                    <div class="chart-container" >
-                                                        <canvas id="dangerChart"></canvas>
-                                                    </div>
+                                                <div class="chart-container" >
+                                                    <canvas id="dangerChart"></canvas>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -173,43 +177,38 @@
 	        </div>
         </div>
     </div>
-        <script>
+    <script>
         $(function() {
-            // Vérifier si l'appareil est mobile
             const isMobile = window.innerWidth < 768;
-            
-            // ID de l'usine (à récupérer dynamiquement si nécessaire)
-            const idUsine = <?=$idusine?>; // Exemple statique
-            
-            // Appel AJAX pour récupérer les données
+            const isSuperAdmin = <?= $isSuperAdmin ? 'true' : 'false' ?>;
+            const idUsine = <?= $idusine ?? 'null' ?>;
+
+            // Préparer les paramètres AJAX selon le type d'utilisateur
+            const ajaxParams = isSuperAdmin ? {} : { idusine: idUsine };
+
             $.ajax({
-                url: '/showgraph', // Votre script PHP
+                url: '/showgraph',
                 method: 'GET',
-                data: { idusine: idUsine },
+                data: ajaxParams,
                 dataType: 'json',
                 success: function(data) {
                     if (data && data.length > 0) {
-                        // Rendre le graphique
                         renderAtelierChart(data);
                     } else {
-                        // Message si pas de données
-                        $('<div class="alert alert-warning mt-3">Aucune donnée disponible pour cette usine</div>').insertAfter('#graphRow');
+                        $('<div class="alert alert-warning mt-3">Aucune donnée disponible</div>').insertAfter('#graphRow');
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Erreur lors de la récupération des données:', error);
-                    // Afficher un message d'erreur
                     $('<div class="alert alert-danger mt-3">Erreur lors du chargement des données</div>').insertAfter('#graphRow');
                 }
             });
-            
+
             function renderAtelierChart(data) {
                 const nomAteliers = data.map(item => item.nom_atelier);
                 const totalProduits = data.map(item => item.total_produits);
-                
-                // Utiliser des couleurs prédéfinies pour un meilleur contraste visuel
                 const colors = generatePredefinedColors(nomAteliers.length);
-                
+
                 const chartData = {
                     labels: nomAteliers,
                     datasets: [{
@@ -221,22 +220,18 @@
                         hoverOffset: 10
                     }]
                 };
-                
+
                 const options = {
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '45%',
                     plugins: {
-                        legend: {
-                            display: false // Nous utilisons une légende personnalisée
-                        },
+                        legend: { display: false },
                         tooltip: {
                             backgroundColor: 'rgba(255, 255, 255, 0.9)',
                             titleColor: '#333',
                             bodyColor: '#555',
-                            bodyFont: {
-                                size: 14
-                            },
+                            bodyFont: { size: 14 },
                             padding: 5,
                             borderColor: '#ddd',
                             borderWidth: 1,
@@ -245,132 +240,88 @@
                                     return nomAteliers[context[0].dataIndex];
                                 },
                                 label: function(context) {
-                                    const dataIndex = context.dataIndex;
-                                    const atelier = data[dataIndex];
-                                    
-                                    // Créer un tableau de lignes pour l'info-bulle
-                                    const result = [
+                                    const atelier = data[context.dataIndex];
+                                    return [
                                         `Total: ${atelier.total_produits} produit(s)`,
                                         `Avec FDS: ${atelier.produits_avec_fds} produit(s)`,
                                         `Sans FDS: ${atelier.produits_sans_fds} produit(s)`
                                     ];
-                                    
-                                    return result;
                                 }
                             }
-                        }, 
-                        // Contrôler l'animation au survol
+                        },
                         hover: {
                             mode: 'nearest',
                             intersect: true,
-                            // Réduire la distance d'expansion au survol
-                            hoverOffset: 5  // Réduire cette valeur (était à 10)
+                            hoverOffset: 5
                         }
-                    }
+                    },
+                    radius: '95%'
                 };
-                // Dans les options du graphique
-                options.radius = '95%';  // Réduire légèrement la taille du donut de base
-                
-                var ctx = document.getElementById('atelierChart').getContext('2d');
-                var atelierChart = new Chart(ctx, {
+
+                const ctx = document.getElementById('atelierChart').getContext('2d');
+                new Chart(ctx, {
                     type: 'doughnut',
                     data: chartData,
                     options: options
                 });
-                
-                // Générer la légende personnalisée
+
                 generateCustomLegend(data, nomAteliers, colors.backgroundColors);
             }
-            
-            // Fonction pour générer des couleurs prédéfinies visuellement distinctes
+
             function generatePredefinedColors(count) {
-                // Palette de couleurs prédéfinies avec une meilleure distinction visuelle
                 const colors = [
-                    { bg: '#E57373', border: '#EF9A9A' }, // rouge
-                    { bg: '#64B5F6', border: '#90CAF9' }, // bleu
-                    { bg: '#FFF176', border: '#FFF59D' }, // jaune
-                    { bg: '#81C784', border: '#A5D6A7' }, // vert
-                    { bg: '#BA68C8', border: '#CE93D8' }, // violet
-                    { bg: '#FF8A65', border: '#FFAB91' }, // orange
-                    { bg: '#E6A970', border: '#F0C6A2' }, // marron clair
-                    { bg: '#4DB6AC', border: '#80CBC4' }, // sarcelle
-                    { bg: '#7986CB', border: '#9FA8DA' }, // indigo
-                    { bg: '#A1887F', border: '#BCAAA4' }, // brun
-                    { bg: '#90A4AE', border: '#B0BEC5' }, // bleu-gris
-                    { bg: '#DCE775', border: '#E6EE9C' }  // vert citron
+                    { bg: '#E57373', border: '#EF9A9A' },
+                    { bg: '#64B5F6', border: '#90CAF9' },
+                    { bg: '#FFF176', border: '#FFF59D' },
+                    { bg: '#81C784', border: '#A5D6A7' },
+                    { bg: '#BA68C8', border: '#CE93D8' },
+                    { bg: '#FF8A65', border: '#FFAB91' },
+                    { bg: '#E6A970', border: '#F0C6A2' },
+                    { bg: '#4DB6AC', border: '#80CBC4' },
+                    { bg: '#7986CB', border: '#9FA8DA' },
+                    { bg: '#A1887F', border: '#BCAAA4' },
+                    { bg: '#90A4AE', border: '#B0BEC5' },
+                    { bg: '#DCE775', border: '#E6EE9C' }
                 ];
-                
                 const backgroundColors = [];
                 const borderColors = [];
-                
+
                 for (let i = 0; i < count; i++) {
                     const colorIndex = i % colors.length;
                     backgroundColors.push(colors[colorIndex].bg);
                     borderColors.push(colors[colorIndex].border);
                 }
-                
-                return {
-                    backgroundColors: backgroundColors,
-                    borderColors: borderColors
-                };
+
+                return { backgroundColors, borderColors };
             }
-            
-            // Générer la légende personnalisée horizontale
+
             function generateCustomLegend(data, labels, colors) {
                 const legendContainer = document.getElementById('legendContainer');
                 legendContainer.innerHTML = '';
-                
-                // Créer les éléments de légende
+
                 labels.forEach((label, index) => {
                     const legendItem = document.createElement('div');
                     legendItem.className = 'legend-item';
                     legendItem.setAttribute('data-index', index);
-                    
+
                     const colorBox = document.createElement('div');
                     colorBox.className = 'legend-color';
                     colorBox.style.backgroundColor = colors[index];
-                    
+
                     const labelText = document.createElement('span');
                     labelText.className = 'legend-text';
                     labelText.textContent = label;
-                    
+
                     legendItem.appendChild(colorBox);
                     legendItem.appendChild(labelText);
                     legendContainer.appendChild(legendItem);
                 });
             }
-            
-            // Fonction pour afficher les informations d'un atelier
-            function afficherInfosAtelier(atelier) {
-                $('#nomAtelier').text(atelier.nom_atelier);
-                $('#totalProduits').text(atelier.total_produits);
-                $('#produitsAvecFds').text(atelier.produits_avec_fds);
-                $('#produitsSansFds').text(atelier.produits_sans_fds);
-                $('#infoAtelier').slideDown(300);
-            }
         });
-        </script>
+    </script>
+
         <script src="/js/dangerChart.js"></script>
-    <title>ChemSafe</title>
-	<script src="/../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script> 
-	<script src="/js/all.js"></script>
-    <!-- <script src="/../../vendor/chart.js/Chart.bundle.min.js"></script> -->
-	<script src="/../vendor/global/global.min.js"></script>
-	<script src="/../vendor/chart.js/Chart.bundle.min.js"></script>
-	<script src="/../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-	<script src="/../vendor/apexchart/apexchart.js"></script>
-    <script src="/../vendor/peity/jquery.peity.min.js"></script>
-	<script src="/../vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script>
-	<script src="/../vendor/swiper/js/swiper-bundle.min.js"></script>
-    <script src="/../vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="/../js/plugins-init/datatables.init.js"></script>
-	<script src="/../js/dashboard/dashboard-1.js"></script>
-	<script src="/../vendor/wow-master/dist/wow.min.js"></script>
-	<script src="/../vendor/bootstrap-datetimepicker/js/moment.js"></script>
-	<script src="/../vendor/datepicker/js/bootstrap-datepicker.min.js"></script>
-	<script src="/../vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script>
-	<script src="/../js/dlabnav-init.js"></script>
-    <script src="/../js/custom.min.js"></script>
+        <?php require_once __DIR__. '/../utilities/all-js.php' ?>
 	<!-- <script src="/../../js/demo.js"></script> -->
     
 	

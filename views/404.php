@@ -307,5 +307,8 @@
         <a class="btn-link" href="#" onclick="history.back()">Retour à la page précédente.</a>
       </div>
     </main>
+    <script>
+      document.title = "ChemSafe";
+    </script>
   </body>
 </html>

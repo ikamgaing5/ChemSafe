@@ -15,6 +15,7 @@
     require_once __DIR__. '/models/danger.php';
     require_once __DIR__. '/middlewares/AuthMiddleware.php';
     require_once __DIR__. '/models/tokens.php';
+    require_once __DIR__. '/models/historique.php';
 
     $conn = Database::getInstance()->getConnection();
 
@@ -106,3 +107,4 @@
     Route::dispatch();
 
 ?>
+
