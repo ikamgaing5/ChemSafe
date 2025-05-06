@@ -98,8 +98,8 @@
             }
         
             // Vérification de la taille
-            if ($_FILES["imageUpload"]["size"] > 50000000) {
-                return -3; // Fichier trop volumineux (>50MB)
+            if ($_FILES["imageUpload"]["size"] > 8388608) {
+                return -3; // Fichier trop volumineux (>50MB  8388608)
             }
         
             return 1; // Succès de l'upload
@@ -181,10 +181,31 @@
                     </div> 
                 </div>";
                 return $notif;
-            }
+        }
             
         
+        public function afficheDate($dates){
+            // Date source
+            $date = new DateTime($dates); // format attendu : Y-m-d
 
+            // Tableau des mois en français
+            $mois_fr = [
+                1 => 'janvier', 2 => 'février', 3 => 'mars', 4 => 'avril',
+                5 => 'mai', 6 => 'juin', 7 => 'juillet', 8 => 'août',
+                9 => 'septembre', 10 => 'octobre', 11 => 'novembre', 12 => 'décembre'
+            ];
+
+            // Extraction
+            $jour = (int)$date->format('j');
+            $mois = (int)$date->format('n');
+            $annee = $date->format('Y');
+
+            // Si le jour est 1, on écrit "1er"
+            $jour_formate = ($jour === 1) ? '1er' : $jour;
+
+            // Résultat final
+            return $formattedDate = "{$jour_formate} {$mois_fr[$mois]} {$annee}";
+        }
 
 
         

@@ -1,14 +1,6 @@
 <?php 
-
-    // require_once __DIR__. '/../core/connexion.php';
-    require_once __DIR__. '/../models/package.php';
-    require_once __DIR__. '/../models/atelier.php';
-    // require_once __DIR__. '/../utilities/session.php';
-    require_once __DIR__. '/../models/contenir.php';
-    require_once __DIR__. '/../models/connexion.php';
-    
+   
     $conn = Database::getInstance()->getConnection();
-    // $conn = getConnection();
 
     class AtelierController{
         private $conn;
@@ -107,8 +99,8 @@
             $chemin = $_POST['chemin'];
             $req = $this -> atelier -> newAtelier($this->conn,$idusine,$nom);
             if ($req == -1) {
-                echo "déjà en bd";
-                echo $idusine;
+                // echo "déjà en bd";
+                // echo $idusine;
                 $_SESSION['error'] = [];
                 $_SESSION['error']['data'] = $_POST;
                 $_SESSION['error']['inbd'] = true;
@@ -117,6 +109,8 @@
                 $_SESSION['insertok'] = [];
                 $_SESSION['insertok']['temoin'] = true;
                 $_SESSION['insertok']['data'] = $_POST;
+                $created_at = date("Y-m-d H:i;s");
+                Historique::insert($this->conn,null,null,$this->atelier->getLastId($this->conn),Auth::user()->idusine,"Création Atelier",$created_at,Auth::user()->id);
                 Route::redirect($chemin);
             }else {
                 echo "problème d'insertion";
@@ -126,23 +120,26 @@
 
         public function delete(){
             $id = $_POST['idatelier'];
+            $usine = $_POST['usine'];
             if ($this -> contenir->NbreProduitParAtelier($this->conn,$id) > 0) {
                 // suppression impossible car l'atelier contient des produits
                 $_SESSION['delete'] = [];
                 $_SESSION['delete']['errorDelete'] = true;
                 $_SESSION['delete']['data'] = $_POST;
-                Route::redirect('/workshop/all-workshop');
+                Route::redirect('/workshop/all-workshop/'.$usine);
             }
             if ($this->atelier -> Delete($this->conn,$id)) {
                 $_SESSION['delete'] = [];
                 $_SESSION['delete']['deleteok'] = true;
                 $_SESSION['delete']['data'] = $_POST;
-                Route::redirect('/workshop/all-workshop');
+                $created_at = date("Y-m-d H:i;s");
+                Historique::insert($this->conn,null,null,$id,Auth::user()->idusine,"Suppression Atelier",$created_at,Auth::user()->id);
+                Route::redirect('/workshop/all-workshop/'.$usine);
             }else {
                 $_SESSION['delete'] = [];
                 $_SESSION['delete']['deleteerror'] = true;
                 $_SESSION['delete']['data'] = $_POST;
-                Route::redirect('/workshop/all-workshop');
+                Route::redirect('/workshop/all-workshop/'.$usine);
             }
 
             

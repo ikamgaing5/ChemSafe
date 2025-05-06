@@ -13,7 +13,7 @@
       <div class="modal-body text-center">
         <img src="../../uploads/photo/<?= htmlspecialchars($prod['photo']) ?>" alt="Photo du produit" 
              class="img-fluid rounded shadow" 
-             style="max-width: 100%; max-height: 80vh; object-fit: contain;" >
+             style="max-width: 100%; max-height: 80vh; object-fit: contain;" loading="lazy">
       </div>
     </div>
   </div>

@@ -59,6 +59,48 @@
             return $raw['nomprod'];
         }
 
+        public function getProduitsPagines($conn, $limit, $offset) {
+            $sql = "SELECT p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
+            p.fabriquant, p.photo, p.fds, p.danger, p.risque,
+            GROUP_CONCAT(a.nomatelier ORDER BY a.nomatelier SEPARATOR ', ') AS ateliers,
+            COUNT(DISTINCT a.idatelier) AS nb_ateliers
+                FROM produit p
+                JOIN contenir c ON p.idprod = c.idprod
+                JOIN atelier a ON a.idatelier = c.idatelier
+                GROUP BY p.idprod
+                LIMIT :limit OFFSET :offset";
+
+            $req = $conn->prepare($sql);
+            $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $req->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+        public function getProduitByWorkshops($conn, $limit = 20, $offset = 0){
+            $sql = "SELECT p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
+                           p.fabriquant, p.photo, p.fds, p.danger, p.risque,
+                           GROUP_CONCAT(a.nomatelier ORDER BY a.nomatelier SEPARATOR ', ') AS ateliers,
+                           COUNT(DISTINCT a.idatelier) AS nb_ateliers
+                    FROM produit p
+                    JOIN contenir c ON p.idprod = c.idprod
+                    JOIN atelier a ON a.idatelier = c.idatelier
+                    GROUP BY p.idprod
+                    LIMIT :limit OFFSET :offset";
+        
+            $req = $conn->prepare($sql);
+            $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $req->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $req->execute();
+            return $req->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
+        
+        public function countProduits($conn) {
+            $sql = "SELECT COUNT(*) FROM produit";
+            return $conn->query($sql)->fetchColumn();
+        }
+        
+
 
         public function getNameByFDS($conn,$fds){
             $req = $conn -> prepare("SELECT * FROM produit WHERE fds = :fds");
@@ -205,8 +247,10 @@
         }
 
         public function ifProduitSansFDS($conn,$idprod){
-            $req = $conn -> prepare("SELECT * FROM produit WHERE fds IS NULL AND idprod = :idprod");
+            $vide = "";
+            $req = $conn -> prepare("SELECT * FROM produit WHERE (fds = :vide OR fds IS NULL)  AND idprod = :idprod");
             $req -> bindParam(':idprod', $idprod);
+            $req -> bindParam(':vide', $vide);
             $req -> execute();
             return $req -> rowCount() > 0;
         }
@@ -250,7 +294,7 @@
 
 
         public static function getProduitsNonAssocies($conn, $idAtelier) {
-            $req = $conn->prepare("SELECT * FROM produit p WHERE p.idprod NOT IN (SELECT idprod FROM contenir WHERE idatelier = :idatelier)");
+            $req = $conn->prepare("SELECT * FROM produit p WHERE p.idprod NOT IN (SELECT idprod FROM contenir WHERE idatelier = :idatelier) ORDER BY nomprod");
             $req->bindParam(':idatelier', $idAtelier, PDO::PARAM_INT);
             $req->execute();
             return $req->fetchAll(PDO::FETCH_ASSOC);

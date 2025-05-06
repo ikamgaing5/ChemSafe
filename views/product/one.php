@@ -34,7 +34,7 @@
         $nomatelier = $atelier->getName($conn,$idatelier);
     }
 
-    $nomatelier = $atelier->getName($conn,$idatelier);
+    // $nomatelier = $atelier->getName($conn,$idatelier);
     
     $prod = $produit->OneProduct($conn,$idprod);
     // $danger = $prod['danger'];
@@ -105,10 +105,12 @@
                                         <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
                                         <i class="bi bi-caret-right-fill"></i>
                                         <u><a href="/workshop/all-workshop" class="text-primary fw-bold fs-5">Nos Ateliers</a></u>
-                                        <i class="bi bi-caret-right-fill"></i>
-                                        <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5">
-                                            <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
-                                        </a></u>
+                                        <?php if(isset($_SESSION['idatelier'])){ ?>
+                                            <i class="bi bi-caret-right-fill"></i>
+                                            <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5">
+                                                <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
+                                            </a></u>
+                                        <?php } ?>    
                                         <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
                                         <span class="card-title fw-bold fs-5">Plus d'informations</span>
                                     </div>
@@ -289,40 +291,7 @@
         </div>
         </body>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <script src="/../../vendor/global/global.min.js"></script>
+    <!-- <script src="/../../vendor/global/global.min.js"></script>
 	<script src="/../../vendor/chart.js/Chart.bundle.min.js"></script>
 	<script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 	<script src="/../../vendor/apexchart/apexchart.js"></script>
@@ -339,4 +308,6 @@
 	<script src="/../../js/dlabnav-init.js"></script>
     <script src="/../../js/custom.min.js"></script>
 	<script src="/../../js/demo.js"></script>
-    <script src="/../../js/new-product.js"></script> 
+    <script src="/../../js/new-product.js"></script>  -->
+    <?php 
+		require_once __DIR__. '/../../utilities/all-js.php';

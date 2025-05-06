@@ -15,6 +15,7 @@
                 Voulez-vous réellement supprimer l'Atelier <strong><?=$key['nomatelier']?></strong> ?
                 <input type="hidden" name="idatelier" value="<?=$key['idatelier']?>">
                 <input type="hidden" name="nom" value="<?=$key['nomatelier']?>">
+                <input type="hidden" name="usine" value="<?=IdEncryptor::encode($idusine) ?>">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

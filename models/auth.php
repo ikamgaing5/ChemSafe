@@ -16,11 +16,23 @@
             $this->role=$role;
         }
 
+        public static function fromArray(array $data): Auth {
+            return new self(
+                $data['iduser'],
+                $data['idusine'],
+                $data['nomuser'],
+                $data['prenomuser'],
+                $data['mailuser'],
+                $data['role']
+            );
+        }
+
         public function __get($name) {
             if (property_exists($this, $name)) {
                 return $this->$name;
             }
         }
+
 
          // Méthode statique qui retourne l'utilisateur connecté
         public static function user() {

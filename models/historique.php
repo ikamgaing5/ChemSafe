@@ -21,4 +21,22 @@
             $req->execute();
             return $req->fetchAll();
         }
+
+        public static function getWorkshop($conn,$idusine){
+            $req = $conn->prepare("SELECT * FROM historique WHERE idusine =:idusine AND idatelier IS NOT NULL");
+            $req->bindParam(':idusine', $idusine);
+        }
+
+        public static function getHistoryByUser($conn,$iduser){
+            $req = $conn->prepare("SELECT * FROM historique WHERE iduser = :iduser");
+            $req->bindParam(':iduser', $iduser);
+            $req->execute();
+            return $req->fetchAll();
+        }
+
+        public static function getAllIdUser($conn){
+            $req = $conn->prepare("SELECT DISTINCT iduser  FROM historique");
+            $req->execute();
+            return $req->fetchAll();
+        }
     }

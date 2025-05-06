@@ -104,18 +104,16 @@
 							$message = "Problème lors de l'insertion";
 							echo $package -> message($message,"danger");
 						}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "insertok") {
-							$message = "Le produit a été ajoutée, n'oubliez pas d'enregistrer sa FDS dès que possible";
+							$message = "Le produit a été ajoutée";
 							echo $package -> message($message,"success");
 						}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "doublonProduit") {
 							$message = "Ce Produit existe déjà ";
 							echo $package->message($message, "danger");
-							// 
-							// echo $package -> message($message,$type);
 						}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "erreur uploadphoto") {
 							$message = "Problème lors de l'envoie de la photo";
 							echo $package -> message($message,"danger");
-						}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "volumineux") {
-							$message = "Fichier trop volumineux";
+						}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "volumineuxPhotos") {
+							$message = "Fichier photo trop volumineux";
 							echo $package -> message($message,"danger");
 						}elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "doublonPhoto") {
 							$message = "Cette photo est déjà associée au produit <strong>$nomproduit</strong>";
@@ -284,7 +282,7 @@
 	</div>
 	<?php unset($_SESSION['photo'],$_SESSION['insert']) ?>
 
-
+<!-- 
     <script src="/vendor/global/global.min.js"></script>
 	<script src="/vendor/chart.js/Chart.bundle.min.js"></script>
 	<script src="/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
@@ -302,10 +300,11 @@
 	<script src="/js/dlabnav-init.js"></script>
     <script src="/js/custom.min.js"></script>
 	<script src="/js/demo.js"></script>
-    <script src="/js/new-product.js"></script> 
+    <script src="/js/new-product.js"></script>  -->
 
     
 	<?php 
+		require_once __DIR__. '/../../utilities/all-js.php';
 		if (isset($_SESSION['photo']['photo'])) {
 			echo $photo = $_SESSION['photo']['photo'];
 		}

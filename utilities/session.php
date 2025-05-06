@@ -9,8 +9,8 @@ $inactivityLimit = 1200; // durée en secondes
 if (isset($_SESSION['log'])) {
     if (isset($_SESSION['LAST_ACTIVITY'])) {
         $inactiveTime = time() - $_SESSION['LAST_ACTIVITY'];
-
         if ($inactiveTime > $inactivityLimit) {
+            historique_acces::Insert(Database::getInstance()->getConnection(),Auth::user()->id,"Inactivité");
             session_unset();
             session_destroy();
 

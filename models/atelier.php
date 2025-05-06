@@ -28,6 +28,14 @@
             return $req -> rowCount();
         }
 
+        public function getLastId($conn){
+            $req = $conn -> prepare("SELECT * FROM atelier");
+            $req -> execute();
+            $raw = $req -> fetchAll();
+            $der = end($raw);
+            return $der['idatelier'];
+        }
+
 
         public function newAtelier($conn,$idusine,$nomatelier){
             if ($this ->ifAtelierExist($conn, $nomatelier, $idusine) >= 1 ) {

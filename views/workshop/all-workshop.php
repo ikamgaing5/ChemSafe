@@ -3,7 +3,7 @@
         $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 		$conn = Database::getInstance()->getConnection();
 		
-		if ($current_page == 'workshop/all-workshop' && $_SESSION['log']['type'] == 'superadmin') {
+		if ($current_page == 'workshop/all-workshop' && Auth::user()->role == 'superadmin') {
 			// Cas du superadmin sans usine spécifique
 			$message = 'Liste des Ateliers de toutes les Usines.';
 			$chemin = '/workshop/all-workshop';
@@ -33,6 +33,7 @@
 // die();
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr" data-bs-theme="auto">
@@ -89,7 +90,7 @@
 		
         <div class="content-body">
 			<div class="container-fluid">
-			<?php if(($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin') && strpos($current_page, 'workshop/all-workshop/') === 0 && isset($params['idusine']) ){  
+			<?php if((Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin') && strpos($current_page, 'workshop/all-workshop/') === 0 && isset($params['idusine']) ){  
 				require __DIR__. '/new-workshop.php';
 			} ?>
 				<!-- Row -->
@@ -130,7 +131,7 @@
 							<div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
 								<div>
 									<u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-									<?php if ($_SESSION['log']['type'] == 'superadmin') { ?>
+									<?php if (Auth::user()->role == 'superadmin') { ?>
 										<span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
 										<u><a class="text-primary fw-bold fs-5" href="/factory/all-factory" >Nos Usines</a></u>
 									<?php } ?>
@@ -146,12 +147,12 @@
 							<u><a href="/dashboard" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
 								Tableau de bord
 							</a></u>
-							<?php if ($_SESSION['log']['type'] === 'admin') { ?>
+							<?php if (Auth::user()->role === 'admin') { ?>
 								<div class="fs-5">
 									Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelierByFactory($conn,$idusine)?></strong>
 								</div>
 							<?php }
-								if ($_SESSION['log']['type'] === 'superadmin') { ?>
+								if (Auth::user()->role === 'superadmin') { ?>
 								<div class="fs-5">
 									Nombre d'atelier : <strong class="card-title fw-bold fs-5"><?=$atelier->NbreAtelier($conn)?></strong>
 								</div>
@@ -164,12 +165,12 @@
 							$idusine = $key['idusine'];
 
 							// Cas pour l'admin : on vérifie si c'est bien l'usine de l'admin
-							if (($_SESSION['log']['type'] === 'admin' || $_SESSION['log']['type'] === 'user') && $idusine != IdEncryptor::decode($params['idusine'])) {
+							if ((Auth::user()->role === 'admin' || Auth::user()->role === 'user') && $idusine != IdEncryptor::decode($params['idusine'])) {
 								continue; // On saute les usines qui ne correspondent pas
 							}
 
 							if (isset($params['idusine'])) {
-								if ($_SESSION['log']['type'] === 'superadmin' && $idusine != IdEncryptor::decode($params['idusine'])) {
+								if (Auth::user()->role === 'superadmin' && $idusine != IdEncryptor::decode($params['idusine'])) {
 									continue; // On saute les usines qui ne correspondent pas
 								}
 							}
@@ -238,7 +239,7 @@
 													<label style="font-weight: 700;" style="font-weight: 600; font-size: 11px;padding: 0px 10px;">Produit sans fds: </label><span class="badge badge-danger light"><?=$nbreProduitSansFds?></span>
 												</div>
 												<div class="d-flex mb-3 justify-content-center align-items-center">
-													<?php if($_SESSION['log']['type'] != 'user'){ ?>
+													<?php if(Auth::user()->role != 'user'){ ?>
 														<center>
 															<?php require __DIR__. '/edit.php'; ?>
 															<?php require __DIR__. '/delete.php'; ?>
@@ -266,11 +267,11 @@
 						</div>
 					</div>
 					<?php
-						if ($_SESSION['log']['type'] === 'admin' || $_SESSION['log']['type'] === 'user') {
+						if (Auth::user()->role === 'admin' || Auth::user()->role === 'user') {
 							break;
 						}
 						
-						// if ($_SESSION['log']['type'] === 'superadmin' && $idusine == IdEncryptor::decode($params['idusine'])) {
+						// if (Auth::user()->role === 'superadmin' && $idusine == IdEncryptor::decode($params['idusine'])) {
 						// 	break; 
 						// }
 

@@ -2,28 +2,28 @@
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
 
-    require __DIR__ . '/../vendor/autoload.php';
+    require_once __DIR__ . '/../vendor/autoload.php';
 
     // require __DIR__.'/../core/connexion.php';
-    require __DIR__.'/../models/user.php';
-    require __DIR__.'/../models/package.php';
-    require __DIR__.'/../models/historique_acces.php';
-    require __DIR__.'/../models/atelier.php'; 
+    // require_once __DIR__.'/../models/user.php';
+    // require_once __DIR__.'/../models/package.php';
+    // require_once __DIR__.'/../models/historique_acces.php';
+    // require_once __DIR__.'/../models/atelier.php'; 
     // require __DIR__.'/../models/tokens.php';
     // $conn = getConnection();
-    require_once __DIR__. '/../models/connexion.php';
+    // require_once __DIR__. '/../models/connexion.php';
     $conn = Database::getInstance()->getConnection();
 
     class UserControllers {
         private $conn;
         private $user;
-        private $historique;
+        // private $historique_acces;
         private $package;
 
         public function __construct($conn) {
             $this->conn = $conn;
             $this->user = new User($this->conn);
-            $this->historique = new historique_acces();
+            // $this->historique_acces = new historique_acces();
             $this->package = new Package();
         }
 
@@ -37,7 +37,7 @@
             }
 
             public function dashboard() {
-                require __DIR__. '/../views/dashboard copy.php';
+                require_once __DIR__. '/../views/dashboard copy.php';
             }
 
             public function logout(){
@@ -47,7 +47,8 @@
                 $id = $_SESSION['infos']['iduser'];
                 $idusine = $_SESSION['infos']['idusine'];
                 $created_at = date("Y-m-d H:i:s");
-                Historique::insert($this->conn,$id,null,null,$idusine,"Deconnexion",$created_at,null);
+                // Historique::insert($this->conn,$id,null,null,$idusine,"Deconnexion",$created_at,null);
+                historique_acces::Insert(Database::getInstance()->getConnection(),Auth::user()->id,"Deconnexion");
                 Route::redirect('/');
             }
 
@@ -111,9 +112,14 @@
                         $_SESSION['id'] = $id;
                         $_SESSION['infos'] = $infoUser;
                         $_SESSION['log']['type'] = $infoUser['role'];
+                        $user = Auth::fromArray($infoUser);
+                        Auth::login($user);
                         $created_at = date("Y-m-d H:i:s");
+                        $date = date("Y-m-d");
+                        $time = date("H:i:s");
                         $vide = "";
-                        Historique::insert($this->conn,$id,null,null,$infoUser['idusine'],"Connexion",$created_at,null);
+                        // Historique::insert($this->conn,$id,null,null,$infoUser['idusine'],"Connexion",$created_at,null);
+                        historique_acces::Insert(Database::getInstance()->getConnection(),Auth::user()->id,"Connexion");
                         Route::redirect('/dashboard');
                     }else {
                         $_SESSION['login_failed'] = [];

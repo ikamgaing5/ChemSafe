@@ -14,7 +14,7 @@
 
         // $conn = getConnection();
         
-        require_once __DIR__. '/../models/connexion.php';
+        // require_once __DIR__. '/../models/connexion.php';
         $conn = Database::getInstance()->getConnection();
         $atelier = new Atelier();
         $produit = new Produit();

@@ -8,12 +8,12 @@
        
 
         // require_once __DIR__. '/../../core/connexion.php';
-        require_once __DIR__. '/../../models/atelier.php';
-        require_once __DIR__. '/../../models/package.php';
-        require_once __DIR__. '/../../models/user.php';
+        // require_once __DIR__. '/../../models/atelier.php';
+        // require_once __DIR__. '/../../models/package.php';
+        // require_once __DIR__. '/../../models/user.php';
         // require_once __DIR__. '/../../models/usine.php';
-		require_once __DIR__. '/../../utilities/session.php';
-		require_once __DIR__. '/../../models/connexion.php';
+		// require_once __DIR__. '/../../utilities/session.php';
+		// require_once __DIR__. '/../../models/connexion.php';
 		$conn = Database::getInstance()->getConnection();
 
         // $conn = getConnection();

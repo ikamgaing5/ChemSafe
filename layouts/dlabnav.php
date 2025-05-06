@@ -19,17 +19,16 @@
                     <i class="bi bi-house-door-fill"></i> <span class="nav-text">Tableau de Bord</span>
 				</a>
 			</li>
-			<?php if($_SESSION['log']['type'] === 'superadmin'){ ?>
+			<?php if(Auth::user()->role === 'superadmin'){ ?>
 			<li>
 				<a href="/factory/all-factory" >
 					<i class="bi bi-buildings-fill"></i>
 					<span class="nav-text">Liste des Usines</span>
 				</a>		
 			</li>
-			<?php }	
-			 if($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'user' ){ ?>		
+			<?php }	if(Auth::user()->role === 'admin' || Auth::user()->role == 'user' ){  ?>		
 			<li>
-				<a href="/workshop/all-workshop/<?=IdEncryptor::encode($idusine)?>" >
+				<a href="/workshop/all-workshop/<?=IdEncryptor::encode(Auth::user()->idusine)?>" >
 					<i class="bi bi-building-fill-gear"></i>
 					<span class="nav-text">Liste des Ateliers</span>
 				</a>		
@@ -37,7 +36,7 @@
 			<?php } ?>
 
 
-			<?php if($_SESSION['log']['type'] === 'superadmin' ){ ?>		
+			<?php if(Auth::user()->role === 'superadmin' ){ 	?>		
 			<li>
 				<a href="/workshop/all-workshop/" >
 					<i class="bi bi-building-fill-gear"></i>
@@ -46,15 +45,17 @@
 			</li>
 			<?php } ?>
 
-			
-			<?php if($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin' ){ ?>		
+
+			<?php if(Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin' ){ ?>	
+				
 			<li>
                 <a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
                     <i class="bi bi-watch"></i>
                     <span class="nav-text">Historique</span>
 			    </a>
                 <ul aria-expanded="false">
-                    <li><a href="#">Utilisateurs</a></li>
+				<li><a href="#">Atelier</a></li>
+                    <li><a href="/history/user">Utilisateurs</a></li>
                     <li><a href="#">Produits</a></li>
                 </ul>
 			</li>
@@ -73,7 +74,7 @@
 					<li><a href="/product/all-product">Liste des produits</a></li>
 				</ul>
 			</li>
-			<?php if($_SESSION['log']['type'] == 'admin' || $_SESSION['log']['type'] == 'superadmin' ){ ?>		
+			<?php if(Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin' ){ ?>		
 			<li>
 				<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
                     <i class="bi bi-person-fill"></i>

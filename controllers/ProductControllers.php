@@ -1,11 +1,11 @@
 <?php
 
-    require_once __DIR__. '/../models/danger.php';
-    require_once __DIR__. '/../models/package.php';
-    require_once __DIR__. '/../models/produit.php';
-    require_once __DIR__. '/../models/possede.php';
-    require_once __DIR__. '/../models/contenir.php';
-    require_once __DIR__. '/../models/connexion.php';
+    // require_once __DIR__. '/../models/danger.php';
+    // require_once __DIR__. '/../models/package.php';
+    // require_once __DIR__. '/../models/produit.php';
+    // require_once __DIR__. '/../models/possede.php';
+    // require_once __DIR__. '/../models/contenir.php';
+    // require_once __DIR__. '/../models/connexion.php';
     // require_once __DIR__. '/../utilities/session.php';
 
     
@@ -42,22 +42,22 @@
                     if ($fdsUpload !== 1) {
                         if ($fdsUpload == -5) {
                             $_SESSION['insert'] = [];
-                         echo   $_SESSION['insert']['type'] = "erreur upload fds";
+                            $_SESSION['insert']['type'] = "erreur upload fds";
                             $_SESSION['insert']['info'] = $_POST;
-                            // echo "aucun fichier";
+                            // "aucun fichier";
                             Route::redirect('/product/new-product');
                         }elseif ($fdsUpload == -1) {
                             $_SESSION['insert'] = [];
-                            echo  $_SESSION['insert']['type'] = "extensionFDS";
+                            $_SESSION['insert']['type'] = "extensionFDS";
                             $_SESSION['insert']['info'] = $_POST;
-                            // echo "extension";
+                            // "extension";
                             Route::redirect('/product/new-product');
                         }elseif ($fdsUpload == -2) {
                             $_SESSION['insert'] = [];
-                         echo   $_SESSION['insert']['erreur'] = "doublonsFDS";
+                            $_SESSION['insert']['type'] = "doublonsFDS";
                             $_SESSION['insert']['insert'] = $fileFds;
                             $_SESSION['insert']['info'] = $_POST;
-                            // echo "déjà en bd";
+                            // "déjà en bd";
                             Route::redirect('/product/new-product');
                         }
                     }else {
@@ -92,7 +92,7 @@
                         $_SESSION['insert']['info'] = $_POST;
                         Route::redirect('/product/new-product');
                     }elseif ($photoUpload == -3) {
-                        $_SESSION['insert']['type'] = "volumineux";
+                        $_SESSION['insert']['type'] = "volumineuxPhotos";
                         $_SESSION['insert']['info'] = $_POST;
                         Route::redirect('/product/new-product');
                     }
@@ -140,7 +140,7 @@
                         $_SESSION['insert'] = [];
                         $_SESSION['insert']['id'] = $this->produit->getIdProductByName($this->conn,$nom);
                         $_SESSION['insert']['type'] = "insertok";
-                        Route::redirect('/product/new-product');
+                        Route::redirect("/".$_SESSION['chemin']);
                     }
                     
                 }elseif ($requete == 0) {
@@ -387,6 +387,10 @@
             echo $result;
         }
 
+        public function tous(){
+            require_once __DIR__. '/../views/product/tous.php';
+        }
+
         public function add(){
             $idatelier = $_POST['idatelier'];
             $idprod = $_POST['produit'];
@@ -396,7 +400,6 @@
             }
             $_SESSION['add-success'] = [];
             $_SESSION['add-success']['type'] = true;
-
             $_SESSION['add-success']['info'] = $_POST;
            
             Route::redirect("/all-products/$cryptedId");

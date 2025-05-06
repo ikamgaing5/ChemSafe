@@ -1,8 +1,8 @@
 <?php
-	$iduser = $_SESSION['id'];
-	$req = User:: getUserById($conn,$iduser);
-	$nom = $req['nomuser'];
-
+	// $iduser = $_SESSION['id'];
+	// $req = User:: getUserById($conn,$iduser);
+	// $nom = $req['nomuser'];
+	$nom = Auth::user()->nom;
 ?>
 
 	<link rel="icon" type="image/png" href="/images/favicon.png" />
@@ -181,12 +181,9 @@
 
 											</div>
 											<form action="/logout" method="POST">
-											<div class="card-footer text-center p-3">
-												
-
-												<input type="submit" name="deconnecter" class="dropdown-item ai-icon btn btn-primary light" value="Se deconnecter">
-	
-											</div>
+												<div class="card-footer text-center p-3">
+													<input type="submit" name="deconnecter" class="dropdown-item ai-icon btn btn-primary light" value="Se deconnecter">
+												</div>
 											</form>
 										</div>
 									</div>

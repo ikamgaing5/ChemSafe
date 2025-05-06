@@ -1,23 +1,33 @@
 <?php
 
-
-
     require_once __DIR__. '/core/Route.php';
+    require_once __DIR__. '/models/connexion.php';
+    require_once __DIR__. '/models/auth.php';
+    require_once __DIR__. '/models/historique_acces.php';
+    require_once __DIR__. '/models/Historique.php';
     require_once __DIR__. '/utilities/session.php';
-    // require_once __DIR__. '/models/package.php';
+    require_once __DIR__. '/models/idcrypt.php';
+    require_once __DIR__. '/models/atelier.php';
+    require_once __DIR__. '/models/produit.php';
+    require_once __DIR__. '/models/user.php';
+    require_once __DIR__. '/models/fds.php';
+    require_once __DIR__. '/models/contenir.php';
+    require_once __DIR__. '/models/package.php';
+    require_once __DIR__. '/models/possede.php';
+    require_once __DIR__. '/models/usine.php';
+    require_once __DIR__. '/models/danger.php';
+    require_once __DIR__. '/middlewares/AuthMiddleware.php';
+    require_once __DIR__. '/models/tokens.php';
     require_once __DIR__. '/controllers/UserControllers.php';
     require_once __DIR__. '/controllers/FactoryController.php';
     require_once __DIR__. '/controllers/ProductControllers.php';
     require_once __DIR__. '/controllers/AtelierController.php';
     require_once __DIR__. '/controllers/FdsController.php';
-    require_once __DIR__. '/models/idcrypt.php';
-    require_once __DIR__. '/models/usine.php';
-    require_once __DIR__. '/models/danger.php';
-    require_once __DIR__. '/middlewares/AuthMiddleware.php';
-    require_once __DIR__. '/models/tokens.php';
-    require_once __DIR__. '/models/historique.php';
+    require_once __DIR__. '/controllers/HistoriqueController.php';
 
+        
     $conn = Database::getInstance()->getConnection();
+
 
     // Contrôleur
     $UserController = new UserControllers($conn);
@@ -25,6 +35,7 @@
     $AtelierController = new AtelierController($conn);
     $FdsController = new FdsController($conn);
     $FactoryController = new FactoryController($conn);
+    $HistoriqueController = new HistoriqueController($conn);
 
     // Route::add('GET', '/login', [$UserController, 'Login']);
     // Route::add('POST', '/', [$UserController, 'Login']);
@@ -68,7 +79,7 @@
     Route::add('POST', '/product/edit-product', [$ProductController, 'update']);
     Route::add('GET', '/all-products/{idatelier}', [$ProductController, 'showWorkshopDangerChart'], [AuthMiddleware::class]);
     Route::add('POST', '/product/delete-everywhere', [$ProductController, 'delete']);
-
+    Route::add('GET', '/all-products', [$ProductController, 'tous']);
 
 
 ###########################################################################################################
@@ -101,6 +112,11 @@
 ###########################################################################################################
 
 
+######################################## ROUTES POUR LES HISTORIQUES ######################################## 
+Route::add('GET', '/history/user', [$HistoriqueController, 'user'], [AuthMiddleware::class]);
+// Route::add('POST', '/fds/add-info', [$FdsController, 'Insert']);
+
+###########################################################################################################
 
     
     // Dispatcher
