@@ -20,6 +20,7 @@
 
     // $allUser = Historique::getAllIdUser($conn);
     $allUser = historique_acces::GetID($conn);
+    $allWorkshops = Historique::getWorkshop($conn,Auth::user()->idusine);
 
 ?>
 
@@ -72,12 +73,7 @@
                 <!-- container starts -->
                 <div class="container-fluid">
                     <div class="demo-view">
-                    <?php  
-                        foreach ($allUser as $keys) {
-                            $key = historique_acces::SelectOne($conn,$keys['iduser']);
-                            // var_dump($key);
-                                
-                    ?>
+                    
                         <div class="col-xl-12">
                             <div class="container-fluid pt-0 ps-0  pe-0">		
                                 <div class="shadow-lg card" id="accordion-one">
@@ -96,16 +92,17 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>Nom de l'utilisateur</th>
-                                                                <th>Date</th>
-                                                                <th>Heure</th>
+                                                                <th>Date et heure</th>
+                                                                <th>Nom de l'atelier</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php 
-                                                            foreach ($key as $value) {
-                                                                $nomss = $user->getOne($conn,$keys['iduser']);
-                                                                $temps = strtotime($value['time']);
+                                                        <?php  
+                                                            foreach ($allWorkshops as $keys) {
+                                                                $nomss = $user->getOne($conn,$keys['created_by']);
+                                                                // $temps = strtotime($value['time']);
+                                                                $nomatelier = $atelier->getAtelierById($conn,$keys['idatelier']);
                                                         ?>
                                                             
                                                            
@@ -115,11 +112,11 @@
                                                                         <h4><?=$nomss['nomuser']?></h4>
                                                                     </div>
                                                                 </td>
-                                                                <td><span class="text-primary font-w600"><?= $package->afficheDate($value['created_at'])?></span></td>
+                                                                <td><span class="text-primary font-w600"><?=$package->dateTimes($keys['created_at'])?></span></td>
                                                                 
-                                                                <td><span class="text-primary font-w600"><?=date('H\hi', $temps)?></span></td>
+                                                                <td><span class="text-primary font-w600"><?=$nomatelier['nomatelier']?></span></td>
                                                                 <td>
-                                                                    <div class="mb-0"><?=$value['action']?></div>
+                                                                    <div class="mb-0"><?=$keys['action']?></div>
                                                                 </td>
                                                             </tr>
                                                             <?php } ?>
@@ -132,7 +129,7 @@
                                 </div>
                             </div>
                         </div>	
-                    <?php } ?>
+                    <?php  ?>
                     </div>			
                 </div>
             </div>

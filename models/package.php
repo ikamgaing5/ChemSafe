@@ -185,26 +185,40 @@
             
         
         public function afficheDate($dates){
-            // Date source
-            $date = new DateTime($dates); // format attendu : Y-m-d
-
-            // Tableau des mois en français
+            $date = new DateTime($dates); 
             $mois_fr = [
-                1 => 'janvier', 2 => 'février', 3 => 'mars', 4 => 'avril',
-                5 => 'mai', 6 => 'juin', 7 => 'juillet', 8 => 'août',
-                9 => 'septembre', 10 => 'octobre', 11 => 'novembre', 12 => 'décembre'
+                1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
+                5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
+                9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
             ];
 
-            // Extraction
+            
             $jour = (int)$date->format('j');
             $mois = (int)$date->format('n');
             $annee = $date->format('Y');
 
-            // Si le jour est 1, on écrit "1er"
             $jour_formate = ($jour === 1) ? '1er' : $jour;
 
-            // Résultat final
             return $formattedDate = "{$jour_formate} {$mois_fr[$mois]} {$annee}";
+        }
+
+        public function dateTimes($dateandtime){
+            $date = new DateTime($dateandtime, new DateTimeZone('Africa/Douala')); 
+            $mois_fr = [
+                1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril',
+                5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
+                9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
+            ];
+
+            $jour = (int)$date->format('j');
+            $mois = (int)$date->format('n');
+            $annee = $date->format('Y');
+            $heure = $date->format('H\hi'); 
+
+            $jour_formate = ($jour === 1) ? '1er' : $jour;
+
+            $formatted = "{$jour_formate} {$mois_fr[$mois]} {$annee} {$heure}";
+            return $formatted;
         }
 
 

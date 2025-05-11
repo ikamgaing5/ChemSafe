@@ -110,82 +110,113 @@
             return $raw['nomprod'];
         }
 
-    public function getDangerStatsByAtelier($conn,$idatelier) {
-        // Requête SQL pour obtenir le nombre de produits par danger pour un atelier spécifique
-        $sql = "SELECT d.iddanger, d.nomdanger, COUNT(p.idprod) as count 
-                FROM Danger d
-                JOIN Possede po ON d.iddanger = po.iddanger
-                JOIN Produit p ON po.idprod = p.idprod
-                JOIN Contenir c ON p.idprod = c.idprod
-                WHERE c.idatelier = :idatelier
-                GROUP BY d.iddanger, d.nomdanger
-                ORDER BY count DESC";
-        
-        $req = $conn->prepare($sql);
-        $req->bindParam(':idatelier', $idatelier, PDO::PARAM_INT);
-        $req->execute();
-        
-        return $req->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    function getDangerData($conn) {
-        try {
-
-            // Requête pour obtenir le nombre de produits par danger
-            $query = "
-                SELECT  d.iddanger, d.nomdanger AS nom_danger, COUNT(p.idprod) AS total_produits FROM danger d LEFT JOIN  possede pos ON d.iddanger = pos.iddanger LEFT JOIN  produit p ON pos.idprod = p.idprod GROUP BY  d.iddanger, d.nomdanger  ORDER BY total_produits DESC ";
+        public function getDangerStatsByAtelier($conn,$idatelier) {
+            // Requête SQL pour obtenir le nombre de produits par danger pour un atelier spécifique
+            $sql = "SELECT d.iddanger, d.nomdanger, COUNT(p.idprod) as count 
+                    FROM Danger d
+                    JOIN Possede po ON d.iddanger = po.iddanger
+                    JOIN Produit p ON po.idprod = p.idprod
+                    JOIN Contenir c ON p.idprod = c.idprod
+                    WHERE c.idatelier = :idatelier
+                    GROUP BY d.iddanger, d.nomdanger
+                    ORDER BY count DESC";
             
-            $req = $conn->prepare($query);
+            $req = $conn->prepare($sql);
+            $req->bindParam(':idatelier', $idatelier, PDO::PARAM_INT);
             $req->execute();
             
-            // Récupérer les résultats
-            $results = $req->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Retourner les résultats au format JSON
-            return json_encode($results);
-            
-        } catch (PDOException $e) {
-            // En cas d'erreur, renvoyer un message d'erreur
-            return json_encode([
-                'error' => true,
-                'message' => 'Erreur de base de données: ' . $e->getMessage()
-            ]);
+            return $req->fetchAll(PDO::FETCH_ASSOC);
         }
-    }
-    
-    function getDangerProducts($conn,$iddanger) {
-        if (empty($iddanger)) {
-            return json_encode([
-                'error' => true,
-                'message' => 'ID de danger non spécifié'
-            ]);
-        }
-    
-        $iddanger = intval($iddanger);
-    
-        try {
-            $query = " SELECT p.idprod, p.nom FROM  produit p JOIN possede pos ON p.idprod = pos.idprod WHERE  pos.iddanger = :iddanger ORDER BY p.nom ASC";
-            
-            $req = $conn->prepare($query);
-            $req->bindParam(':iddanger', $iddanger, PDO::PARAM_INT);
-            $req->execute();
-            $results = $req->fetchAll(PDO::FETCH_ASSOC);
-            return json_encode($results);
-            
-        } catch (PDOException $e) {
-            return json_encode([
-                'error' => true,
-                'message' => 'Erreur de base de données: ' . $e->getMessage()
-            ]);
-        }
-    }
 
-    public function AddFds($conn,$fds,$idprod){
-        $req = $conn->prepare("UPDATE produit SET fds = :fds WHERE idprod = :idprod");
-        $req->bindParam(':fds',$fds);
-        $req->bindParam(':idprod', $idprod);
-        return $req->execute();
-    }
+        function getDangerData($conn) {
+            try {
+
+                // Requête pour obtenir le nombre de produits par danger
+                $query = " SELECT  d.iddanger, d.nomdanger AS nom_danger, COUNT(p.idprod) AS total_produits FROM danger d LEFT JOIN  possede pos ON d.iddanger = pos.iddanger LEFT JOIN  produit p ON pos.idprod = p.idprod  GROUP BY  d.iddanger, d.nomdanger  ORDER BY total_produits DESC ";
+                
+                $req = $conn->prepare($query);
+                $req->execute();
+                
+                // Récupérer les résultats
+                $results = $req->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Retourner les résultats au format JSON
+                return json_encode($results);
+                
+            } catch (PDOException $e) {
+                // En cas d'erreur, renvoyer un message d'erreur
+                return json_encode([
+                    'error' => true,
+                    'message' => 'Erreur de base de données: ' . $e->getMessage()
+                ]);
+            }
+        }
+
+        public function getDangerDatas($conn, $idusine) {
+            try {
+                $query = "
+                    SELECT 
+                        d.iddanger, 
+                        d.nomdanger AS nom_danger, 
+                        COUNT(DISTINCT p.idprod) AS total_produits
+                    FROM danger d
+                    LEFT JOIN possede pos ON d.iddanger = pos.iddanger
+                    LEFT JOIN produit p ON pos.idprod = p.idprod
+                    LEFT JOIN contenir c ON p.idprod = c.idprod
+                    LEFT JOIN atelier a ON c.idatelier = a.idatelier
+                    WHERE a.idusine = :idusine
+                    GROUP BY d.iddanger, d.nomdanger
+                    ORDER BY total_produits DESC
+                ";
+        
+                $req = $conn->prepare($query);
+                $req->execute([':idusine' => $idusine]);
+        
+                $results = $req->fetchAll(PDO::FETCH_ASSOC);
+                return json_encode($results);
+        
+            } catch (PDOException $e) {
+                return json_encode([
+                    'error' => true,
+                    'message' => 'Erreur de base de données: ' . $e->getMessage()
+                ]);
+            }
+        }
+        
+        
+        function getDangerProducts($conn,$iddanger) {
+            if (empty($iddanger)) {
+                return json_encode([
+                    'error' => true,
+                    'message' => 'ID de danger non spécifié'
+                ]);
+            }
+        
+            $iddanger = intval($iddanger);
+        
+            try {
+                $query = " SELECT p.idprod, p.nom FROM  produit p JOIN possede pos ON p.idprod = pos.idprod WHERE  pos.iddanger = :iddanger ORDER BY p.nom ASC";
+                
+                $req = $conn->prepare($query);
+                $req->bindParam(':iddanger', $iddanger, PDO::PARAM_INT);
+                $req->execute();
+                $results = $req->fetchAll(PDO::FETCH_ASSOC);
+                return json_encode($results);
+                
+            } catch (PDOException $e) {
+                return json_encode([
+                    'error' => true,
+                    'message' => 'Erreur de base de données: ' . $e->getMessage()
+                ]);
+            }
+        }
+
+        public function AddFds($conn,$fds,$idprod){
+            $req = $conn->prepare("UPDATE produit SET fds = :fds WHERE idprod = :idprod");
+            $req->bindParam(':fds',$fds);
+            $req->bindParam(':idprod', $idprod);
+            return $req->execute();
+        }
 
         public function getIdProductByName($conn, $nom){
             $req = $conn ->prepare("SELECT * FROM produit WHERE nomprod = :nomprod");

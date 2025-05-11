@@ -20,4 +20,10 @@
             $req->execute();
             return $req->fetchAll();
         }
+
+        public function delete($conn,$idprod){
+            $req = $conn->prepare("DELETE FROM possede WHERE idprod =:idprod");
+            $req->bindParam(':idprod', $idprod);
+            return $req->execute();
+        }
     }

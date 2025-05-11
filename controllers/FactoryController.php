@@ -1,7 +1,4 @@
 <?php 
-    // require_once __DIR__ . '/../models/usine.php';
-    // require_once __DIR__. '/../models/package.php';
-    // require_once __DIR__. '/../models/connexion.php';
     $conn = Database::getInstance()->getConnection();
 
     class FactoryController{

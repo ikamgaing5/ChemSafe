@@ -4,14 +4,6 @@
 
     require_once __DIR__ . '/../vendor/autoload.php';
 
-    // require __DIR__.'/../core/connexion.php';
-    // require_once __DIR__.'/../models/user.php';
-    // require_once __DIR__.'/../models/package.php';
-    // require_once __DIR__.'/../models/historique_acces.php';
-    // require_once __DIR__.'/../models/atelier.php'; 
-    // require __DIR__.'/../models/tokens.php';
-    // $conn = getConnection();
-    // require_once __DIR__. '/../models/connexion.php';
     $conn = Database::getInstance()->getConnection();
 
     class UserControllers {
@@ -64,9 +56,10 @@
                     $password = htmlspecialchars($_POST['password']);
                     // $password = password_hash($password , PASSWORD_BCRYPT);
                     $role = htmlspecialchars($_POST['role']);
+                    $usine = htmlspecialchars($_POST['usine']);
                     $supp = "false";
                     // Le fichier upload avec succès
-                    $insert = $this->user->Insert($this->conn,$nom,$prenom,$mail,$password,$role,$supp);
+                    $insert = $this->user->Insert($this->conn,$usine,$nom,$prenom,$mail,$password,$role,$supp);
                     if ($insert == 0) {
                         // email déjà en bd
                         $_SESSION['insert'] = [];

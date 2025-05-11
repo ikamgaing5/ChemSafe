@@ -25,6 +25,8 @@
         public static function getWorkshop($conn,$idusine){
             $req = $conn->prepare("SELECT * FROM historique WHERE idusine =:idusine AND idatelier IS NOT NULL");
             $req->bindParam(':idusine', $idusine);
+            $req->execute();
+            return $req->fetchAll();
         }
 
         public static function getHistoryByUser($conn,$iduser){

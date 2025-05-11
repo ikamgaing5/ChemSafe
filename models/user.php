@@ -24,12 +24,13 @@
         }
 
 
-        public function Insert($conn,$nomuser,$prenomuser,$mailuser,$mdp,$role,$supp){
+        public function Insert($conn,$idusine,$nomuser,$prenomuser,$mailuser,$mdp,$role,$supp){
 
             if ($this->ifUseExist($conn,$nomuser) >= 1) {
                 return 0;
             }else {
-                $req = $conn -> prepare("INSERT INTO user(nomuser,prenomuser,mailuser,role,mdp,supp) VALUES (:nomuser,:prenomuser,:mailuser,:role,:mdp,:supp)");
+                $req = $conn -> prepare("INSERT INTO user(idusine,nomuser,prenomuser,mailuser,role,mdp,supp) VALUES (:idusine,:nomuser,:prenomuser,:mailuser,:role,:mdp,:supp)");
+                $req -> bindParam(":idusine", $idusine);
                 $req -> bindParam(":nomuser", $nomuser);
                 $req -> bindParam(":prenomuser", $prenomuser);
                 $req -> bindParam(":mailuser", $mailuser);

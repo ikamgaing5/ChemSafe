@@ -1,12 +1,4 @@
 <?php 
-
-    
-    // require_once __DIR__. '/../models/package.php';
-    // require_once __DIR__. '/../models/atelier.php';
-    // require_once __DIR__. '/../models/fds.php';
-    // require_once __DIR__. '/../utilities/session.php';
-    // require_once __DIR__. '/../models/contenir.php';
-    // require_once __DIR__. '/../models/connexion.php';
     $conn = Database::getInstance()->getConnection();
     class FdsController{
         private $conn;

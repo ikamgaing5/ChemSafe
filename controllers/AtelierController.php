@@ -128,7 +128,7 @@
                 $_SESSION['delete']['data'] = $_POST;
                 Route::redirect('/workshop/all-workshop/'.$usine);
             }
-            if ($this->atelier -> Delete($this->conn,$id)) {
+            if ($this->atelier -> Desactive($this->conn,$id)) {
                 $_SESSION['delete'] = [];
                 $_SESSION['delete']['deleteok'] = true;
                 $_SESSION['delete']['data'] = $_POST;

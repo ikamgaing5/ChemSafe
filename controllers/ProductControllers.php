@@ -1,13 +1,4 @@
-<?php
-
-    // require_once __DIR__. '/../models/danger.php';
-    // require_once __DIR__. '/../models/package.php';
-    // require_once __DIR__. '/../models/produit.php';
-    // require_once __DIR__. '/../models/possede.php';
-    // require_once __DIR__. '/../models/contenir.php';
-    // require_once __DIR__. '/../models/connexion.php';
-    // require_once __DIR__. '/../utilities/session.php';
-
+<?php       
     
     $conn = Database::getInstance()->getConnection();
 
@@ -15,7 +6,7 @@
         private $package;
         private $conn;
         private $produit;
-        private $contenir;
+        private $contenir;   
         private $danger;
         private $possede;
 
@@ -187,7 +178,7 @@
             $photo = $_POST['photo'];
 
             if ($fds == NULL) {
-                if ($this->contenir->Delete($this->conn,$id) &&  $this->produit->Delete($this->conn,$id) && $this->package->deleteFiles($photo,"photo")) {
+                if ($this->contenir->Delete($this->conn,$id) && $this->possede->delete($this->conn,$id) && $this->produit->Delete($this->conn,$id) && $this->package->deleteFiles($photo,"photo")) {
                     $_SESSION['info']['type'] = 'deletesuccess';
                     Route::redirect("/product/all-product");
                 }else {
@@ -195,7 +186,7 @@
                     Route::redirect("/product/all-product/");
                 }
             }else {
-                if ($this->contenir->Delete($this->conn,$id) &&  $this->produit->Delete($this->conn,$id) && $this->package->deleteFiles($photo,"photo") && $this->package->deleteFiles($photo,"fds")) {
+                if ($this->contenir->Delete($this->conn,$id) && $this->possede->delete($this->conn,$id) &&  $this->produit->Delete($this->conn,$id) && $this->package->deleteFiles($photo,"photo") && $this->package->deleteFiles($photo,"fds")) {
                     $_SESSION['info']['type'] = 'deletesuccess';
                     Route::redirect("/product/all-product/" );
                 }else {
@@ -383,6 +374,15 @@
         }
 
         public function getDangerData(){
+            if (Auth::user()->role == 'superadmin') {
+            $result = $this->produit->getDangerData($this->conn);
+            }else {
+            $result = $this->produit->getDangerDatas($this->conn,Auth::user()->idusine);
+            }
+            echo $result;
+        }
+
+        public function getAllDangerData(){
             $result = $this->produit->getDangerData($this->conn);
             echo $result;
         }

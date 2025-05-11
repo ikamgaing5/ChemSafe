@@ -12,15 +12,15 @@
     }
 	
 	// require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../core/connexion.php';
-    require_once __DIR__. '/../../models/user.php';
+	// require_once __DIR__. '/../../models/package.php';
+	// require_once __DIR__. '/../../core/connexion.php';
+    // require_once __DIR__. '/../../models/user.php';
 	
     $conn = Database::getInstance()->getConnection();
 
 	$package = new Package();
 	$user = new User($conn);
-
+    $allUsine = Usine::AllFactory($conn);
 
 
 ?>
@@ -49,7 +49,7 @@
         <link rel="stylesheet" href="/css/all.css">
         <script src="/js/all.js"></script>
 	
-</head>
+    </head>
 <body>
 	<div id="preloader">
         <div class="loader">
@@ -73,21 +73,21 @@
 		<form onsubmit="return validForm()" action="/user/new-user" enctype="multipart/form-data" method="POST">
             <div class="content-body">
                 <div class="container-fluid">
-                        <?php 
-                            $nomuser ="";
-                            if (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == 1){
-                                $message = "L'utilisateur <strong>". $_SESSION['insert']['info']['nom'] ."</strong> a été ajouté avec succès";
-                                echo $package -> message($message,"success");
-                            }elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == 0 ){
-                                $message = "L'utilisateur <strong>". $_SESSION['insert']['info']['nom'] ."</strong> existe déjà";
-                                $nomuser = $_SESSION['insert']['info']['nom'];
-                                echo $package -> message($message,"danger");
-                            }elseif (isset($_SESSION['insert']['type']) &&  $_SESSION['insert']['type'] == -1){ 
-                                $message = "Problème lors de l'insertion";
-                                $nomuser = $_SESSION['insert']['info']['nom'];
-                                echo $package -> message($message,"danger");
-                            }
-                        ?>
+                    <?php 
+                        $nomuser ="";
+                        if (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == 1){
+                            $message = "L'utilisateur <strong>". $_SESSION['insert']['info']['nom'] ."</strong> a été ajouté avec succès";
+                            echo $package -> message($message,"success");
+                        }elseif (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == 0 ){
+                            $message = "L'utilisateur <strong>". $_SESSION['insert']['info']['nom'] ."</strong> existe déjà";
+                            $nomuser = $_SESSION['insert']['info']['nom'];
+                            echo $package -> message($message,"danger");
+                        }elseif (isset($_SESSION['insert']['type']) &&  $_SESSION['insert']['type'] == -1){ 
+                            $message = "Problème lors de l'insertion";
+                            $nomuser = $_SESSION['insert']['info']['nom'];
+                            echo $package -> message($message,"danger");
+                        }
+                    ?>
                     <div class="col-xl-12">
                         <div class="shadow-lg card" >
                             <div class="card-header">
@@ -111,8 +111,18 @@
                                             </select>
                                             <span id="messageRole"  class="fw-bold text-danger"></span>
                                         </div>
-                                    
+                                        <div class="mb-3">
+                                    <label style="font-weight: 700;" for="exampleFormControlInput1" class="form-label text-primary">Usine<span class="required">*</span></label>
+                                            <select class="default-select form-control wide " name="usine" id="role">
+                                                <option value="none">Faites un choix</option>
+                                                <?php foreach (Usine::AllFactory($conn) as $key){ ?>
+                                                    <option value="<?=$key['idusine']?>"><?=$key['nom']?></option>
+                                                <?php } ?>
+                                            </select>
+                                            <span id="messageRole"  class="fw-bold text-danger"></span>
                                     </div>
+                                    </div>
+                                    
                                     <div class="col-xl-6 col-sm-6">
                                         <div class="mb-3">
                                             <label style="font-weight: 700;" for="exampleFormControlInput8" class="form-label text-primary">Mot de passe<span class="required">*</span></label>
@@ -142,6 +152,29 @@
 	    </form>
 	   
 	</div>
+    <script src="/js/new-user.js"></script>
+    <script>
+        		function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#imagePreview').css('background-image', 'url('+e.target.result +')');
+            $('#imagePreview').hide();
+            $('#imagePreview').fadeIn(650);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+$("#imageUpload").change(function() {
+    readURL(this);
+});
+	$('.remove-img').on('click', function() {
+		var imageUrl = "images/no-img-avatar.png";
+		$('.avatar-preview, #imagePreview').removeAttr('style');
+		$('#imagePreview').css('background-image', 'url(' + imageUrl + ')');
+	});
+	
+    </script>
 <?php 
     unset($_SESSION['insert']);
     require_once __DIR__. '/../../utilities/all-js.php'
@@ -149,4 +182,4 @@
 
 
 
-    <script src="/js/new-user.js"></script>
+    

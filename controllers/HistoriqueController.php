@@ -20,4 +20,8 @@
         public function user(){
             require_once __DIR__. '/../views/history/user.php';
         }
+
+        public function workshop(){
+            require_once __DIR__. '/../views/history/workshop.php';
+        }
     }

@@ -80,7 +80,7 @@
     Route::add('GET', '/all-products/{idatelier}', [$ProductController, 'showWorkshopDangerChart'], [AuthMiddleware::class]);
     Route::add('POST', '/product/delete-everywhere', [$ProductController, 'delete']);
     Route::add('GET', '/all-products', [$ProductController, 'tous']);
-
+    Route::add('GET', '/getAllDanderData', [$ProductController, 'getAllDangerData']);
 
 ###########################################################################################################
     
@@ -116,6 +116,7 @@
 Route::add('GET', '/history/user', [$HistoriqueController, 'user'], [AuthMiddleware::class]);
 // Route::add('POST', '/fds/add-info', [$FdsController, 'Insert']);
 
+Route::add('GET', '/history/workshop', [$HistoriqueController, 'workshop'], [AuthMiddleware::class]);
 ###########################################################################################################
 
     

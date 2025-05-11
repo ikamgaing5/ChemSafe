@@ -54,7 +54,7 @@
                     <span class="nav-text">Historique</span>
 			    </a>
                 <ul aria-expanded="false">
-				<li><a href="#">Atelier</a></li>
+				<li><a href="/history/workshop">Atelier</a></li>
                     <li><a href="/history/user">Utilisateurs</a></li>
                     <li><a href="#">Produits</a></li>
                 </ul>

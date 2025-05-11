@@ -7,8 +7,9 @@ $(function() {
     
     // Appel AJAX pour récupérer les données sur les dangers
     $.ajax({
-        url: '/getAllDanderData', // Point de terminaison à créer
+        url: '/getAllDangerData',
         method: 'GET',
+        data: { idusine: selectedUsineId }, // <<< à définir selon ton contexte
         dataType: 'json',
         success: function(data) {
             if (data && data.length > 0) {

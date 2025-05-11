@@ -41,6 +41,7 @@
             if ($this ->ifAtelierExist($conn, $nomatelier, $idusine) >= 1 ) {
                 return -1; // déjà dans la bd
             }else {
+                
                 $req = $conn -> prepare("INSERT INTO atelier(idusine,nomatelier) VALUES(:idusine,:nomatelier)");
                 $req->bindParam(':idusine', $idusine);
                 $req -> bindParam(':nomatelier', $nomatelier);
@@ -74,9 +75,20 @@
             return $req -> execute();
         }
 
+        public function Desactive($conn,$id){
+            $active = "false";
+            $req = $conn->prepare("UPDATE atelier SET active = :active WHERE idatelier = :idatelier");
+            $req -> bindParam(":idatelier", $id);
+            $req -> bindParam(":active", $active);
+            return $req -> execute();
+
+        }
+
         public function AllAtelier($conn,$idusine){
-            $req = $conn -> prepare("SELECT * FROM atelier WHERE idusine = :idusine ORDER BY nomatelier ASC");
+            $active = "true";
+            $req = $conn -> prepare("SELECT * FROM atelier WHERE idusine = :idusine AND active =:active ORDER BY nomatelier ASC");
             $req->bindParam(':idusine',$idusine);
+            $req->bindParam(':active',$active);
             $req -> execute();
             return $req -> fetchAll();
         } 
@@ -98,13 +110,17 @@
         
 
         public function NbreAtelier($conn){
-            $req = $conn -> prepare("SELECT * FROM atelier");
+            $active = "true";
+            $req = $conn -> prepare("SELECT * FROM atelier WHERE active = :active");
+            $req->bindParam(':active',$active);
             $req -> execute();
             return $req -> rowCount();
         }
 
         public static function NbreAtelierByFactory($conn, $idusine){
-            $req = $conn -> prepare("SELECT * FROM atelier WHERE idusine = :idusine");
+            $active = "true";
+            $req = $conn -> prepare("SELECT * FROM atelier WHERE idusine = :idusine AND active = :active");
+            $req->bindParam(':active',$active);
             $req->bindParam(':idusine', $idusine);
             $req -> execute();
             return $req -> rowCount();
