@@ -59,7 +59,7 @@
     Route::add('GET', '/getDangerProducts', [$ProductController, 'getDangerByProducts']);
     Route::add('GET', '/getDangerData', [$ProductController, 'getDangerData']);
     Route::add('POST', '/logout', [UserControllers::class , 'logout']);
-
+    
 
 
 
@@ -113,10 +113,10 @@
 
 
 ######################################## ROUTES POUR LES HISTORIQUES ######################################## 
-Route::add('GET', '/history/user', [$HistoriqueController, 'user'], [AuthMiddleware::class]);
-// Route::add('POST', '/fds/add-info', [$FdsController, 'Insert']);
+    Route::add('GET', '/history/user', [$HistoriqueController, 'user'], [AuthMiddleware::class]);
+    // Route::add('POST', '/fds/add-info', [$FdsController, 'Insert']);
 
-Route::add('GET', '/history/workshop', [$HistoriqueController, 'workshop'], [AuthMiddleware::class]);
+    Route::add('GET', '/history/workshop', [$HistoriqueController, 'workshop'], [AuthMiddleware::class]);
 ###########################################################################################################
 
     

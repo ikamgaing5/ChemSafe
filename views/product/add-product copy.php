@@ -1,13 +1,13 @@
 <?php 
-    require_once __DIR__. '/../../utilities/session.php';
+    // require_once __DIR__. '/../../utilities/session.php';
 
 
-    // require_once __DIR__. '/../../core/connexion.php';
-    require_once __DIR__. '/../../models/atelier.php';
-    require_once __DIR__. '/../../models/produit.php';
-    require_once __DIR__. '/../../models/contenir.php';
-    require_once __DIR__. '/../../models/connexion.php';
-    require_once __DIR__. '/../../models/package.php';
+    // // require_once __DIR__. '/../../core/connexion.php';
+    // require_once __DIR__. '/../../models/atelier.php';
+    // require_once __DIR__. '/../../models/produit.php';
+    // require_once __DIR__. '/../../models/contenir.php';
+    // require_once __DIR__. '/../../models/connexion.php';
+    // require_once __DIR__. '/../../models/package.php';
     
     $conn = Database::getInstance()->getConnection();
 
@@ -290,8 +290,8 @@
             </div>
         </div>
     
-    
-        <script src="/vendor/global/global.min.js"></script>
+        <?php  require_once __DIR__. '/../../utilities/all-js.php' ?>
+        <!-- <script src="/vendor/global/global.min.js"></script>
         <script src="/vendor/chart.js/Chart.bundle.min.js"></script>
         <script src="/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
         <script src="/vendor/apexchart/apexchart.js"></script>
@@ -307,7 +307,7 @@
         <script src="/vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script>
         <script src="/js/dlabnav-init.js"></script>
         <script src="/js/custom.min.js"></script>
-	    <script src="/js/demo.js"></script>
+	    <script src="/js/demo.js"></script> -->
         <script>
                     
             document.addEventListener('DOMContentLoaded', function() {
