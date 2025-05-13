@@ -55,6 +55,7 @@
     Route::add('GET', '/admin/new-user', [$UserController, 'CreateUser'], [AuthMiddleware::class]);
     Route::add('POST', '/user/new-user', [$UserController, 'CreateUser']);
     Route::add('GET', '/dashboard', [$UserController, 'dashboard'],[AuthMiddleware::class]);
+    Route::add('GET', '/showgraphs', [$AtelierController, 'showGraphs']);
     Route::add('GET', '/showgraph', [$AtelierController, 'dashboard']);
     Route::add('GET', '/getDangerProducts', [$ProductController, 'getDangerByProducts']);
     Route::add('GET', '/getDangerData', [$ProductController, 'getDangerData']);
@@ -95,6 +96,8 @@
     Route::add('POST', '/workshop/delete', [$AtelierController, 'delete']);
     Route::add('GET', '/workshop/new-workshop', [$AtelierController, 'Insert'], [AuthMiddleware::class]);
     Route::add('GET', '/workshop/all-workshop/', [$AtelierController, 'alls'], [AuthMiddleware::class]);
+    
+
 
 ############################################################################################################
 

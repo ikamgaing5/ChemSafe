@@ -13,7 +13,7 @@ Ce projet est une application web PHP permettant la gestion d'usines, d'ateliers
 
 ## Prérequis
 
-- Docker
+- Docker 
 - Docker Compose
 - Git
 - WAMP / XAMP
@@ -25,16 +25,21 @@ Ce projet est une application web PHP permettant la gestion d'usines, d'ateliers
    - Copier le fichier `.env.example` vers `.env`
    - Modifier les variables d'environnement selon votre configuration
 
-2. Démarrer les conteneurs Docker :
+
+2. Créer la base de données :
+   - Ouvrez le dossier db, importer la base de données dans PhpMyAdmin
+
+
+3. Démarrer les conteneurs Docker :
 ```bash
 docker-compose up -d
 ```
 
-3. Créer la base de données :
-   - Ouvrez le dossier db, importer la base de données dans PhpMyAdmin
+4. Lancer votre serveur :
+   - WAMP / XAMP (Si vous êtes en local)
 
 
-4. Accéder à l'application :
+5. Accéder à l'application :
    - Ouvrez votre navigateur et accédez à `http://localhost:8080`
 
 ## Configuration
@@ -61,6 +66,9 @@ Les variables d'environnement suivantes doivent être configurées dans le fichi
 
 1. Accédez à l'application via votre navigateur
 2. Connectez-vous avec les identifiants :
+   Connexion en tant qu'admin
+      Nom d'utilisateur : admin
+      Mot de passe : admin 
 
 ## Commandes Docker utiles
 

@@ -156,5 +156,12 @@
             echo json_encode($resultats);
         }
 
-        
+    public function showGraphs() {
+        $data = $this->atelier->getAteliersWithDetailsAll($this->conn);
+
+        header('Content-Type: application/json');
+        echo json_encode($data);
     }
+
+
+}

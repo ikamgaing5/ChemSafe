@@ -158,67 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (submitBtn) {
             submitBtn.disabled = !Object.values(validationStates).every(Boolean);
         }
-    }
-
-
-    // danger.addEventListener('change', () => {
-    //     const selectedOptions = Array.from(danger.selectedOptions);
-    //     const selectedValues = selectedOptions.map(option => option.value);
-    //     const isNoneSelected = selectedValues.includes("1");
-    //     const hasOtherSelections = selectedValues.some(value => value !== "1");
-    
-    //     const messageConflict = document.getElementById("message-conflit-danger");
-    
-    //     // Désélection automatique si nécessaire
-    //     for (let option of danger.options) {
-    //         if (isNoneSelected && option.value !== "1") {
-    //             option.selected = false; // désélectionne les autres dangers
-    //         }
-    //         if (hasOtherSelections && option.value === "1") {
-    //             option.selected = false; // désélectionne "Aucun danger"
-    //         }
-    //     }
-    
-    //     // Recalcul après désélection automatique
-    //     const finalSelected = Array.from(danger.selectedOptions).map(option => option.value);
-    //     const finalIsNone = finalSelected.includes("1");
-    //     const finalHasOthers = finalSelected.some(value => value !== "1");
-    
-    //     // Gestion des messages de validation
-    //     if (finalSelected.length === 0 || finalSelected.includes("none")) {
-    //         validationStates.temoinDanger = false;
-    //         messageDanger.style.display = 'block';
-    //         messageDanger.textContent = 'Veuillez sélectionner au moins un danger.';
-    //         messageConflict.style.display = 'none';
-    //     } else {
-    //         validationStates.temoinDanger = true;
-    //         messageDanger.style.display = 'none';
-    //         messageConflict.style.display = 'none';
-    //     }
-    
-    //     // Désactivation des options incompatibles
-    //     for (let option of danger.options) {
-    //         option.disabled = false; // tout réactiver au départ
-    
-    //         if (finalIsNone && option.value !== "1") {
-    //             option.disabled = true;
-    //         }
-    
-    //         if (finalHasOthers && option.value === "1") {
-    //             option.disabled = true;
-    //         }
-    //     }
-    
-    //     // Mise à jour du bouton
-    //     const submitButton = document.getElementById("btn-valider");
-    //     submitButton.disabled = !Object.values(validationStates).every(Boolean);
-    // });
-    
-
-
-
-    // Valider à la soumission du formulaire
-   
+    }   
    
     danger.addEventListener('change', () => {
         const selectedDanger = Array.from(danger.selectedOptions).map(option => option.value);

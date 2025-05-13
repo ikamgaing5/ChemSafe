@@ -128,26 +128,7 @@
 
 
         public static function getAteliers($conn,$idusine){
-            $sql = "
-            SELECT 
-                a.idatelier,
-                a.nomatelier AS nom_atelier,
-                COUNT(DISTINCT c.idprod) AS total_produits,
-                SUM(CASE WHEN p.fds IS NOT NULL AND p.fds != '' THEN 1 ELSE 0 END) AS produits_avec_fds,
-                SUM(CASE WHEN p.fds IS NULL OR p.fds = '' THEN 1 ELSE 0 END) AS produits_sans_fds
-            FROM 
-                atelier a
-            LEFT JOIN 
-                contenir c ON a.idatelier = c.idatelier
-            LEFT JOIN 
-                produit p ON c.idprod = p.idprod
-            WHERE 
-                a.idusine = :idusine
-            GROUP BY 
-                a.idatelier, a.nomatelier
-            ORDER BY 
-                a.nomatelier
-            ";
+            $sql = "SELECT a.idatelier, a.nomatelier AS nom_atelier,COUNT(DISTINCT c.idprod) AS total_produits,SUM(CASE WHEN p.fds IS NOT NULL AND p.fds != '' THEN 1 ELSE 0 END) AS produits_avec_fds,SUM(CASE WHEN p.fds IS NULL OR p.fds = '' THEN 1 ELSE 0 END) AS produits_sans_fds FROM atelier a LEFT JOIN contenir c ON a.idatelier = c.idatelier LEFT JOIN produit p ON c.idprod = p.idprod WHERE a.idusine = :idusine GROUP BY a.idatelier, a.nomatelier ORDER BY a.nomatelier ";
             $req = $conn->prepare($sql);
             $req->execute(['idusine' => $idusine]);
             return $req->fetchAll(PDO::FETCH_ASSOC);
@@ -205,6 +186,42 @@
             
         }
 
-
-
+    public static function getAteliersWithDetailsAll($conn): array
+    {
+        $sql = "
+    SELECT 
+        a.idatelier,
+        a.nomatelier       AS nom_atelier,
+        u.idusine,
+        u.nom,
+        COUNT(DISTINCT c.idprod) AS total_produits,
+        SUM(CASE WHEN p.fds IS NOT NULL AND p.fds != '' THEN 1 ELSE 0 END) AS produits_avec_fds,
+        SUM(CASE WHEN p.fds IS NULL OR p.fds = '' THEN 1 ELSE 0 END) AS produits_sans_fds,
+        (
+            SELECT COUNT(DISTINCT c2.idprod)
+            FROM atelier a2
+            LEFT JOIN contenir c2 ON a2.idatelier = c2.idatelier
+            WHERE a2.idusine = a.idusine
+        ) AS total_usine
+    FROM 
+        atelier a
+    LEFT JOIN contenir c ON a.idatelier = c.idatelier
+    LEFT JOIN produit p ON c.idprod = p.idprod
+    INNER JOIN usine u ON a.idusine = u.idusine
+    GROUP BY 
+        a.idatelier, a.nomatelier, u.idusine, u.nom
+    ORDER BY 
+        u.nom, a.nomatelier
+    ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+
+
+
+
+
+}
