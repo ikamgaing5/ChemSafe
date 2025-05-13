@@ -2,13 +2,13 @@
     
 
 	// require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../utilities/session.php';
-	require_once __DIR__. '/../../models/produit.php';
-	require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../models/atelier.php';
-	require_once __DIR__. '/../../core/connexion.php';
-	require_once __DIR__. '/../../models/danger.php';
-    require_once __DIR__. '/../../models/fds.php';
+	// require_once __DIR__. '/../../utilities/session.php';
+	// require_once __DIR__. '/../../models/produit.php';
+	// require_once __DIR__. '/../../models/package.php';
+	// require_once __DIR__. '/../../models/atelier.php';
+	// require_once __DIR__. '/../../core/connexion.php';
+	// require_once __DIR__. '/../../models/danger.php';
+    // require_once __DIR__. '/../../models/fds.php';
 	$conn = Database::getInstance()->getConnection();
 
 	$danger = new Danger();
@@ -76,9 +76,8 @@
 
             
     </head>
-        <body>
+    <body>
         <div>
-    
             <div id="preloader">
                 <div class="loader">
                     <div class="dots">
@@ -90,7 +89,7 @@
                     </div>		
                 </div>
             </div>
-       
+    
             <div id="main-wrapper">
 
                 <?php require_once __DIR__. '/../../layouts/navbar.php'; ?>
@@ -98,34 +97,32 @@
                 <div class="content-body">
                     <div class="container-fluid mt-4">
                         <div class="row justify-content-center">
-                        <div class="col-xl-12">
-                            <div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
-                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                                    <div>
-                                        <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
-                                        <i class="bi bi-caret-right-fill"></i>
-                                        <u><a href="/workshop/all-workshop" class="text-primary fw-bold fs-5">Nos Ateliers</a></u>
-                                        <?php if(isset($_SESSION['idatelier'])){ ?>
+                            <div class="col-xl-12">
+                                <div class="shadow-lg page-title flex-wrap d-none d-xl-block"> <!-- Ajout des classes de visibilité -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                        <div>
+                                            <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de bord</a></u>
                                             <i class="bi bi-caret-right-fill"></i>
-                                            <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5">
-                                                <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
-                                            </a></u>
-                                        <?php } ?>    
-                                        <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
-                                        <span class="card-title fw-bold fs-5">Plus d'informations</span>
+                                            <u><a href="/workshop/all-workshop" class="text-primary fw-bold fs-5">Nos Ateliers</a></u>
+                                            <?php if(isset($_SESSION['idatelier'])){ ?>
+                                                <i class="bi bi-caret-right-fill"></i>
+                                                <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5">
+                                                    <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
+                                                </a></u>
+                                            <?php } ?>    
+                                            <span class="fs-4"><i class="bi bi-caret-right-fill"></i></span>
+                                            <span class="card-title fw-bold fs-5">Plus d'informations</span>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <div class="shadow-lg page-title d-xl-none text-center py-2">
+                                
+                                    <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
+                                        <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
+                                    </a></u>
+                                </div>
                             </div>
-
-                            <div class="shadow-lg page-title d-xl-none text-center py-2">
-                            
-                                <u><a href="/all-products/<?=$_SESSION['idatelier']?>" class="text-primary fw-bold fs-5"><i class="bi bi-caret-right-fill"></i>
-                                    <?php if (isset($_SESSION['idatelier'])) echo $nomatelier; ?>
-                                </a></u>
-                            </div>
-                        </div>
-
-
                             <div class="col-xl-12 col-lg-12">
                                 <div class="card shadow-lg">
                                     <div class="card-header">
@@ -133,22 +130,21 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row align-items-center">
-                                            <!-- Image du produit -->
                                             <div class="col-md-7">
                                                 <img src="../../uploads/photo/<?=$prod['photo']?>" alt="Produit"  class="img-fluid rounded shadow">
                                             </div>
 
-                                            <!-- Détails du produit -->
                                             <div class="col-md-5">
                                                 <h3 class="mt-4"><?=$prod['nomprod']?></h3>
-
                                                 <div class="mb-3">
                                                     <h6>Danger : </h6>
-                                                    <span class="text-danger fw-bold"><?=$nomdanger?></span>
+                                                    <?php if ($nomdanger == "AUCUN DANGER") {
+                                                        $color = "text-success";
+                                                    }else {
+                                                        $color = "text-danger";
+                                                    }?>
+                                                    <span class="<?=$color?> fw-bold"><?=$nomdanger?></span>
                                                 </div>
-
-                                            
-
                                                 <p class="mb-3" >
                                                     <strong>Nature : </strong><span class="fw-bold text-primary"><?=$prod['nature']?></span>
                                                 </p>
@@ -171,23 +167,29 @@
                                                 
                                                 <p><strong>Vol/Poids : </strong><span class="fw-bold text-primary"><?=$prod['poids']?></span></p>
 
-                                                <?php if ($prod['fds'] != NULL) { ?>
-                                                    <div class="mb-3">
-                                                        <h6>FDS : </h6>
-                                                        <div class="d-flex align-items-center">
-                                                            <strong class="text-success me-2">✔ Disponible</strong>
-                                                            <?php require_once __DIR__ .'/fds.php'; ?>
-                                                        </div>
+                                                <?php
+                                                    if ($prod['fds'] != NULL) {
+                                                        $temoin = true; 
+                                                        $color = "success";
+                                                        $message = "✔ Disponible";
+                                                    }else { 
+                                                        $temoin = false;
+                                                        $color = "danger";
+                                                        $message = "&times; Pas Disponible";
+                                                    } 
+                                                ?>
+                                                <div class="mb-3">
+                                                    <h6>FDS : </h6>
+                                                    <div class="d-flex align-items-center">
+                                                        <strong class="text-<?=$color?> me-2"><?=$message?></strong>
+                                                        <?php require __DIR__ .'/fds.php'; ?>
                                                     </div>
-                                                <?php }else { ?>
-                                                    <p> FDS : <span class="text-danger"><strong>&times; Pas Disponible</strong></span></p>
-                                                <?php  } ?>
-
-
-                                                <p class="mt-3"><strong>Price:</strong> Contact Us</p>
+                                                </div>
 
                                                 <div class="d-flex">
-                                                    <button class="btn btn-outline-dark me-2">Talk to an Expert</button>
+                                                <?php if (FDS::Exist($conn,$idprod) == 0 && $temoin == true ) { ?>
+                                                    <a href="/info-fds/new-info-fds/<?=IdEncryptor::encode($idprod)?>" class="btn btn-outline-dark me-2">Ajouter les informations de la FDS</a>
+                                                <?php } ?>
                                                     <button class="btn btn-primary">Add to Favorites</button>
                                                 </div>
                                             </div>
@@ -196,11 +198,9 @@
                                 </div>
                             </div> 
                         </div>
-                        
-                        
                     </div>
 
-
+                    
                     <div class="container-fluid mt-0">
                         <div class="row justify-content-center">
                             <div class="col-xl-12 col-lg-12">
@@ -209,54 +209,56 @@
                                         <h5 class="mb-0">Information FDS</h5>
                                     </div>
                                     <div class="card-body">
-                                    <div class="row">
-											<div class="col-xl-6 col-sm-6">
-												<div class="mb-3">
+                                        <?php if (FDS::Exist($conn,$idprod) == 0 && $temoin == true) { ?>
+                                            <h2 class="text-center text-danger">Vous n'avez pas ajouté les informations de la FDS de ce produit.</strong></span></h2>
+                                        <?php }else { ?>
+                                        <?php if ($temoin) { ?>
+                                        <div class="row">
+                                            <div class="col-xl-6 col-sm-6">
+                                                <div class="mb-3">
                                                     <h6 class="text-primary">Risque Physique : </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['physique'] ?></span>
-												</div>
-												
+                                                </div>
+                                                
                                                 <div class="mb-3">
                                                     <h6 class="text-primary">Danger pour la santé : </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['sante'] ?></span>
-												</div>
+                                                </div>
                                                                                                 
                                                 <!-- <div class="mb-3">
                                                     <h6 class="text-primary">Danger pour la santé : </h6>
                                                     <span class="text-danger fw-bold"><?=$nomdanger?></span>
-												</div> -->
+                                                </div> -->
 
-												<div class="mb-3">
+                                                <div class="mb-3">
                                                     <h6 class="text-primary">Caractéristiques des PPT chimiques: </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['ppt'] ?></span>
-												</div>
-												
+                                                </div>
+                                                
 
-												<div class="mb-3">
+                                                <div class="mb-3">
                                                     <h6 class="text-primary">Stabilité: </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['stabilite'] ?></span>
-												</div>
+                                                </div>
 
                                                 <div class="mb-3">
                                                     <h6 class="text-primary">Conditions à éviter: </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['eviter'] ?></span>
-												</div>
+                                                </div>
 
-											</div>
-											<div class="col-xl-6 col-sm-6">
-                                                
-
-												<div class="mb-3">
+                                            </div>
+                                            <div class="col-xl-6 col-sm-6">
+                                                <div class="mb-3">
                                                     <h6 class="text-primary">Matériaux incompatibles: </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['incompatible'] ?></span>
-												</div>
+                                                </div>
 
-												<div class="mb-3">
+                                                <div class="mb-3">
                                                     <h6 class="text-primary">Réactivité : </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['reactivite'] ?></span>
-												</div>
+                                                </div>
 
-												<div class="mb-3">
+                                                <div class="mb-3">
                                                     <h6 class="text-primary">Manipulation Stockage : </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['stockage'] ?></span>
                                                 </div>
@@ -270,26 +272,22 @@
                                                     <h6 class="text-primary">EPI : </h6>
                                                     <span class="text-danger fw-bold"><?=$infoFDS['epi'] ?></span>
                                                 </div>
-
-                                                
-
-												</div>
-											</div>
-										</div> <!-- Fin row -->
-                                    </div> <!-- Fin card-body -->
-                                </div> <!-- Fin card -->
-                            </div> <!-- Fin col -->
-                        </div> <!-- Fin row -->
-                        
-                        
+                                            </div>
+                                        </div>
+                                        <?php }else { ?>
+                                            <h2 class="text-center text-danger">Ajouter la FDS pour avoir ses informations.</strong></span></h2>
+                                        <?php } }?>
+                                    </div>
+                                </div>
+                            </div> 
+                        </div>
                     </div>
                     
-                </div>
-                                            
-             <!-- Fin main-wrapper -->
-
+                        
+                </div>   
+            </div>
         </div>
-        </body>
+    </body>
 
     <!-- <script src="/../../vendor/global/global.min.js"></script>
 	<script src="/../../vendor/chart.js/Chart.bundle.min.js"></script>

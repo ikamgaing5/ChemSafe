@@ -30,7 +30,7 @@
            
         }
 
-        public function Exist($conn, $id){
+        public static function Exist($conn, $id){
             $req = $conn -> prepare("SELECT * FROM infofds WHERE idprod = :idprod");
             $req -> bindParam(':idprod', $id);
             $req -> execute();

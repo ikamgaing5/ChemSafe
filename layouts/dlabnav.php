@@ -67,7 +67,7 @@
 					<span class="nav-text" >Produits</span>
 				</a>
 				<ul aria-expanded="false">
-					<?php if($_SESSION['log']['type']=='admin'||$_SESSION['log']['type']=='superadmin'){ ?>		
+					<?php if(Auth::user()->role=='admin'||Auth::user()->role=='superadmin'){ ?>		
 						<li><a href="/product/new-product">Ajouter un produit</a></li>
 					<?php } ?>
 

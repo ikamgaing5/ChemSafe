@@ -97,14 +97,14 @@
                     if ($this -> user -> loginWithUser($this->conn,$nom,$password)) {
                         $id = $this -> user -> getIDbynom($this->conn,$nom);
                         $infoUser = $this->user->getOne($this->conn,$id);
-                        $_SESSION['role'] = $role = $this -> user -> getRole($this -> conn, $id);
+                        $_SESSION['role'] = $this->user->getRole($this->conn, $id);
                         // $this -> historique -> Insert($this->conn, $id);
                         $_SESSION['info'] = [];
                         $_SESSION['idusine'] = $infoUser['idusine'];
                         $_SESSION['log'] = [];
                         $_SESSION['id'] = $id;
                         $_SESSION['infos'] = $infoUser;
-                        $_SESSION['log']['type'] = $infoUser['role'];
+                        // $_SESSION['log']['type'] = $infoUser['role'];
                         $user = Auth::fromArray($infoUser);
                         Auth::login($user);
                         $created_at = date("Y-m-d H:i:s");

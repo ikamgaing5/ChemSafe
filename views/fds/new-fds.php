@@ -126,7 +126,7 @@
 		<form action="/fds/add-info" enctype="multipart/form-data" method="POST">
         <div class="content-body">
 		
-        <?=$idprod?>
+        
 			<div class="container-fluid">
 				<div class="row">
 				<?php 
@@ -229,44 +229,13 @@
                                     </div> <!-- Fin col-12 -->
                                 </div>
                             </div>
-
+                            <div class="card-footer">
+                                <div class="text-end">
+                                    <button type="submit" id="submitBtn" class="btn btn-primary" >Soumettre</button>
+                                </div>
+                            </div>
 						</div>
 					</div>
-				</div>
-				<div class="col-xl-12">
-					<div class="shadow-lg card" >
-						<div class="card-header">
-							<h5 class="mb-0">Details de l'authentification</h5>
-						</div>
-						<div class="card-body" >
-							<div class="row">
-								<div class="col-xl-6 col-sm-6">
-									<div class="mb-3">
-										<label style="font-weight: 700;" for="exampleFormControlInput8" class="form-label text-primary">Nom d'utilisateur<span class="required">*</span></label>
-										<input type="text" class="form-control" id="username" name="username" placeholder="Votre nom d'utilisateur">
-									  </div>
-								
-								</div>
-								<div class="col-xl-6 col-sm-6">
-									<div class="mb-3">
-										<label style="font-weight: 700;" for="exampleFormControlInput8" class="form-label text-primary">Mot de passe<span class="required">*</span></label>
-										<input type="text" class="form-control" id="password" name="password" placeholder="Votre mot de passe" maxlenght="6">
-									  </div>
-						
-								</div>
-							</div>
-							<div class="float-end">
-								<!-- <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Soumettre</button> -->
-
-								<!-- <input type="submit" id="submitBtn" disabled class="btn btn-primary"> -->
-							</div>
-							<div class="text-end mt-4">
-							<button type="submit" id="submitBtn" class="btn btn-primary" >Soumettre</button>
-							
-						</div>
-						</div>
-					</div>
-					
 				</div>
 			</div>
 		</div>

@@ -1,13 +1,13 @@
 <?php 
-    require_once __DIR__. '/../../utilities/session.php';
+    // require_once __DIR__. '/../../utilities/session.php';
 
 
-    // require_once __DIR__. '/../../core/connexion.php';
-    require_once __DIR__. '/../../models/atelier.php';
-    require_once __DIR__. '/../../models/produit.php';
-    require_once __DIR__. '/../../models/contenir.php';
-    require_once __DIR__. '/../../models/connexion.php';
-    require_once __DIR__. '/../../models/package.php';
+    // // require_once __DIR__. '/../../core/connexion.php';
+    // require_once __DIR__. '/../../models/atelier.php';
+    // require_once __DIR__. '/../../models/produit.php';
+    // require_once __DIR__. '/../../models/contenir.php';
+    // require_once __DIR__. '/../../models/connexion.php';
+    // require_once __DIR__. '/../../models/package.php';
     
     $conn = Database::getInstance()->getConnection();
 
@@ -196,7 +196,7 @@
                                                                     <th>Plus d'info</th>
                                                                     <th>Médias</th>
                                                                     <th>Ateliers</th>
-                                                                    <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                                    <?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin') { ?>
                                                                         <th class="text-end">Action</th>    
                                                                     <?php   } ?>
                                                                 </tr>
@@ -226,7 +226,7 @@
                                                                         </div>
                                                                     </td>
                                                                     <td><span class="text-primary font-w600"><?=$prod['ateliers']?></span></td>
-                                                                    <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                                    <?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin') { ?>
                                                                         <td>
                                                                             <div class="d-flex">
                                                                                 <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
@@ -308,7 +308,7 @@
                                                                         <?php require __DIR__. '/fds.php'?>
                                                                     </div>
                                                                 </td>
-                                                                <?php if (isset( $_SESSION['log']['type']) && $_SESSION['log']['type'] == 'admin') { ?>
+                                                                <?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin') { ?>
                                                                     <td class="d-flex">
                                                                             <a href="/product/edit-product/<?=IdEncryptor::encode($prod['idprod'])?>" class="btn btn-primary shadow btn-xs sharp me-1">
                                                                                 <i class="bi bi-pencil-square"></i>

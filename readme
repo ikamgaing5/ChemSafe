@@ -1,0 +1,93 @@
+# Système de Gestion d'Usine
+
+## Description
+Ce projet est une application web PHP permettant la gestion d'usines, d'ateliers et d'utilisateurs. Il inclut des fonctionnalités d'authentification, de gestion des rôles et un système de journalisation des accès.
+
+## Fonctionnalités principales
+
+- Authentification et gestion des utilisateurs
+- Gestion des rôles (Admin, Super Admin, etc.)
+- Gestion des ateliers et des usines
+- Historique des accès
+- Système de réinitialisation de mot de passe par email
+
+## Prérequis
+
+- Docker
+- Docker Compose
+- Git
+- WAMP / XAMP
+
+## Installation
+
+
+1. Configurer l'environnement :
+   - Copier le fichier `.env.example` vers `.env`
+   - Modifier les variables d'environnement selon votre configuration
+
+2. Démarrer les conteneurs Docker :
+```bash
+docker-compose up -d
+```
+
+3. Créer la base de données :
+   - Ouvrez le dossier db, importer la base de données dans PhpMyAdmin
+
+
+4. Accéder à l'application :
+   - Ouvrez votre navigateur et accédez à `http://localhost:8080`
+
+## Configuration
+
+### Variables d'environnement
+Les variables d'environnement suivantes doivent être configurées dans le fichier `.env` :
+
+- `DB_HOST` : Hôte de la base de données (généralement 'db')
+- `DB_PORT` : Port de la base de données (3306 par défaut)
+- `DB_NAME` : Nom de la base de données
+- `DB_USER` : Nom d'utilisateur
+- `DB_PASS` : Mot de passe
+- `SMTP_HOST` : Serveur SMTP pour l'envoi d'emails
+- `SMTP_PORT` : Port SMTP
+- `SMTP_USER` : Utilisateur SMTP
+- `SMTP_PASS` : Mot de passe SMTP
+
+### Structure des conteneurs Docker
+- `web` : Serveur Apache avec PHP
+- `db` : Base de données MySQL
+- `phpmyadmin` : Interface de gestion de la base de données (optionnel)
+
+## Utilisation
+
+1. Accédez à l'application via votre navigateur
+2. Connectez-vous avec les identifiants :
+
+## Commandes Docker utiles
+
+```bash
+# Démarrer les conteneurs
+docker-compose up -d
+
+# Arrêter les conteneurs
+docker-compose down
+
+# Voir les logs
+docker-compose logs -f
+
+# Reconstruire les conteneurs
+docker-compose up -d --build
+```
+
+## Sécurité
+- Assurez-vous que les ports Docker ne sont pas exposés publiquement en production
+
+## Support
+
+Pour toute question ou problème, veuillez :
+1. Consulter la documentation
+2. Créer une issue sur le repository
+3. Contacter l'équipe de support
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.

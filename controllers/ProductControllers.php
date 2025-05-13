@@ -183,15 +183,15 @@
                     Route::redirect("/product/all-product");
                 }else {
                     $_SESSION['info']['type'] = 'deletefailed';
-                    Route::redirect("/product/all-product/");
+                    Route::redirect("/product/all-product");
                 }
             }else {
                 if ($this->contenir->Delete($this->conn,$id) && $this->possede->delete($this->conn,$id) &&  $this->produit->Delete($this->conn,$id) && $this->package->deleteFiles($photo,"photo") && $this->package->deleteFiles($photo,"fds")) {
                     $_SESSION['info']['type'] = 'deletesuccess';
-                    Route::redirect("/product/all-product/" );
+                    Route::redirect("/product/all-product" );
                 }else {
                     $_SESSION['info']['type'] = 'deletefailed';
-                    Route::redirect("/product/all-product/");
+                    Route::redirect("/product/all-product");
                 }
             }
         }

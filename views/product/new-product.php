@@ -8,12 +8,12 @@
 	
 	// require_once __DIR__. '/../../models/package.php';
 	// require_once __DIR__. '/../../utilities/session.php';
-	require_once __DIR__. '/../../models/produit.php';
-	require_once __DIR__. '/../../models/package.php';
-	require_once __DIR__. '/../../models/atelier.php';
+	// require_once __DIR__. '/../../models/produit.php';
+	// require_once __DIR__. '/../../models/package.php';
+	// require_once __DIR__. '/../../models/atelier.php';
 	// require_once __DIR__. '/../../core/connexion.php';
-	require_once __DIR__ . '/../../models/connexion.php';
-	require_once __DIR__. '/../../models/danger.php';
+	// require_once __DIR__ . '/../../models/connexion.php';
+	// require_once __DIR__. '/../../models/danger.php';
 
 	$conn = Database::getInstance()->getConnection();
 
@@ -22,7 +22,8 @@
 	$package = new Package();
 	$atelier = new Atelier();
 	
-	$idusine = $_SESSION['idusine'];
+	$idusine = Auth::user()->idusine;
+	// $idusine = $_SESSION['idusine'];
 
 	$allAtelier = $atelier->AllAtelier($conn,$idusine);
 	$allDanger = $danger->all($conn);

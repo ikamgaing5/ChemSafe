@@ -22,12 +22,12 @@
                 $mail = new PHPMailer(true);
                 $mail->SMTPDebug = 0;
                 $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';
+                $mail->Host = $_ENV['SMTP_HOST'];
                 $mail->SMTPAuth = true;
-                $mail->Username = 'babaaba237@gmail.com'; // Votre adresse Gmail
-                $mail->Password = 'pzvs davr fibe hpqj'; // Le mot de passe généré
+                $mail->Username = $_ENV['SMTP_USER']; // Votre adresse Gmail
+                $mail->Password = $_ENV['SMTP_PASS']; // Le mot de passe généré
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = 587;
+                $mail->Port = $_ENV['SMTP_PORT'];
                 //Recipients
                 $mail->setFrom('babaaba237@gmail.com', 'ChemSafe');
 
@@ -191,14 +191,10 @@
                 5 => 'Mai', 6 => 'Juin', 7 => 'Juillet', 8 => 'Août',
                 9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
             ];
-
-            
             $jour = (int)$date->format('j');
             $mois = (int)$date->format('n');
             $annee = $date->format('Y');
-
             $jour_formate = ($jour === 1) ? '1er' : $jour;
-
             return $formattedDate = "{$jour_formate} {$mois_fr[$mois]} {$annee}";
         }
 
