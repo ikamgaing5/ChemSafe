@@ -51,31 +51,43 @@ if (strpos($current_page, 'product/edit') === 0) {
 <!DOCTYPE html>
 <html lang="fr">
 
+<!-- <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="shortcut icon" type="image/png" href="images/favicon.png" > 
+<link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
+<link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
+<link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
+<link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
+<link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
+<link href="/css/style.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/all.css">
+<script src="/js/all.js"></script>
+</head> -->
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- <link rel="shortcut icon" type="image/png" href="images/favicon.png" > -->
-    <link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
-    <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
-    <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
-    <link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
-
-    <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
-
-
+    <!-- CSS principaux -->
     <link href="/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/all.css">
-    <script src="/js/all.js"></script>
 
+    <!-- Librairies nécessaires UNIQUEMENT -->
+    <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
+
+    <!-- (Optionnel) Google Fonts ou autres si tu les utilises vraiment -->
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"> -->
+
+    <!-- jQuery d'abord ! -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -305,10 +317,9 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                             class="form-label text-primary">Fichier PDF <span
                                                                 class="required">*</span></label>
                                                         <div class="pdf-upload">
-                                                            <div class="pdf-preview mt-2" id="pdfPreview"
-                                                                >
+                                                            <div class="pdf-preview mt-2" id="pdfPreview">
                                                                 <?php if (!empty($infoproduit['fds'])): ?>
-                                                               
+
                                                                 <div class="mt-3">
                                                                     <object id="pdfViewer" data="<?= $pdfPath ?>"
                                                                         type="application/pdf" width="100%"

@@ -42,9 +42,9 @@
 	<!-- Pour navigateur Microsoft (optionnel) -->
 	<meta name="msapplication-TileImage" content="/images/favicon.png">
 
-	<link href="/../vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0">
-    <link href="/../css/style.css" rel="stylesheet">
+	<link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+
+    <link href="/css/style.css" rel="stylesheet">
 
 </head>
 

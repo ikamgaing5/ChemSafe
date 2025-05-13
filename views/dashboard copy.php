@@ -8,12 +8,12 @@
         $conn = Database::getInstance()->getConnection();
         $atelier = new Atelier();
         $produit = new Produit();
-        $user = new User($conn);
+        // $user = new User($conn);
         $contenir = new Contenir();
         $package = new Package();
 
         $iduser = Auth::user()->iduser;
-        $req = $user->getUserById($conn,$iduser);
+        $req = User::getUserById($conn,$iduser);
         $nom = Auth::user()->nomuser;
         $allProductFDS = $produit -> ProduitFDS($conn);
         $idusine = Auth::user()->idusine;
