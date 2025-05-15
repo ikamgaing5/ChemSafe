@@ -8,7 +8,7 @@
     $conn = Database::getInstance()->getConnection();
 
     $atelier = new Atelier();
-    $user = new User($conn);
+    $user = new User();
     $package = new Package();
     // $historique = new Historique();
 
@@ -109,7 +109,9 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="trans-list">
-                                                                        <h4><?=$nomss['nomuser']?></h4>
+                                                                        <h4>
+                                                                            <?=$nomss['nomuser']?>
+                                                                        </h4>
                                                                     </div>
                                                                 </td>
                                                                 <td><span class="text-primary font-w600"><?=$package->dateTimes($keys['created_at'])?></span></td>

@@ -1,7 +1,6 @@
-
-
 <?php
-function getConnection() {
+function getConnection()
+{
     $dsn = 'mysql:host=localhost;dbname=chemsafe;charset=utf8';
     $username = 'root';
     $password = '';

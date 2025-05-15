@@ -1,13 +1,4 @@
 <?php
-// require_once __DIR__. '/../../utilities/session.php';
-
-
-// // require_once __DIR__. '/../../core/connexion.php';
-// require_once __DIR__. '/../../models/atelier.php';
-// require_once __DIR__. '/../../models/produit.php';
-// require_once __DIR__. '/../../models/contenir.php';
-// require_once __DIR__. '/../../models/connexion.php';
-// require_once __DIR__. '/../../models/package.php';
 
 $conn = Database::getInstance()->getConnection();
 
@@ -17,19 +8,14 @@ $atelier = new Atelier();
 $produit = new Produit();
 $contenir = new Contenir();
 $package = new Package();
-// $idatelier = $_GET['workshop'];
-// $idatelier = $params['idatelier'];
 
-// $nomatelier = $atelier ->getName($conn,$idatelier);
 $idusine = Auth::user()->idusine;
 $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'product/all-product') === 0) {
-    $message = "Produits de l'" . Usine::getNameById($conn, $_SESSION['idusine']);
+    $message = "Produits de l'" . Usine::getNameById($conn, $idusine);
     $chemin = "product/all-product";
 }
-
-// $produitsNonAssocies =$produit->getProduitsNonAssocies($conn, $idatelier);
 
 if (isset($_SESSION['add-success']) && $_SESSION['add-success']['type'] == true && isset($_SESSION['add-success']['info'])) {
     $prodAdd = $_SESSION['add-success']['info']['produit'];
@@ -44,13 +30,39 @@ if (isset($_SESSION['add-success']) && $_SESSION['add-success']['type'] == true 
     }
 }
 
-$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$limit = 20; // Nombre de produits par page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 30; // Nombre de produits par page
 $offset = ($page - 1) * $limit;
 
-$produits = $produit->getProduitByWorkshops($conn, $limit, $offset);
-$total_produits = $produit->countProduits($conn);
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Déterminer si on doit filtrer par usine
+$idusine = null;
+if (Auth::user()->role === 'admin') {
+    $idusine = Auth::user()->idusine;
+}
+
+if (!empty($search)) {
+    $produits = $produit->searchProduits($conn, $search, $limit, $offset, $idusine);
+    $total_produits = $produit->countSearchProduits($conn, $search, $idusine);
+} else {
+    $produits = $produit->getProduitByWorkshops($conn, $limit, $offset, $idusine);
+    $total_produits = $produit->countProduits($conn, $idusine);
+}
+
 $total_pages = ceil($total_produits / $limit);
+
+// Grouper les produits par usine pour le superadmin
+$produitsParUsine = [];
+if (Auth::user()->role === 'superadmin') {
+    foreach ($produits as $prod) {
+        $usine = $prod['nom_usine'];
+        if (!isset($produitsParUsine[$usine])) {
+            $produitsParUsine[$usine] = [];
+        }
+        $produitsParUsine[$usine][] = $prod;
+    }
+}
 
 $parAtelier = [];
 $communs = [];
@@ -91,7 +103,8 @@ foreach ($produits as $key) {
     <link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" media="print"
         onload="this.media='all'">
 
-    <link rel="stylesheet"  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment"
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment"
         media="print" onload="this.media='all'">
 
     <link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" media="print"
@@ -168,6 +181,40 @@ endif; ?>
                     unset($_SESSION['add-success']);
                 }
                 ?>
+                <div class="container-fluid pt-0 ps-0 pe-0">
+                    <div class="shadow-lg card mb-4">
+                        <div class="card-body">
+                            <form method="GET" action="" class="row g-3 align-items-center">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="search"
+                                            placeholder="Rechercher un produit par nom, type d'emballage, nature ou utilisation..."
+                                            value="<?= htmlspecialchars($search) ?>">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="bi bi-search"></i> Rechercher
+                                        </button>
+                                    </div>
+                                </div>
+                                <?php if (!empty($search)): ?>
+                                <div class="col-md-4">
+                                    <a href="?" class="btn btn-secondary">
+                                        <i class="bi bi-x-circle"></i> Effacer la recherche
+                                    </a>
+                                </div>
+                                <?php endif; ?>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <?php if (!empty($search)): ?>
+                <div class="alert alert-primary">
+                    <i class="bi bi-primary-circle"></i> Résultats de la recherche pour
+                    "<?= htmlspecialchars($search) ?>"
+                    (<?= $total_produits ?> produit(s) trouvé(s))
+                </div>
+                <?php endif; ?>
+
                 <div class="demo-view">
                     <div class="col-xl-12">
                         <div class="shadow-lg page-title flex-wrap d-none d-xl-block">
@@ -192,7 +239,88 @@ endif; ?>
                         </div>
                     </div>
 
-                    <?php if (count($communs) > 0): ?>
+                    <?php if (Auth::user()->role === 'superadmin'): ?>
+                    <?php foreach ($produitsParUsine as $usine => $produitsUsine): ?>
+                    <div class="container-fluid pt-0 ps-0 pe-0">
+                        <div class="shadow-lg card" id="accordion-one">
+                            <div class="card-header flex-wrap">
+                                <div>
+                                    <h6 class="card-title">Produits / Liste des Produits</h6>
+                                    <p class="m-0 subtitle">Produits de l'usine
+                                        <strong><?= htmlspecialchars($usine) ?></strong></p>
+                                </div>
+                            </div>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="Preview" role="tabpanel"
+                                    aria-labelledby="home-tab">
+                                    <div class="shadow-lg card-body p-0">
+                                        <div class="table-responsive">
+                                            <table id="basic-btn" class="display table table-striped"
+                                                style="min-width: 845px">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nom du produit</th>
+                                                        <th>Type d'emballage</th>
+                                                        <th>Vol/Poids</th>
+                                                        <th>Plus d'info</th>
+                                                        <th>Médias</th>
+                                                        <th>Ateliers</th>
+                                                        <?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin') { ?>
+                                                        <th class="text-end">Action</th>
+                                                        <?php } ?>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php foreach ($produitsUsine as $prod): ?>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="trans-list">
+                                                                <h4><?= htmlspecialchars($prod['nomprod']) ?></h4>
+                                                            </div>
+                                                        </td>
+                                                        <td><span
+                                                                class="text-primary font-w600"><?= htmlspecialchars($prod['type_emballage']) ?></span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="mb-0"><?= htmlspecialchars($prod['poids']) ?>
+                                                            </div>
+                                                        </td>
+                                                        <td><a href="/product/more-detail/<?= IdEncryptor::encode($prod['idprod']) ?>"
+                                                                class="btn btn-secondary shadow btn-xs sharp me-1"><i
+                                                                    class="bi bi-info-circle-fill"></i></a></td>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <?php require __DIR__. '/photo.php'?>
+                                                                <?php require __DIR__. '/fds.php'?>
+                                                            </div>
+                                                        </td>
+                                                        <td><span
+                                                                class="text-primary font-w600"><?= htmlspecialchars($prod['ateliers']) ?></span>
+                                                        </td>
+                                                        <?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'superadmin') { ?>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <a href="/product/edit-product/<?= IdEncryptor::encode($prod['idprod']) ?>"
+                                                                    class="btn btn-primary shadow btn-xs sharp me-1">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                </a>
+                                                                <?php require __DIR__. '/deleteall.php'; ?>
+                                                            </div>
+                                                        </td>
+                                                        <?php } ?>
+                                                    </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <?php if(count($communs) > 0): ?>
                     <div class="container-fluid pt-0 ps-0  pe-0">
                         <div class="shadow-lg card" id="accordion-one">
                             <div class="card-header flex-wrap px-3">
@@ -227,8 +355,8 @@ endif; ?>
                                                         <td>
                                                             <div class="trans-list">
                                                                 <?php
-                                                                        // echo "<img src='./upload/".$row['name']."' alt='' class='avatar me-3'>";
-                                                                        ?>
+                                                                                // echo "<img src='./upload/".$row['name']."' alt='' class='avatar me-3'>";
+                                                                                ?>
                                                                 <h4><?= $prod['nomprod'] ?></h4>
                                                             </div>
                                                         </td>
@@ -361,11 +489,16 @@ endif; ?>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
 
                         </div>
                     </div>
                     <?php } ?>
+                    <?php endif; ?>
+                    <?php
+                        // endif;
+                  ?>
                 </div>
             </div>
         </div>
@@ -374,7 +507,9 @@ endif; ?>
                 <ul class="pagination">
                     <?php if ($page > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                        <a class="page-link"
+                            href="?page=<?= $page - 1 ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>"
+                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -382,13 +517,16 @@ endif; ?>
 
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                     <li class="page-item <?= $i == $page ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        <a class="page-link"
+                            href="?page=<?= $i ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>"><?= $i ?></a>
                     </li>
                     <?php endfor; ?>
 
                     <?php if ($page < $total_pages): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                        <a class="page-link"
+                            href="?page=<?= $page + 1 ?><?= !empty($search) ? '&search=' . urlencode($search) : '' ?>"
+                            aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
@@ -398,23 +536,6 @@ endif; ?>
         </div>
     </div>
 
-    <!-- <script src="/vendor/global/global.min.js"></script>
-    <script src="/vendor/chart.js/Chart.bundle.min.js"></script>
-    <script src="/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-    <script src="/vendor/apexchart/apexchart.js"></script>
-    <script src="/vendor/peity/jquery.peity.min.js"></script>
-    <script src="/vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script>
-    <script src="/vendor/swiper/js/swiper-bundle.min.js"></script>
-    <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="/js/plugins-init/datatables.init.js"></script>
-    <script src="/js/dashboard/dashboard-1.js"></script>
-    <script src="/vendor/wow-master/dist/wow.min.js"></script>
-    <script src="/vendor/bootstrap-datetimepicker/js/moment.js"></script>
-    <script src="/vendor/datepicker/js/bootstrap-datepicker.min.js"></script>
-    <script src="/vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script>
-    <script src="/js/dlabnav-init.js"></script>
-    <script src="/js/custom.min.js"></script>
-    <script src="/js/demo.js"></script> -->
     <?php require_once __DIR__ . '/../../utilities/all-js.php' ?>
     <script>
     document.addEventListener('DOMContentLoaded', function() {

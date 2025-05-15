@@ -41,7 +41,8 @@ $selectedAtelierIds = array_column($linkedAteliers, 'idatelier');
 $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'product/edit') === 0) {
-	$message = "<span class='fs-4'> Modificaion du Produit " . $infoproduit['nomprod'] . "</span>";
+    $message = "<span class='fs-4'> Modificaion du Produit " . $infoproduit['nomprod'] . "</span>";
+    $chemin = '/product/edit/' . $idChiffre;
 }
 
 // die();
@@ -112,15 +113,16 @@ if (strpos($current_page, 'product/edit') === 0) {
 
 
         <form action="/product/edit-product" enctype="multipart/form-data" method="POST">
+            <input type="hidden" name="chemin" value="<?= $chemin ?>">
             <div class="content-body">
 
 
                 <div class="container-fluid">
                     <div class="row">
                         <?php
-						// echo $message_succes;
-						
-						?>
+                        // echo $message_succes;
+                        
+                        ?>
 
                         <div class="col-xl-12">
                             <div class="shadow-lg card">
@@ -134,13 +136,13 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                     class="required">*</span></label>
                                             <div class="avatar-upload">
                                                 <?php
-												// var_dump($infoproduit['photo']); // Pour déboguer
-												?>
+                                                // var_dump($infoproduit['photo']); // Pour déboguer
+                                                ?>
                                                 <div class="avatar-preview">
                                                     <?php
-													$photoPath = '/uploads/photo/' . $infoproduit['photo'];
-													$pdfPath = '/uploads/pdf/' . $infoproduit['fds'];
-													?>
+                                                    $photoPath = '/uploads/photo/' . $infoproduit['photo'];
+                                                    $pdfPath = '/uploads/pdf/' . $infoproduit['fds'];
+                                                    ?>
                                                     <div id="imagePreview"
                                                         style="background-image: url('<?= $photoPath ?>');">
                                                     </div>
@@ -169,10 +171,10 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                                 class="required">*</span></label>
                                                         <input type="text" class="form-control" name="nom" id="nom"
                                                             placeholder="Le nom du produit" value="<?php if (isset($_SESSION['insert']['info'])) {
-																echo $_SESSION['insert']['info']['nom'];
-															} else {
-																echo $infoproduit['nomprod'];
-															} ?>">
+                                                                echo $_SESSION['insert']['info']['nom'];
+                                                            } else {
+                                                                echo $infoproduit['nomprod'];
+                                                            } ?>">
                                                         <span class="fw-bold text-danger" id="messageNom"
                                                             style="display: none;"></span>
                                                     </div>
@@ -185,20 +187,20 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                             <div class="d-flex flex-column">
                                                                 <input type="text" class="form-control" name="emballage"
                                                                     placeholder="Type d'Emballage" id="emballage" value="<?php if (isset($_SESSION['insert']['info'])) {
-																		echo $_SESSION['insert']['info']['emballage'];
-																	} else {
-																		echo $infoproduit['type_emballage'];
-																	} ?>">
+                                                                        echo $_SESSION['insert']['info']['emballage'];
+                                                                    } else {
+                                                                        echo $infoproduit['type_emballage'];
+                                                                    } ?>">
                                                                 <span class="fw-bold text-danger" id="messageEmballage"
                                                                     style="display: none;"></span>
                                                             </div>
                                                             <div class="d-flex flex-column">
                                                                 <input type="text" class="form-control w-50 ms-3"
                                                                     name="vol" id="vol" value="<?php if (isset($_SESSION['insert']['info'])) {
-																		echo $_SESSION['insert']['info']['vol'];
-																	} else {
-																		echo $infoproduit['poids'];
-																	} ?>" placeholder="Vol/Poids">
+                                                                        echo $_SESSION['insert']['info']['vol'];
+                                                                    } else {
+                                                                        echo $infoproduit['poids'];
+                                                                    } ?>" placeholder="Vol/Poids">
                                                                 <span class="fw-bold text-danger" id="messageVol"
                                                                     style="display: none;"></span>
                                                             </div>
@@ -214,15 +216,15 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                         <div class="mb-3">
                                                             <select multiple name="danger[]" class="form-control">
                                                                 <?php foreach ($allDangers as $danger): ?>
-                                                                <?php if (in_array($danger['iddanger'], $selectedIds)) { ?>
-                                                                <option value="<?= $danger['iddanger'] ?>" selected>
-                                                                    <?= htmlspecialchars($danger['nomdanger']) ?>
-                                                                </option>
-                                                                <?php } else { ?>
-                                                                <option value="<?= $danger['iddanger'] ?>">
-                                                                    <?= htmlspecialchars($danger['nomdanger']) ?>
-                                                                </option>
-                                                                <?php } ?>
+                                                                    <?php if (in_array($danger['iddanger'], $selectedIds)) { ?>
+                                                                        <option value="<?= $danger['iddanger'] ?>" selected>
+                                                                            <?= htmlspecialchars($danger['nomdanger']) ?>
+                                                                        </option>
+                                                                    <?php } else { ?>
+                                                                        <option value="<?= $danger['iddanger'] ?>">
+                                                                            <?= htmlspecialchars($danger['nomdanger']) ?>
+                                                                        </option>
+                                                                    <?php } ?>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                             <span id="messageDanger" class="text-danger fw-bold"
@@ -241,10 +243,10 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                                 class="required">*</span></label>
                                                         <textarea class="form-control" name="risque" id="risque"
                                                             rows="6"> <?php if (isset($_SESSION['insert']['info'])) {
-																echo $_SESSION['insert']['info']['risque'];
-															} else {
-																echo $infoproduit['risque'];
-															} ?></textarea>
+                                                                echo $_SESSION['insert']['info']['risque'];
+                                                            } else {
+                                                                echo $infoproduit['risque'];
+                                                            } ?></textarea>
                                                         <span class="fw-bold text-danger" id="messageRisque"
                                                             style="display: none;"></span>
                                                     </div>
@@ -260,10 +262,10 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                                 <input type="text" class="form-control"
                                                                     name="fabriquant" placeholder="Fabricant"
                                                                     id="fabriquant" value="<?php if (isset($_SESSION['insert']['info'])) {
-																		echo $_SESSION['insert']['info']['fabriquant'];
-																	} else {
-																		echo $infoproduit['fabriquant'];
-																	} ?> ">
+                                                                        echo $_SESSION['insert']['info']['fabriquant'];
+                                                                    } else {
+                                                                        echo $infoproduit['fabriquant'];
+                                                                    } ?> ">
                                                                 <span class="fw-bold text-danger" id="messageFabriquant"
                                                                     style="display: none;"></span>
                                                             </div>
@@ -272,10 +274,10 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                                 <input type="text" class="form-control w-50 ms-3"
                                                                     name="nature" id="nature" placeholder="Nature"
                                                                     value="<?php if (isset($_SESSION['insert']['info'])) {
-																		echo $_SESSION['insert']['info']['nature'];
-																	} else {
-																		echo $infoproduit['nature'];
-																	} ?>">
+                                                                        echo $_SESSION['insert']['info']['nature'];
+                                                                    } else {
+                                                                        echo $infoproduit['nature'];
+                                                                    } ?>">
                                                                 <span class="fw-bold text-danger" id="messageNature"
                                                                     style="display: none;"></span>
                                                             </div>
@@ -289,10 +291,10 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                                 class="required">*</span></label>
                                                         <textarea class="form-control" name="utilisation"
                                                             id="utilisation" rows="6"><?php if (isset($_SESSION['insert']['info'])) {
-																echo $_SESSION['insert']['info']['utilisation'];
-															} else {
-																echo $infoproduit['utilisation'];
-															} ?></textarea>
+                                                                echo $_SESSION['insert']['info']['utilisation'];
+                                                            } else {
+                                                                echo $infoproduit['utilisation'];
+                                                            } ?></textarea>
                                                         <span class="fw-bold text-danger" id="messageUtilisation"
                                                             style="display: none;"></span>
                                                     </div>
@@ -320,14 +322,14 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                             <div class="pdf-preview mt-2" id="pdfPreview">
                                                                 <?php if (!empty($infoproduit['fds'])): ?>
 
-                                                                <div class="mt-3">
-                                                                    <object id="pdfViewer" data="<?= $pdfPath ?>"
-                                                                        type="application/pdf" width="100%"
-                                                                        height="400px" style="border: 1px solid #ccc;">
-                                                                    </object>
-                                                                </div>
+                                                                    <div class="mt-3">
+                                                                        <object id="pdfViewer" data="<?= $pdfPath ?>"
+                                                                            type="application/pdf" width="100%"
+                                                                            height="400px" style="border: 1px solid #ccc;">
+                                                                        </object>
+                                                                    </div>
                                                                 <?php else: ?>
-                                                                <p class="text-danger">Aucun fichier PDF disponible</p>
+                                                                    <p class="text-danger">Aucun fichier PDF disponible</p>
                                                                 <?php endif; ?>
                                                             </div>
 
@@ -365,80 +367,80 @@ if (strpos($current_page, 'product/edit') === 0) {
 
     </div>
     <script>
-    // Débogage du chemin du PDF
-    console.log("Chemin du PDF:", "<?= $pdfPath ?>");
+        // Débogage du chemin du PDF
+        console.log("Chemin du PDF:", "<?= $pdfPath ?>");
 
-    $(document).ready(function() {
-        <?php if (!empty($infoproduit['fds'])): ?>
-        $('#pdfPreview').show();
-        // Vérifier si le PDF est accessible
-        $.ajax({
-            url: '<?= $pdfPath ?>',
-            type: 'HEAD',
-            success: function() {
-                console.log("PDF accessible");
-            },
-            error: function(xhr, status, error) {
-                console.error("Erreur d'accès au PDF:", error);
-                $('#pdfPreview').html(
-                    '<div class="alert alert-danger">' +
-                    '<p>Le PDF n\'est pas accessible. Erreur: ' + error + '</p>' +
-                    '<p>URL: <?= $pdfPath ?></p>' +
-                    '</div>'
-                );
-            }
+        $(document).ready(function () {
+            <?php if (!empty($infoproduit['fds'])): ?>
+                $('#pdfPreview').show();
+                // Vérifier si le PDF est accessible
+                $.ajax({
+                    url: '<?= $pdfPath ?>',
+                    type: 'HEAD',
+                    success: function () {
+                        console.log("PDF accessible");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Erreur d'accès au PDF:", error);
+                        $('#pdfPreview').html(
+                            '<div class="alert alert-danger">' +
+                            '<p>Le PDF n\'est pas accessible. Erreur: ' + error + '</p>' +
+                            '<p>URL: <?= $pdfPath ?></p>' +
+                            '</div>'
+                        );
+                    }
+                });
+            <?php endif; ?>
         });
-        <?php endif; ?>
-    });
 
-    function readPDF(input) {
-        if (input.files && input.files[0]) {
-            var file = input.files[0];
-            if (file.type === "application/pdf") {
+        function readPDF(input) {
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+                if (file.type === "application/pdf") {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#pdfViewer').attr('data', e.target.result);
+                        $('#pdfPreview').show();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert("Veuillez sélectionner un fichier PDF.");
+                    input.value = "";
+                }
+            }
+        }
+
+        $("#pdfUpload").change(function () {
+            readPDF(this);
+        });
+
+        $(".remove-pdf").on("click", function () {
+            $('#pdfUpload').val('');
+            $('#pdfViewer').attr('data', '');
+            $('#pdfPreview').hide();
+        });
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
                 var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#pdfViewer').attr('data', e.target.result);
-                    $('#pdfPreview').show();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert("Veuillez sélectionner un fichier PDF.");
-                input.value = "";
+                reader.onload = function (e) {
+                    $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+                    $('#imagePreview').hide();
+                    $('#imagePreview').fadeIn(650);
+                }
+                reader.readAsDataURL(input.files[0]);
             }
         }
-    }
-
-    $("#pdfUpload").change(function() {
-        readPDF(this);
-    });
-
-    $(".remove-pdf").on("click", function() {
-        $('#pdfUpload').val('');
-        $('#pdfViewer').attr('data', '');
-        $('#pdfPreview').hide();
-    });
-
-
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
-                $('#imagePreview').hide();
-                $('#imagePreview').fadeIn(650);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    $("#imageUpload").change(function() {
-        readURL(this);
-    });
-    $('.remove-img').on('click', function() {
-        var
-            imageUrl = "images/no-img-avatar.png";
-        $('.avatar-preview, #imagePreview').removeAttr('style');
-        $('#imagePreview').css('background-image', 'url(' + imageUrl + ')');
-    });
+        $("#imageUpload").change(function () {
+            readURL(this);
+        });
+        $('.remove-img').on('click', function () {
+            var
+                imageUrl = "images/no-img-avatar.png";
+            $('.avatar-preview, #imagePreview').removeAttr('style');
+            $('#imagePreview').css('background-image', 'url(' + imageUrl + ')');
+        });
     </script>
     <?php unset($_SESSION['photo'], $_SESSION['insert']) ?>
 
@@ -464,8 +466,8 @@ if (strpos($current_page, 'product/edit') === 0) {
 
 
     <?php
-	if (isset($_SESSION['photo']['photo'])) {
-		echo $photo = $_SESSION['photo']['photo'];
-	}
+    if (isset($_SESSION['photo']['photo'])) {
+        echo $photo = $_SESSION['photo']['photo'];
+    }
 
-	?>
+    ?>

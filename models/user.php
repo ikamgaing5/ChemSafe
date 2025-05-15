@@ -1,6 +1,6 @@
 <?php
 
-    // require_once __DIR__. '/../core/connexion.php';
+// require_once __DIR__. '/../core/connexion.php';
 
 class User
 {
@@ -216,4 +216,3 @@ class User
 
 }
 
-    

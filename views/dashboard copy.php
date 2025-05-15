@@ -1,30 +1,40 @@
-<?php 
-        $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+<?php
+$current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
-        if ($current_page == 'dashboard') {
-            $message = 'Tableau de bord.';
-        }
+if ($current_page == 'dashboard') {
+    $message = 'Tableau de bord.';
+}
 
-        $conn = Database::getInstance()->getConnection();
-        $atelier = new Atelier();
-        $produit = new Produit();
-        // $user = new User($conn);
-        $contenir = new Contenir();
-        $package = new Package();
+$conn = Database::getInstance()->getConnection();
+$atelier = new Atelier();
+$produit = new Produit();
+// $user = new User($conn);
+$contenir = new Contenir();
+$package = new Package();
 
-        $iduser = Auth::user()->iduser;
-        $req = User::getUserById($conn,$iduser);
-        $nom = Auth::user()->nomuser;
-        $allProductFDS = $produit -> ProduitFDS($conn);
-        $idusine = Auth::user()->idusine;
-        $_SESSION['chemin'] = "dashboard";
-        $nomUsine = Usine::getNameById($conn,$idusine);
-        $isSuperAdmin = false;
-        if (Auth::user()->role == 'superadmin') {
-            $isSuperAdmin = true;
-        }
+$iduser = Auth::user()->iduser;
+$req = User::getUserById(Database::getInstance()->getConnection(), $iduser);
+$nom = Auth::user()->nomuser;
+$allProductFDS = $produit->ProduitFDS($conn);
+$idusine = Auth::user()->idusine;
+$_SESSION['chemin'] = "dashboard";
+$nomUsine = Usine::getNameById($conn, $idusine);
+$isSuperAdmin = false;
+$NbreProduit = 0;
 
-        // die();
+
+if (Auth::user()->role == 'superadmin') {
+    $isSuperAdmin = true;
+    $NbreProduit = $produit->NbreProduits(Database::getInstance()->getConnection());
+} else {
+    // foreach (Contenir::NbreProduitParAtelier($conn) as $key) {
+    //     echo $NbreProduit += (Contenir::AllWorkshop($conn, $key['idatelier']));
+    //     echo  "<br>";
+    //  }
+    $NbreProduit = Contenir::AllProductOfFactory($conn, Auth::user()->idusine);
+}
+$_SESSION['vue'] = "dashboard";
+//  die();
 
 ?>
 
@@ -85,30 +95,30 @@
     </div>
 
     <div id="main-wrapper" class="wallet-open active">
-        <?php require_once __DIR__. '/../layouts/nav.php'; ?>
+        <?php require_once __DIR__ . '/../layouts/nav.php'; ?>
 
-        <?php require_once __DIR__. '/../layouts/dlabnav.php'; ?>
+        <?php require_once __DIR__ . '/../layouts/dlabnav.php'; ?>
         <div class="wallet-bar-close"></div>
 
         <div class="content-body">
             <div class="container-fluid">
                 <div class="row">
-                    <?php   
-                        if (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "insertok") {
-                            echo $package -> message("Le produit a été ajoutée, pensez à ajouter sa FDS dès que possible","success");
-                        }elseif(isset($_SESSION['insertinfoFDS']) && $_SESSION['insertinfoFDS'] == true) {
-                            echo $package -> message("Le produit et sa FDS ont été ajouté","success");
-                        }
-                        unset($_SESSION['insertinfoFDS'],$_SESSION['insert'])
-                    ?>
+                    <?php
+                    if (isset($_SESSION['insert']['type']) && $_SESSION['insert']['type'] == "insertok") {
+                        echo $package->message("Le produit a été ajoutée, pensez à ajouter sa FDS dès que possible", "success");
+                    } elseif (isset($_SESSION['insertinfoFDS']) && $_SESSION['insertinfoFDS'] == true) {
+                        echo $package->message("Le produit et sa FDS ont été ajouté", "success");
+                    }
+                    unset($_SESSION['insertinfoFDS'], $_SESSION['insert'])
+                        ?>
 
-                    <?php require_once __DIR__. '/../layouts/info.php' ?>
+                    <?php require_once __DIR__ . '/../layouts/info.php' ?>
                     <div class="col-xl-12">
                         <div class="shadow-lg page-titles">
                             <div class="d-flex align-items-center flex-wrap ">
                                 <h2 class="heading">Bienvenue dans ChemSafe! <span style="color: red;">
-                                        <?=$nom?> </span>.</h2>
-                                <input type="hidden" id="id_usine" value="<?=$idusine?>">
+                                        <?= $nom ?> </span>.</h2>
+                                <input type="hidden" id="id_usine" value="<?= $idusine ?>">
                             </div>
                         </div>
                     </div>
@@ -143,9 +153,10 @@
                                 <div class="shadow-lg card">
                                     <div class="card-header border-0 ">
                                         <h4 class="heading m-0"><?php if (Auth::user()->role == 'superadmin') { ?>Les
-                                            Ateliers de ChemSafe<?php }else { ?>
-                                            Atelier de l'<?=Usine::getNameById($conn,$idusine)?>
-                                            <?php } ?> </h4>
+                                                Ateliers de ChemSafe<?php } else { ?>
+                                                Atelier de l'<?= Usine::getNameById($conn, $idusine) ?>
+                                            <?php } ?>
+                                        </h4>
 
                                     </div>
                                     <div class="container">
@@ -185,16 +196,16 @@
     </div>
 
     <?php
-        
-        if (Auth::user()->role == 'superadmin') {
-            require_once __DIR__ . '/../utilities/grapheSuper.php';
-            echo '<script src="/js/dangerChart.js"></script>';
-        }else {
-            require_once __DIR__. '/../utilities/grapheDanger.php';
-            require_once __DIR__ . '/../utilities/graphedashoboard.php';
-        }
-        require_once __DIR__. '/../utilities/all-js.php' 
-    ?>
+
+    if (Auth::user()->role == 'superadmin') {
+        require_once __DIR__ . '/../utilities/grapheSuper.php';
+        echo '<script src="/js/dangerChart.js"></script>';
+    } else {
+        require_once __DIR__ . '/../utilities/grapheDanger.php';
+        require_once __DIR__ . '/../utilities/graphedashoboard.php';
+    }
+    require_once __DIR__ . '/../utilities/all-js.php'
+        ?>
     <!-- <script src="/../../js/demo.js"></script> -->
 
 

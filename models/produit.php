@@ -83,21 +83,31 @@ class Produit
         $req->execute();
         return $req->fetchAll(PDO::FETCH_ASSOC);
     }
-    public function getProduitByWorkshops($conn, $limit = 20, $offset = 0)
+    public function getProduitByWorkshops($conn, $limit = 20, $offset = 0, $idusine = null)
     {
         $sql = "SELECT p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
-                           p.fabriquant, p.photo, p.fds, p.danger, p.risque,
-                           GROUP_CONCAT(DISTINCT a.nomatelier ORDER BY a.nomatelier SEPARATOR ', ') AS ateliers,
-                           COUNT(DISTINCT a.idatelier) AS nb_ateliers
-                    FROM produit p
-                    INNER JOIN contenir c ON p.idprod = c.idprod
-                    INNER JOIN atelier a ON a.idatelier = c.idatelier
-                    WHERE a.active = 'true'
-                    GROUP BY p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
-                             p.fabriquant, p.photo, p.fds, p.danger, p.risque
-                    LIMIT :limit OFFSET :offset";
+                       p.fabriquant, p.photo, p.fds, p.danger, p.risque,
+                       GROUP_CONCAT(DISTINCT a.nomatelier ORDER BY a.nomatelier SEPARATOR ', ') AS ateliers,
+                       COUNT(DISTINCT a.idatelier) AS nb_ateliers,
+                       u.nom as nom_usine
+                FROM produit p
+                INNER JOIN contenir c ON p.idprod = c.idprod
+                INNER JOIN atelier a ON a.idatelier = c.idatelier
+                INNER JOIN usine u ON a.idusine = u.idusine
+                WHERE a.active = 'true'";
+
+        if ($idusine !== null) {
+            $sql .= " AND a.idusine = :idusine";
+        }
+
+        $sql .= " GROUP BY p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
+                         p.fabriquant, p.photo, p.fds, p.danger, p.risque, u.nom
+                  LIMIT :limit OFFSET :offset";
 
         $req = $conn->prepare($sql);
+        if ($idusine !== null) {
+            $req->bindValue(':idusine', $idusine, PDO::PARAM_INT);
+        }
         $req->bindValue(':limit', $limit, PDO::PARAM_INT);
         $req->bindValue(':offset', $offset, PDO::PARAM_INT);
         $req->execute();
@@ -105,13 +115,92 @@ class Produit
     }
 
 
-    public function countProduits($conn)
+    public function countProduits($conn, $idusine = null)
     {
-        $sql = "SELECT COUNT(*) FROM produit";
-        return $conn->query($sql)->fetchColumn();
+        $sql = "SELECT COUNT(DISTINCT p.idprod) 
+                FROM produit p
+                INNER JOIN contenir c ON p.idprod = c.idprod
+                INNER JOIN atelier a ON a.idatelier = c.idatelier
+                WHERE a.active = 'true'";
+
+        if ($idusine !== null) {
+            $sql .= " AND a.idusine = :idusine";
+        }
+
+        $req = $conn->prepare($sql);
+        if ($idusine !== null) {
+            $req->bindValue(':idusine', $idusine, PDO::PARAM_INT);
+        }
+        $req->execute();
+        return $req->fetchColumn();
     }
 
+    public function searchProduits($conn, $search, $limit = 20, $offset = 0, $idusine = null)
+    {
+        $search = "%$search%";
+        $sql = "SELECT p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
+                       p.fabriquant, p.photo, p.fds, p.danger, p.risque,
+                       GROUP_CONCAT(DISTINCT a.nomatelier ORDER BY a.nomatelier SEPARATOR ', ') AS ateliers,
+                       COUNT(DISTINCT a.idatelier) AS nb_ateliers,
+                       u.nom as nom_usine
+                FROM produit p
+                INNER JOIN contenir c ON p.idprod = c.idprod
+                INNER JOIN atelier a ON a.idatelier = c.idatelier
+                INNER JOIN usine u ON a.idusine = u.idusine
+                WHERE a.active = 'true'
+                AND (
+                    p.nomprod LIKE :search 
+                    OR p.type_emballage LIKE :search 
+                    OR p.nature LIKE :search
+                    OR p.utilisation LIKE :search
+                )";
 
+        if ($idusine !== null) {
+            $sql .= " AND a.idusine = :idusine";
+        }
+
+        $sql .= " GROUP BY p.idprod, p.nomprod, p.type_emballage, p.poids, p.nature, p.utilisation,
+                         p.fabriquant, p.photo, p.fds, p.danger, p.risque, u.nom
+                  LIMIT :limit OFFSET :offset";
+
+        $req = $conn->prepare($sql);
+        $req->bindValue(':search', $search, PDO::PARAM_STR);
+        if ($idusine !== null) {
+            $req->bindValue(':idusine', $idusine, PDO::PARAM_INT);
+        }
+        $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $req->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $req->execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countSearchProduits($conn, $search, $idusine = null)
+    {
+        $search = "%$search%";
+        $sql = "SELECT COUNT(DISTINCT p.idprod) 
+                FROM produit p
+                INNER JOIN contenir c ON p.idprod = c.idprod
+                INNER JOIN atelier a ON a.idatelier = c.idatelier
+                WHERE a.active = 'true'
+                AND (
+                    p.nomprod LIKE :search 
+                    OR p.type_emballage LIKE :search 
+                    OR p.nature LIKE :search
+                    OR p.utilisation LIKE :search
+                )";
+
+        if ($idusine !== null) {
+            $sql .= " AND a.idusine = :idusine";
+        }
+
+        $req = $conn->prepare($sql);
+        $req->bindValue(':search', $search, PDO::PARAM_STR);
+        if ($idusine !== null) {
+            $req->bindValue(':idusine', $idusine, PDO::PARAM_INT);
+        }
+        $req->execute();
+        return $req->fetchColumn();
+    }
 
     public function getNameByFDS($conn, $fds)
     {
@@ -346,6 +435,13 @@ class Produit
     }
 
     public function NbreProduits($conn)
+    {
+        $req = $conn->prepare("SELECT * FROM produit");
+        $req->execute();
+        return $req->rowCount();
+    }
+
+    public function NbreProduitsByWorkshop($conn)
     {
         $req = $conn->prepare("SELECT * FROM produit");
         $req->execute();

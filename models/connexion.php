@@ -2,7 +2,8 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-class Database {
+class Database
+{
     private static $instance = null;
     private $conn;
 
@@ -13,7 +14,8 @@ class Database {
     private $password;
 
     // Constructeur pour initialiser les valeurs
-    private function __construct() {
+    private function __construct()
+    {
         // Charger les variables d'environnement
         $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
         $dotenv->load();
@@ -30,7 +32,8 @@ class Database {
     }
 
     // Méthode pour établir la connexion à la base de données
-    private function connect() {
+    private function connect()
+    {
         try {
             $this->conn = new PDO(
                 "mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8",
@@ -44,7 +47,8 @@ class Database {
     }
 
     // Méthode statique pour obtenir l'instance unique de la classe Database
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new Database();
         }
@@ -53,7 +57,8 @@ class Database {
     }
 
     // Méthode pour obtenir la connexion
-    public function getConnection() {
+    public function getConnection()
+    {
         return $this->conn;
     }
 }

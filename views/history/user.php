@@ -12,7 +12,7 @@
     $conn = Database::getInstance()->getConnection();
 
 
-    $user = new User($conn);
+    $user = new User();
     $package = new Package();
     // $historique = new Historique();
 

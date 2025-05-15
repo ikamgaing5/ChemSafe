@@ -49,12 +49,12 @@ $HistoriqueController = new HistoriqueController($conn);
 Route::add('GET', '/', [$UserController, 'Logs']);
 Route::add('POST', '/', [$UserController, 'Logs']);
 
-Route::add('GET', '/update-password', [$UserController, 'updatePassword']);
-Route::add('POST', '/update-password', [$UserController, 'updatePassword']);
+// Route::add('GET', '/update-password', [$UserController, 'updatePassword']);
+// Route::add('POST', '/update-password', [$UserController, 'updatePassword']);
 
 
-Route::add('GET', '/change-password/{token}', [$UserController, 'changePassword']);
-Route::add('POST', '/change-password/{token}', [$UserController, 'changePassword']);
+// Route::add('GET', '/change-password/{token}', [$UserController, 'changePassword']);
+// Route::add('POST', '/change-password/{token}', [$UserController, 'changePassword']);
 
 Route::add('GET', '/admin/new-user', [$UserController, 'CreateUser'], [AuthMiddleware::class]);
 Route::add('POST', '/user/new-user', [$UserController, 'CreateUser']);
