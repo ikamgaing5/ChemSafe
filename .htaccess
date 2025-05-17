@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Permettre l'accès direct aux fichiers dans le dossier uploads
+RewriteCond %{REQUEST_URI} ^/uploads/
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Permettre l'accès aux fichiers statiques
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Redirige toutes les requêtes vers index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+php_value post_max_size 16M
+php_value upload_max_filesize 16M

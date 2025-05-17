@@ -1,0 +1,18 @@
+{
+    "name": "ivan/phptemplate",
+    "autoload": {
+        "psr-4": {
+            "Ivan\\Phptemplate\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ikamgaing5",
+            "email": "ikamgaing5@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

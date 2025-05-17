@@ -1,0 +1,26 @@
+# version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - chemsafe-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: host.docker.internal
+      PMA_USER: user
+      PMA_PASSWORD: 
+    networks:
+      - chemsafe-network
+
+networks:
+  chemsafe-network:

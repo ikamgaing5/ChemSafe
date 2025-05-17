@@ -1,0 +1,63 @@
+.scrollable-row {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #6c757d #f8f9fa;
+    padding-bottom: 10px; /* Espace pour la barre de défilement */
+}
+
+.scrollable-row::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scrollable-row::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.scrollable-row::-webkit-scrollbar-thumb {
+    background-color: #6c757d;
+    border-radius: 20px;
+    border: 3px solid #f8f9fa;
+}
+
+.card-container {
+    flex: 0 0 auto;
+    width: 280px; /* Largeur fixe pour toutes les tailles d'écran */
+    margin-right: 0.5rem; /* Espacement réduit entre les cartes */
+}
+
+.scroll-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-indicator-text {
+    margin-right: 0.5rem;
+}
+
+.scroll-indicator-icon {
+    animation: bounceRight 1.5s infinite;
+}
+
+@keyframes bounceRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+}
+
+@media (max-width: 991.98px) { /* Cette media query cible les écrans de taille inférieure à lg */
+    .custom-toggler .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    
+    .custom-toggler {
+      border-color: rgba(255, 255, 255, 0.5); /* Optionnel : change la couleur de la bordure du bouton */
+    }
+  }
+

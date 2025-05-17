@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: #343a40;
+    color: white;
+    padding: 1rem;
+    height: 100vh;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.sidebar.compacted {
+    width: 80px;
+}
+
+.sidebar.compacted .nav-link span {
+    display: none;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 280px;
+    transition: margin-left 0.3s ease;
+    width: 100%;
+}
+
+.sidebar.compacted + .main-content {
+    margin-left: 80px;
+}
