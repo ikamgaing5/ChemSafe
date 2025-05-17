@@ -1,5 +1,5 @@
 <?php
-// require_once __DIR__. '/../../utilities/session.php';
+require_once __DIR__ . '/../../utilities/session.php';
 // require_once __DIR__. '/../../models/atelier.php';
 // require_once __DIR__. '/../../models/produit.php';
 // require_once __DIR__.'/../../models/danger.php';
@@ -42,7 +42,8 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'product/edit') === 0) {
     $message = "<span class='fs-4'> Modificaion du Produit " . $infoproduit['nomprod'] . "</span>";
-    $chemin = '/product/edit/' . $idChiffre;
+    $chemin = '/product/edit-product/' . $idChiffre;
+    // $chemin = ''
 }
 
 // die();
@@ -51,25 +52,6 @@ if (strpos($current_page, 'product/edit') === 0) {
 
 <!DOCTYPE html>
 <html lang="fr">
-
-<!-- <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-     <link rel="shortcut icon" type="image/png" href="images/favicon.png" > 
-<link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
-<link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
-<link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
-<link href="/vendor/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-<link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=experiment" />
-<link href="/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/vendor/swiper/css/swiper-bundle.min.css">
-<link href="/css/style.css" rel="stylesheet">
-<link rel="stylesheet" href="/css/all.css">
-<script src="/js/all.js"></script>
-</head> -->
 
 <head>
     <meta charset="utf-8">
@@ -84,8 +66,6 @@ if (strpos($current_page, 'product/edit') === 0) {
     <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/vendor/jquery-nice-select/css/nice-select.css">
 
-    <!-- (Optionnel) Google Fonts ou autres si tu les utilises vraiment -->
-    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"> -->
 
     <!-- jQuery d'abord ! -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -114,6 +94,7 @@ if (strpos($current_page, 'product/edit') === 0) {
 
         <form action="/product/edit-product" enctype="multipart/form-data" method="POST">
             <input type="hidden" name="chemin" value="<?= $chemin ?>">
+            <input type="hidden" name="idprod" value="<?= $infoproduit['idprod'] ?>">
             <div class="content-body">
 
 
@@ -123,6 +104,53 @@ if (strpos($current_page, 'product/edit') === 0) {
                         // echo $message_succes;
                         
                         ?>
+                        <?php
+
+                        if (isset($_SESSION['insert']['type'])) {
+                            switch ($_SESSION['insert']['type']) {
+                                case "insertfalse":
+                                    echo $package->message("Problème lors de l'insertion", "danger");
+                                    break;
+                                case "insertok":
+                                    echo $package->message("Le produit a été ajouté avec succès", "success");
+                                    break;
+                                case "updateok":
+                                    echo $package->message("Le produit a été modifié avec succès", "success");
+                                    break;
+                                case "updatefailed":
+                                    echo $package->message("Problème lors de la modification", "danger");
+                                    break;
+                                case "extension":
+                                    echo $package->message("L'extension de l'image n'est pas valide", "danger");
+                                    break;
+                                case "doublonProduit":
+                                    echo $package->message("Ce produit existe déjà", "danger");
+                                    break;
+                                case "erreur uploadphoto":
+                                    echo $package->message("Problème lors de l'envoi de la photo", "danger");
+                                    break;
+                                case "volumineux":
+                                    echo $package->message("Fichier trop volumineux", "danger");
+                                    break;
+                                case "doublonPhoto":
+                                    $nomproduit = isset($_SESSION['insert']['insert']) ? $_SESSION['insert']['insert'] : '';
+                                    echo $package->message("Cette photo est déjà associée au produit <strong>$nomproduit</strong>", "danger");
+                                    break;
+                                case "erreur upload fds":
+                                    echo $package->message("Erreur lors de la sauvegarde de la FDS", "danger");
+                                    break;
+                                case "extensionFDS":
+                                    echo $package->message("Veuillez choisir un fichier d'extension <strong>.pdf</strong>", "danger");
+                                    break;
+                                case "doublonsFDS":
+                                    $nomproduitFDS = isset($_SESSION['insert']['insert']) ? $_SESSION['insert']['insert'] : '';
+                                    echo $package->message("Cette FDS est déjà associée au produit <strong>$nomproduitFDS</strong>", "danger");
+                                    break;
+                            }
+                        }
+                        unset($_SESSION['insert']);
+                        ?>
+
 
                         <div class="col-xl-12">
                             <div class="shadow-lg card">
@@ -216,15 +244,15 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                         <div class="mb-3">
                                                             <select multiple name="danger[]" class="form-control">
                                                                 <?php foreach ($allDangers as $danger): ?>
-                                                                    <?php if (in_array($danger['iddanger'], $selectedIds)) { ?>
-                                                                        <option value="<?= $danger['iddanger'] ?>" selected>
-                                                                            <?= htmlspecialchars($danger['nomdanger']) ?>
-                                                                        </option>
-                                                                    <?php } else { ?>
-                                                                        <option value="<?= $danger['iddanger'] ?>">
-                                                                            <?= htmlspecialchars($danger['nomdanger']) ?>
-                                                                        </option>
-                                                                    <?php } ?>
+                                                                <?php if (in_array($danger['iddanger'], $selectedIds)) { ?>
+                                                                <option value="<?= $danger['iddanger'] ?>" selected>
+                                                                    <?= htmlspecialchars($danger['nomdanger']) ?>
+                                                                </option>
+                                                                <?php } else { ?>
+                                                                <option value="<?= $danger['iddanger'] ?>">
+                                                                    <?= htmlspecialchars($danger['nomdanger']) ?>
+                                                                </option>
+                                                                <?php } ?>
                                                                 <?php endforeach; ?>
                                                             </select>
                                                             <span id="messageDanger" class="text-danger fw-bold"
@@ -322,14 +350,14 @@ if (strpos($current_page, 'product/edit') === 0) {
                                                             <div class="pdf-preview mt-2" id="pdfPreview">
                                                                 <?php if (!empty($infoproduit['fds'])): ?>
 
-                                                                    <div class="mt-3">
-                                                                        <object id="pdfViewer" data="<?= $pdfPath ?>"
-                                                                            type="application/pdf" width="100%"
-                                                                            height="400px" style="border: 1px solid #ccc;">
-                                                                        </object>
-                                                                    </div>
+                                                                <div class="mt-3">
+                                                                    <object id="pdfViewer" data="<?= $pdfPath ?>"
+                                                                        type="application/pdf" width="100%"
+                                                                        height="400px" style="border: 1px solid #ccc;">
+                                                                    </object>
+                                                                </div>
                                                                 <?php else: ?>
-                                                                    <p class="text-danger">Aucun fichier PDF disponible</p>
+                                                                <p class="text-danger">Aucun fichier PDF disponible</p>
                                                                 <?php endif; ?>
                                                             </div>
 
@@ -353,8 +381,7 @@ if (strpos($current_page, 'product/edit') === 0) {
                                 </div>
                                 <div class="card-footer">
                                     <div class="text-end">
-                                        <button type="submit" id="submitBtn" class="btn btn-primary"
-                                            disabled>Soumettre</button>
+                                        <button type="submit" id="submitBtn" class="btn btn-primary">Soumettre</button>
 
                                     </div>
                                 </div>
@@ -367,85 +394,200 @@ if (strpos($current_page, 'product/edit') === 0) {
 
     </div>
     <script>
-        // Débogage du chemin du PDF
-        console.log("Chemin du PDF:", "<?= $pdfPath ?>");
+    // Débogage du chemin du PDF
+    console.log("Chemin du PDF:", "<?= $pdfPath ?>");
 
-        $(document).ready(function () {
-            <?php if (!empty($infoproduit['fds'])): ?>
-                $('#pdfPreview').show();
-                // Vérifier si le PDF est accessible
-                $.ajax({
-                    url: '<?= $pdfPath ?>',
-                    type: 'HEAD',
-                    success: function () {
-                        console.log("PDF accessible");
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Erreur d'accès au PDF:", error);
-                        $('#pdfPreview').html(
-                            '<div class="alert alert-danger">' +
-                            '<p>Le PDF n\'est pas accessible. Erreur: ' + error + '</p>' +
-                            '<p>URL: <?= $pdfPath ?></p>' +
-                            '</div>'
-                        );
-                    }
-                });
-            <?php endif; ?>
+    $(document).ready(function() {
+        <?php if (!empty($infoproduit['fds'])): ?>
+        $('#pdfPreview').show();
+        // Vérifier si le PDF est accessible
+        $.ajax({
+            url: '<?= $pdfPath ?>',
+            type: 'HEAD',
+            success: function() {
+                console.log("PDF accessible");
+            },
+            error: function(xhr, status, error) {
+                console.error("Erreur d'accès au PDF:", error);
+                $('#pdfPreview').html(
+                    '<div class="alert alert-danger">' +
+                    '<p>Le PDF n\'est pas accessible. Erreur: ' + error + '</p>' +
+                    '<p>URL: <?= $pdfPath ?></p>' +
+                    '</div>'
+                );
+            }
         });
+        <?php endif; ?>
 
-        function readPDF(input) {
-            if (input.files && input.files[0]) {
-                var file = input.files[0];
-                if (file.type === "application/pdf") {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        $('#pdfViewer').attr('data', e.target.result);
-                        $('#pdfPreview').show();
-                    };
-                    reader.readAsDataURL(file);
+        // Validation du formulaire
+        $('form').on('submit', function(e) {
+            let isValid = true;
+
+            // Validation du nom
+            if ($('#nom').val().trim() === '') {
+                $('#messageNom').text('Le nom du produit est requis').show();
+                isValid = false;
+            } else {
+                $('#messageNom').hide();
+            }
+
+            // Validation de l'emballage
+            if ($('#emballage').val().trim() === '') {
+                $('#messageEmballage').text('Le type d\'emballage est requis').show();
+                isValid = false;
+            } else {
+                $('#messageEmballage').hide();
+            }
+
+            // Validation du volume/poids
+            if ($('#vol').val().trim() === '') {
+                $('#messageVol').text('Le volume/poids est requis').show();
+                isValid = false;
+            } else {
+                $('#messageVol').hide();
+            }
+
+            // Validation des dangers
+            if ($('select[name="danger[]"]').val() === null || $('select[name="danger[]"]').val()
+                .length === 0) {
+                $('#messageDanger').text('Veuillez sélectionner au moins un danger').show();
+                isValid = false;
+            } else {
+                $('#messageDanger').hide();
+            }
+
+            // Validation du risque
+            if ($('#risque').val().trim() === '') {
+                $('#messageRisque').text('Le risque est requis').show();
+                isValid = false;
+            } else {
+                $('#messageRisque').hide();
+            }
+
+            // Validation du fabricant
+            if ($('#fabriquant').val().trim() === '') {
+                $('#messageFabriquant').text('Le fabricant est requis').show();
+                isValid = false;
+            } else {
+                $('#messageFabriquant').hide();
+            }
+
+            // Validation de la nature
+            if ($('#nature').val().trim() === '') {
+                $('#messageNature').text('La nature du produit est requise').show();
+                isValid = false;
+            } else {
+                $('#messageNature').hide();
+            }
+
+            // Validation de l'utilisation
+            if ($('#utilisation').val().trim() === '') {
+                $('#messageUtilisation').text('L\'utilisation est requise').show();
+                isValid = false;
+            } else {
+                $('#messageUtilisation').hide();
+            }
+
+            // Validation de la photo si une nouvelle est sélectionnée
+            if ($('#imageUpload')[0].files.length > 0) {
+                const file = $('#imageUpload')[0].files[0];
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(file.type)) {
+                    $('#messagePhoto').text('Format d\'image non valide. Utilisez JPG, PNG ou GIF')
+                        .show();
+                    isValid = false;
                 } else {
-                    alert("Veuillez sélectionner un fichier PDF.");
-                    input.value = "";
+                    $('#messagePhoto').hide();
                 }
             }
+
+            // Validation de la FDS si une nouvelle est sélectionnée
+            if ($('#DispoFDS').val() === 'oui' && $('#pdfUpload')[0].files.length > 0) {
+                const file = $('#pdfUpload')[0].files[0];
+                if (file.type !== 'application/pdf') {
+                    $('#messageFDS').text('Format de fichier non valide. Utilisez PDF').show();
+                    isValid = false;
+                } else {
+                    $('#messageFDS').hide();
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Gestion de l'affichage du champ FDS
+        $('#DispoFDS').change(function() {
+            if ($(this).val() === 'oui') {
+                $('#FDSDisplay').show();
+            } else {
+                $('#FDSDisplay').hide();
+                $('#pdfUpload').val('');
+                $('#pdfPreview').hide();
+            }
+        });
+
+        // Initialisation de l'affichage du champ FDS
+        if ($('#DispoFDS').val() === 'non') {
+            $('#FDSDisplay').hide();
         }
+    });
 
-        $("#pdfUpload").change(function () {
-            readPDF(this);
-        });
-
-        $(".remove-pdf").on("click", function () {
-            $('#pdfUpload').val('');
-            $('#pdfViewer').attr('data', '');
-            $('#pdfPreview').hide();
-        });
-
-
-        function readURL(input) {
-            if (input.files && input.files[0]) {
+    function readPDF(input) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            if (file.type === "application/pdf") {
                 var reader = new FileReader();
-                reader.onload = function (e) {
-                    $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
-                    $('#imagePreview').hide();
-                    $('#imagePreview').fadeIn(650);
-                }
-                reader.readAsDataURL(input.files[0]);
+                reader.onload = function(e) {
+                    $('#pdfViewer').attr('data', e.target.result);
+                    $('#pdfPreview').show();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Veuillez sélectionner un fichier PDF.");
+                input.value = "";
             }
         }
-        $("#imageUpload").change(function () {
-            readURL(this);
-        });
-        $('.remove-img').on('click', function () {
-            var
-                imageUrl = "images/no-img-avatar.png";
-            $('.avatar-preview, #imagePreview').removeAttr('style');
-            $('#imagePreview').css('background-image', 'url(' + imageUrl + ')');
-        });
+    }
+
+    $("#pdfUpload").change(function() {
+        readPDF(this);
+    });
+
+    $(".remove-pdf").on("click", function() {
+        $('#pdfUpload').val('');
+        $('#pdfViewer').attr('data', '');
+        $('#pdfPreview').hide();
+    });
+
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+                $('#imagePreview').hide();
+                $('#imagePreview').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $("#imageUpload").change(function() {
+        readURL(this);
+    });
+    $('.remove-img').on('click', function() {
+        var
+            imageUrl = "images/no-img-avatar.png";
+        $('.avatar-preview, #imagePreview').removeAttr('style');
+        $('#imagePreview').css('background-image', 'url(' + imageUrl + ')');
+    });
     </script>
     <?php unset($_SESSION['photo'], $_SESSION['insert']) ?>
 
 
-    <script src="/../../vendor/global/global.min.js"></script>
+    <!-- <script src="/../../vendor/global/global.min.js"></script>
     <script src="/../../vendor/chart.js/Chart.bundle.min.js"></script>
     <script src="/../../vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="/../../vendor/apexchart/apexchart.js"></script>
@@ -462,10 +604,11 @@ if (strpos($current_page, 'product/edit') === 0) {
     <script src="/../../js/dlabnav-init.js"></script>
     <script src="/../../js/custom.min.js"></script>
     <script src="/../../js/demo.js"></script>
-    <script src="/../../js/new-product.js"></script>
+    <script src="/../../js/new-product.js"></script> -->
 
 
     <?php
+    require_once __DIR__ . '/../../utilities/all-js.php';
     if (isset($_SESSION['photo']['photo'])) {
         echo $photo = $_SESSION['photo']['photo'];
     }

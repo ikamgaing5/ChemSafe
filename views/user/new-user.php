@@ -19,7 +19,7 @@ if ($current_page == 'admin/new-user') {
 $conn = Database::getInstance()->getConnection();
 
 $package = new Package();
-$user = new User($conn);
+$user = new User();
 $allUsine = Usine::AllFactory($conn);
 
 

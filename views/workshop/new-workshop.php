@@ -15,8 +15,8 @@
                 <div class="modal-body">
                     <label class="form-label text-secondary">Nom de l'atelier: </label>
                     <input type="text" class="form-control" name="nom" id="" value="">
-                    <input type="text" value="<?= $chemin ?>" name="chemin">
-                    <input type="text" name="idusine" value="<?= IdEncryptor::decode($params['idusine']) ?>">
+                    <input type="hidden" value="<?= $chemin ?>" name="chemin">
+                    <input type="hidden" name="idusine" value="<?= IdEncryptor::decode($params['idusine']) ?>">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>

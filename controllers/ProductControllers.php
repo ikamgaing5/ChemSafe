@@ -205,12 +205,53 @@ class ProductController
     public function update($params)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
+            $idprod = $_POST['idprod'];
             $photo = NULL;
             $fds = NULL;
             $chemin = $_POST['chemin'];
-            $filePhoto = $this->package->filtrer($_FILES['imageUpload']['name']);
 
+            // Récupérer les informations actuelles du produit
+            $currentProduct = $this->produit->OneProduct($this->conn, $idprod);
+
+            // Gestion de la photo
+            if (!empty($_FILES['imageUpload']['name'])) {
+                $filePhoto = $this->package->filtrer($_FILES['imageUpload']['name']);
+                $photoUpload = $this->package->photos($filePhoto);
+
+                if ($photoUpload !== 1) {
+                    if ($photoUpload == -5) {
+                        $_SESSION['insert'] = [];
+                        $_SESSION['insert']['type'] = "erreur uploadphoto";
+                        $_SESSION['insert']['info'] = $_POST;
+                        Route::redirect($chemin);
+                    } elseif ($photoUpload == -1) {
+                        $_SESSION['insert'] = [];
+                        $_SESSION['insert']['type'] = "extension";
+                        $_SESSION['insert']['info'] = $_POST;
+                        Route::redirect($chemin);
+                    } elseif ($photoUpload == -2) {
+                        $_SESSION['insert'] = [];
+                        $_SESSION['insert']['type'] = "doublonPhoto";
+                        $_SESSION['insert']['insert'] = $filePhoto;
+                        $_SESSION['insert']['info'] = $_POST;
+                        Route::redirect($chemin);
+                    } elseif ($photoUpload == -3) {
+                        $_SESSION['insert']['type'] = "volumineux";
+                        $_SESSION['insert']['info'] = $_POST;
+                        Route::redirect($chemin);
+                    }
+                } else {
+                    $photo = $filePhoto;
+                    // Supprimer l'ancienne photo si elle existe
+                    if ($currentProduct['photo'] && file_exists(__DIR__ . '/../uploads/photo/' . $currentProduct['photo'])) {
+                        unlink(__DIR__ . '/../uploads/photo/' . $currentProduct['photo']);
+                    }
+                }
+            } else {
+                $photo = $currentProduct['photo'];
+            }
+
+            // Gestion de la FDS
             if ($_POST['DispoFDS'] === "oui" && !empty($_FILES['pdfUpload']['name'])) {
                 $fileFds = $this->package->filtrer($_FILES['pdfUpload']['name']);
                 $fdsUpload = $this->package->fds($fileFds);
@@ -220,89 +261,93 @@ class ProductController
                         $_SESSION['insert'] = [];
                         $_SESSION['insert']['type'] = "erreur upload fds";
                         $_SESSION['insert']['info'] = $_POST;
-                        // "aucun fichier";
                         Route::redirect($chemin);
                     } elseif ($fdsUpload == -1) {
                         $_SESSION['insert'] = [];
                         $_SESSION['insert']['type'] = "extensionFDS";
                         $_SESSION['insert']['info'] = $_POST;
-                        // "extension";
                         Route::redirect($chemin);
                     } elseif ($fdsUpload == -2) {
                         $_SESSION['insert'] = [];
-                        $_SESSION['insert']['erreur'] = "doublonsFDS";
+                        $_SESSION['insert']['type'] = "doublonsFDS";
                         $_SESSION['insert']['insert'] = $fileFds;
                         $_SESSION['insert']['info'] = $_POST;
-                        // "déjà en bd";
                         Route::redirect($chemin);
                     }
                 } else {
-                    // 'ok';
                     $fds = $fileFds;
+                    // Supprimer l'ancienne FDS si elle existe
+                    if ($currentProduct['fds'] && file_exists(__DIR__ . '/../uploads/pdf/' . $currentProduct['fds'])) {
+                        unlink(__DIR__ . '/../uploads/pdf/' . $currentProduct['fds']);
+                    }
                 }
             } else {
-                $fds = NULL;
+                $fds = $currentProduct['fds'];
             }
 
-
-            $photoUpload = $this->package->photos($filePhoto);
-            // var_dump($photoUpload);
-            // var_dump($_POST);
-            // var_dump($_FILES);
-
-            if ($photoUpload !== 1) {
-                if ($photoUpload == -5) {
-                    $_SESSION['insert'] = [];
-                    echo $_SESSION['insert']['type'] = "erreur uploadphoto";
-                    $_SESSION['insert']['info'] = $_POST;
-                    Route::redirect('/product/new-product');
-                } elseif ($photoUpload == -1) {
-                    $_SESSION['insert'] = [];
-                    echo $_SESSION['insert']['type'] = "extension";
-                    $_SESSION['insert']['info'] = $_POST;
-                    Route::redirect('/product/new-product');
-                } elseif ($photoUpload == -2) {
-                    $_SESSION['insert'] = [];
-                    echo $_SESSION['insert']['type'] = "doublonPhoto";
-                    $_SESSION['insert']['insert'] = $filePhoto;
-                    $_SESSION['insert']['info'] = $_POST;
-                    Route::redirect('/product/new-product');
-                } elseif ($photoUpload == -3) {
-                    echo $_SESSION['insert']['type'] = "volumineux";
-                    $_SESSION['insert']['info'] = $_POST;
-                    Route::redirect('/product/new-product');
-                }
-            } else {
-                // L'image est valide, on stocke juste le nom pour la suite
-                $photo = $filePhoto;
-            }
-
-
+            // Récupération et nettoyage des données du formulaire
             $nom = $this->package->filtrer($_POST['nom']);
             $emballage = $this->package->filtrer($_POST['emballage']);
             $vol = $this->package->filtrer($_POST['vol']);
             $dangers = $_POST['danger'];
-            // Convertir le tableau en une chaîne avec des virgules comme séparateur
             $danger = implode(", ", $dangers);
-            $atelier = $_POST['atelier'];
             $nature = $this->package->filtrer($_POST['nature']);
             $risque = $this->package->filtrer($_POST['risque']);
             $fabriquant = $this->package->filtrer($_POST['fabriquant']);
             $utilisation = $this->package->filtrer($_POST['utilisation']);
+
+            // Mise à jour du produit
+            $updateResult = $this->produit->Update(
+                $this->conn,
+                $idprod,
+                $nom,
+                $emballage,
+                $vol,
+                $nature,
+                $utilisation,
+                $fabriquant,
+                $photo,
+                $fds,
+                $danger,
+                $risque
+            );
+
+            if ($updateResult) {
+                // Mise à jour des dangers
+                $this->possede->delete($this->conn, $idprod); // Supprimer toutes les relations existantes
+                foreach ($dangers as $idDanger) {
+                    $this->possede->add($this->conn, $idDanger, $idprod);
+                }
+
+                // Upload des nouveaux fichiers si nécessaire
+                if ($photo !== $currentProduct['photo'] && isset($_FILES["imageUpload"]["tmp_name"])) {
+                    move_uploaded_file($_FILES["imageUpload"]["tmp_name"], __DIR__ . '/../uploads/photo/' . basename($photo));
+                }
+                if ($fds !== $currentProduct['fds'] && isset($_FILES["pdfUpload"]["tmp_name"])) {
+                    move_uploaded_file($_FILES["pdfUpload"]["tmp_name"], __DIR__ . '/../uploads/pdf/' . basename($fds));
+                }
+
+                $_SESSION['insert'] = [];
+                $_SESSION['insert']['type'] = "updateok";
+                $_SESSION['insert']['idprod'] = $idprod;
+                Route::redirect('/product/all-product');
+            } else {
+                $_SESSION['insert'] = [];
+                $_SESSION['insert']['type'] = "updatefailed";
+                $_SESSION['insert']['info'] = $_POST;
+                Route::redirect($chemin);
+            }
         } else {
             $idChiffre = $params['idprod'];
             $id = IdEncryptor::decode($idChiffre);
 
             if (!$id || !is_numeric($id)) {
-                // http_response_code(400);
-                // echo "ID invalide.";
                 require_once __DIR__ . '/../views/404.php';
                 return;
             }
             $idprod = $id;
             require_once __DIR__ . '/../views/product/edit.php';
         }
-
     }
 
     public function getDangerProducts($params)

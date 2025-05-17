@@ -333,7 +333,7 @@ class Produit
         return $raw['idprod'];
     }
 
-    public function getNameById($conn, $id)
+    public static function getNameById($conn, $id)
     {
         $req = $conn->prepare("SELECT * FROM produit WHERE idprod = :idprod");
         $req->bindParam(':idprod', $id);
@@ -412,10 +412,10 @@ class Produit
     public function Update($conn, $id, $nom, $emballage, $poids, $nature, $utilisation, $fabricant, $photo, $fds, $danger, $risque)
     {
         if ($this->IfExist($conn, $nom, $id) == 0) {
-            $req = $conn->prepare("UPDATE produit SET nomprod = :nom, type_emballage = :type_emballage,poids = :poids, nature = :nature, utilisation = :utilisation, fabricant = :fabricant, photo = :photo, fds = :fds, danger = :danger, risque = :risque WHERE idprod = id");
+            $req = $conn->prepare("UPDATE produit SET nomprod = :nom, type_emballage = :emballage, poids = :poids, nature = :nature, utilisation = :utilisation, fabriquant = :fabricant, photo = :photo, fds = :fds, danger = :danger, risque = :risque WHERE idprod = :id");
             $req->bindParam(':id', $id);
             $req->bindParam(':nom', $nom);
-            $req->bindParam(':type_emballage', $emballage);
+            $req->bindParam(':emballage', $emballage);
             $req->bindParam(':poids', $poids);
             $req->bindParam(':nature', $nature);
             $req->bindParam(':utilisation', $utilisation);
@@ -424,13 +424,9 @@ class Produit
             $req->bindParam(':fds', $fds);
             $req->bindParam(':danger', $danger);
             $req->bindParam(':risque', $risque);
-            if ($req->execute()) {
-                return 1; // Modification ok
-            } else {
-                return -1; // Problème de modification
-            }
+            return $req->execute();
         } else {
-            return 0; // Nom déjà en bd
+            return false;
         }
     }
 
