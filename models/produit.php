@@ -324,6 +324,14 @@ class Produit
         return $req->execute();
     }
 
+    public function AddPhoto($conn, $photo, $idprod)
+    {
+        $req = $conn->prepare("UPDATE produit SET photo = :photo WHERE idprod = :idprod");
+        $req->bindParam(':photo', $photo);
+        $req->bindParam(':idprod', $idprod);
+        return $req->execute();
+    }
+
     public function getIdProductByName($conn, $nom)
     {
         $req = $conn->prepare("SELECT * FROM produit WHERE nomprod = :nomprod");

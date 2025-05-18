@@ -75,6 +75,7 @@ Route::add('POST', '/product/delete', [$ProductController, 'deleteFromWorkshop']
 Route::add('POST', '/product/add', [$ProductController, 'add']);
 Route::add('GET', '/product/more-detail/{idprod}', [$ProductController, 'oneprod'], [AuthMiddleware::class]);
 Route::add('POST', '/product/updateFDS', [$ProductController, 'addFDS']);
+Route::add('POST', '/product/updatePhoto', [ProductController::class, 'addPhoto']);
 Route::add('GET', '/product/all-product', [$ProductController, 'all'], [AuthMiddleware::class]);
 // Route::add('GET', '/product/all-product/{idatelier}', [$ProductController, 'alls']);
 Route::add('GET', '/product/all-product/{idatelier}', [$ProductController, 'allss'], [AuthMiddleware::class]);

@@ -1,13 +1,5 @@
 <?php
-// require_once __DIR__. '/../../utilities/session.php';
 
-
-// // require_once __DIR__. '/../../core/connexion.php';
-// require_once __DIR__. '/../../models/atelier.php';
-// require_once __DIR__. '/../../models/produit.php';
-// require_once __DIR__. '/../../models/contenir.php';
-// require_once __DIR__. '/../../models/connexion.php';
-// require_once __DIR__. '/../../models/package.php';
 
 $conn = Database::getInstance()->getConnection();
 
@@ -26,7 +18,7 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'all-product') === 0) {
     $message = "Produits de l'atelier $nomatelier.";
-    $chemin = "all-product/" . IdEncryptor::encode($idatelier);
+    $chemin = "/all-products/" . IdEncryptor::encode($idatelier);
 }
 
 $produitsNonAssocies = $produit->getProduitsNonAssocies($conn, $idatelier);
@@ -129,6 +121,31 @@ $_SESSION['idatelier'] = IdEncryptor::encode($idatelier);
                     $message = "Les informations de la FDS ont été enregistrée";
                     echo $package->message($message, "success");
                     unset($_SESSION['insertinfoFDS']);
+                }
+                if (isset($_SESSION['addphoto'])) {
+                    switch ($_SESSION['addphoto']['erreur']) {
+                        case 'taille':
+                            $message = "La taille de la photo envoyée pour le produit <strong>" . $_SESSION['addphoto']['nomproduit'] . "</strong> dépasse la limite qui est de 5 Mo";
+                            $type = "danger";
+                            break;
+                        case 'nom':
+                            $message = "La photo envoyée pour le produit<strong>" . $_SESSION['addphoto']['nomproduit'] . "</strong> est déjà associée à un autre produit";
+                            $type = "danger";
+                            break;
+                        case 'extension':
+                            $message = "L'extension de la photo envoyée pour le produit<strong>" . $_SESSION['addphoto']['nomproduit'] . "</strong> n'est pas prise en charge";
+                            $type = "danger";
+                            break;
+                        case 'erreur':
+                            $message = "Une erreur est survenué lors de l'envoie de la photo envoyée pour le produit<strong>" . $_SESSION['addphoto']['nomproduit'] . "</strong>, veuillez réesayer";
+                            $type = "danger";
+                            break;
+                        default:
+                            $message = "La photo envoyée pour le produit <strong>" . $_SESSION['addphoto']['nomproduit'] . "</strong> a été enregistrée avec succès";
+                            $type = "success";
+                            break;
+                    }
+                    echo $package->message($message, $type);
                 }
                 ?>
 

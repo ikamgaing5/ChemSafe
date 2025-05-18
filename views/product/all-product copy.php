@@ -1,18 +1,7 @@
 <?php
 require_once __DIR__ . '/../../utilities/session.php';
-
-
-// require_once __DIR__. '/../../core/connexion.php';
-require_once __DIR__ . '/../../models/atelier.php';
-require_once __DIR__ . '/../../models/produit.php';
-require_once __DIR__ . '/../../models/contenir.php';
-require_once __DIR__ . '/../../models/connexion.php';
-require_once __DIR__ . '/../../models/package.php';
-
 $conn = Database::getInstance()->getConnection();
 
-
-// $conn = getConnection();
 $atelier = new Atelier();
 $produit = new Produit();
 $contenir = new Contenir();
@@ -23,7 +12,7 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'product/all-product') === 0) {
     $message = "Produits de l'" . Usine::getNameById($conn, $_SESSION['idusine']);
-    $chemin = "product/all-product";
+    $chemin = "/product/all-product";
 }
 
 if (isset($_SESSION['add-success']) && $_SESSION['add-success']['type'] == true && isset($_SESSION['add-success']['info'])) {
@@ -144,6 +133,31 @@ endif; ?>
 
                     echo $package->message($message, "success");
                     unset($_SESSION['add-success']);
+                }
+                if (isset($_SESSION['addphoto'])) {
+                    switch ($_SESSION['addphoto']['erreur']) {
+                        case 'taille':
+                            $message = "La taille de la photo envoyée pour le produit " . $_SESSION['addphoto']['nomproduit'] . "dépasse la limite qui est de 5 Mo";
+                            $type = "danger";
+                            break;
+                        case 'nom':
+                            $message = "La photo envoyée pour le produit " . $_SESSION['addphoto']['nomproduit'] . "est déjà associée à un autre produit";
+                            $type = "danger";
+                            break;
+                        case 'extension':
+                            $message = "L'extension de la photo envoyée pour le produit " . $_SESSION['addphoto']['nomproduit'] . "n'est pas prise en charge";
+                            $type = "danger";
+                            break;
+                        case 'erreur':
+                            $message = "Une erreur est survenué lors de l'envoie de la photo envoyée pour le produit " . $_SESSION['addphoto']['nomproduit'] . ", veuillez réesayer";
+                            $type = "danger";
+                            break;
+                        default:
+                            $message = "La photo envoyée pour le produit " . $_SESSION['addphoto']['nomproduit'] . "a été enregistrée avec succès";
+                            $type = "success";
+                            break;
+                    }
+                    echo $package->message($message, $type);
                 }
                 ?>
                 <div class="demo-view">
@@ -367,7 +381,6 @@ endif; ?>
     <script src="/js/custom.min.js"></script>
     <script src="/js/demo.js"></script>
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
             let produit = document.getElementById('produit');
             let submitBtn = document.getElementById('submitBtn');

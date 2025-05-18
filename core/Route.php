@@ -14,6 +14,13 @@ class Route
     }
     public static function redirect($path)
     {
+        // Nettoyer le chemin
+        $path = trim($path);
+        // S'assurer qu'il n'y a qu'un seul slash au début
+        $path = '/' . ltrim($path, '/');
+        // Encoder les caractères spéciaux dans l'URL
+        $path = str_replace([' ', "\n", "\r"], '', $path);
+
         header("Location: $path");
         exit();
     }

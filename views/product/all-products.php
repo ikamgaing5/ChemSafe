@@ -13,7 +13,7 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'product/all-product') === 0) {
     $message = "Produits de l'" . Usine::getNameById($conn, $_SESSION['idusine']);
-    $chemin = "product/all-product";
+    $chemin = "/product/all-product";
 }
 
 // $produitsNonAssocies =$produit->getProduitsNonAssocies($conn, $idatelier);

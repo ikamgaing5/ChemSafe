@@ -14,7 +14,7 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'product/all-product') === 0) {
     $message = "Produits de l'" . Usine::getNameById($conn, $idusine);
-    $chemin = "product/all-product";
+    $chemin = "/product/all-product";
 }
 
 if (isset($_SESSION['add-success']) && $_SESSION['add-success']['type'] == true && isset($_SESSION['add-success']['info'])) {

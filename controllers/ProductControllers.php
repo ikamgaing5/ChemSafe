@@ -71,8 +71,9 @@ class ProductController
             if ($photoUpload !== 1) {
                 if ($photoUpload == -5) {
                     $_SESSION['insert'] = [];
-                    $_SESSION['insert']['type'] = "erreur uploadphoto";
+                    $_SESSION['insert']['type'] = "erreur upload photo";
                     $_SESSION['insert']['info'] = $_POST;
+                    $_SESSION['insert']['openModalPhoto'] = $_POST['idprod'];
                     Route::redirect('/product/new-product');
                 } elseif ($photoUpload == -1) {
                     $_SESSION['insert'] = [];
@@ -81,13 +82,15 @@ class ProductController
                     Route::redirect('/product/new-product');
                 } elseif ($photoUpload == -2) {
                     $_SESSION['insert'] = [];
-                    $_SESSION['insert']['type'] = "doublonPhoto";
-                    $_SESSION['insert']['insert'] = $filePhoto;
+                    $_SESSION['insert']['type'] = "erreur upload photo";
                     $_SESSION['insert']['info'] = $_POST;
+                    $_SESSION['insert']['insert'] = $filePhoto;
+                    $_SESSION['insert']['openModalPhoto'] = $_POST['idprod'];
                     Route::redirect('/product/new-product');
                 } elseif ($photoUpload == -3) {
-                    $_SESSION['insert']['type'] = "volumineuxPhotos";
+                    $_SESSION['insert']['type'] = "erreur upload photo";
                     $_SESSION['insert']['info'] = $_POST;
+                    $_SESSION['insert']['openModalPhoto'] = $_POST['idprod'];
                     Route::redirect('/product/new-product');
                 }
             } else {
@@ -139,8 +142,9 @@ class ProductController
 
             } elseif ($requete == 0) {
                 $_SESSION['insert'] = [];
-                $_SESSION['insert']['type'] = "insertfalse";
+                $_SESSION['insert']['type'] = "erreur upload photo";
                 $_SESSION['insert']['info'] = $_POST;
+                $_SESSION['insert']['openModalPhoto'] = $_POST['idprod'];
                 Route::redirect('/product/new-product');
             } else {
                 $_SESSION['insert'] = [];
@@ -523,5 +527,73 @@ class ProductController
             }
         }
 
+    }
+
+    public function addPhoto()
+    {
+        if (!empty($_FILES['imageUpload']['name'])) {
+            $idprod = $_POST['idprod'];
+            $chemin = trim($_POST['chemin']);
+            $filePhoto = $this->package->filtrer($_FILES['imageUpload']['name']);
+            $photoUpload = $this->package->photos($filePhoto);
+
+            // Récupérer le nom du produit pour le message
+            $nomProduit = $this->produit->getNameById($this->conn, $idprod);
+            $_SESSION['addphoto'] = [];
+            $_SESSION['addphoto']['nomproduit'] = $nomProduit;
+            if ($photoUpload !== 1) {
+                switch ($photoUpload) {
+                    case -5:
+                        $_SESSION['addphoto']['erreur'] = "erreur";
+                        break;
+                    case -1:
+                        $_SESSION['addphoto']['erreur'] = "extension";
+                        break;
+                    case -2:
+                        $_SESSION['addphoto']['erreur'] = "nom";
+                        break;
+                    case -3:
+                        $_SESSION['addphoto']['erreur'] = "taille";
+                        break;
+                }
+                Route::redirect($chemin);
+                return;
+            }
+
+            // Si l'upload est réussi
+            $photo = $filePhoto;
+            if ($this->produit->AddPhoto($this->conn, $photo, $idprod)) {
+                move_uploaded_file($_FILES["imageUpload"]["tmp_name"], __DIR__ . '/../uploads/photo/' . basename($photo));
+                $this->package->message("La photo a été ajoutée avec succès pour le produit $nomProduit.", "success");
+                $_SESSION['addphoto']['erreur'] = "false";
+                Route::redirect($chemin);
+            } else {
+                $this->package->message("Une erreur est survenue lors de l'ajout de la photo pour le produit $nomProduit. Veuillez réessayer.", "error");
+                $_SESSION['addphoto']['erreur'] = "erreur";
+
+                Route::redirect($chemin);
+            }
+        }
+    }
+
+    public function clearSession()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = json_decode(file_get_contents('php://input'), true);
+
+            if (isset($data['type'])) {
+                if ($data['type'] === 'photo_error' && isset($_SESSION['photo_error'])) {
+                    unset($_SESSION['photo_error']);
+                } elseif ($data['type'] === 'photo_success' && isset($_SESSION['photo_success'])) {
+                    unset($_SESSION['photo_success']);
+                }
+            }
+
+            http_response_code(200);
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+        }
     }
 }
