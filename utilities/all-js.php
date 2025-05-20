@@ -16,6 +16,7 @@
 <script src="/js/custom.min.js"></script>
 <script src="/js/demo.js"></script>
 <script src="/js/all.js"></script>
-<script>
+<!-- <script>
 	document.title = "ChemSafe";
-</script>
+</script> -->
+<title>ChemSafe - <?= $addTitle ?? '' ?></title>

@@ -17,7 +17,7 @@
           Voulez-vous réellement supprimer l'<strong><?= $key['nom'] ?></strong> ?
           <input type="hidden" name="idusine" value="<?= $key['idusine'] ?>">
           <input type="hidden" name="nom" value="<?= $key['nom'] ?>">
-          <input type="hidden" name="usine" value="><?= $idusine ?>">
+          <input type="hidden" name="usine" value="<?= $idusine ?>">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

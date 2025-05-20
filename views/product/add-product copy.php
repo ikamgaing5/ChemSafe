@@ -19,6 +19,7 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 if (strpos($current_page, 'all-product') === 0) {
     $message = "Produits de l'atelier $nomatelier.";
     $chemin = "/all-products/" . IdEncryptor::encode($idatelier);
+    $addTitle = "Produits de l'atelier $nomatelier.";
 }
 
 $produitsNonAssocies = $produit->getProduitsNonAssocies($conn, $idatelier);
@@ -49,7 +50,13 @@ $_SESSION['idatelier'] = IdEncryptor::encode($idatelier);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
 
+    <!-- Pour Apple (optionnel mais recommandé) -->
+    <link rel="apple-touch-icon" href="/images/favion.png">
+
+    <!-- Pour navigateur Microsoft (optionnel) -->
+    <meta name="msapplication-TileImage" content="/images/favicon.png">
     <link href="/vendor/wow-master/css/libs/animate.css" rel="stylesheet">
     <link href="/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/vendor/bootstrap-select-country/css/bootstrap-select-country.min.css">
@@ -146,6 +153,7 @@ $_SESSION['idatelier'] = IdEncryptor::encode($idatelier);
                             break;
                     }
                     echo $package->message($message, $type);
+                    unset($_SESSION['addphoto']);
                 }
                 ?>
 
@@ -324,23 +332,6 @@ $_SESSION['idatelier'] = IdEncryptor::encode($idatelier);
     </div>
 
     <?php require_once __DIR__ . '/../../utilities/all-js.php' ?>
-    <!-- <script src="/vendor/global/global.min.js"></script>
-        <script src="/vendor/chart.js/Chart.bundle.min.js"></script>
-        <script src="/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-        <script src="/vendor/apexchart/apexchart.js"></script>
-        <script src="/vendor/peity/jquery.peity.min.js"></script>
-        <script src="/vendor/jquery-nice-select/js/jquery.nice-select.min.js"></script>
-        <script src="/vendor/swiper/js/swiper-bundle.min.js"></script>
-        <script src="/vendor/datatables/js/jquery.dataTables.min.js"></script>
-        <script src="/js/plugins-init/datatables.init.js"></script>
-        <script src="/js/dashboard/dashboard-1.js"></script>
-        <script src="/vendor/wow-master/dist/wow.min.js"></script>
-        <script src="/vendor/bootstrap-datetimepicker/js/moment.js"></script>
-        <script src="/vendor/datepicker/js/bootstrap-datepicker.min.js"></script>
-        <script src="/vendor/bootstrap-select-country/js/bootstrap-select-country.min.js"></script>
-        <script src="/js/dlabnav-init.js"></script>
-        <script src="/js/custom.min.js"></script>
-        <script src="/js/demo.js"></script> -->
     <script>
 
         document.addEventListener('DOMContentLoaded', function () {

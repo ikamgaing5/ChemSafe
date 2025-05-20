@@ -1,14 +1,6 @@
 <?php
 
 
-// require_once __DIR__. '/../../models/package.php';
-// require_once __DIR__. '/../../utilities/session.php';
-// require_once __DIR__. '/../../models/produit.php';
-// require_once __DIR__. '/../../models/package.php';
-// require_once __DIR__. '/../../models/atelier.php';
-// require_once __DIR__. '/../../core/connexion.php';
-// require_once __DIR__. '/../../models/danger.php';
-// require_once __DIR__. '/../../models/fds.php';
 $conn = Database::getInstance()->getConnection();
 
 $danger = new Danger();
@@ -32,6 +24,8 @@ if (strpos($current_page, 'product/more-detail') === 0) {
 if (isset($_SESSION['idatelier'])) {
     $idatelier = IdEncryptor::decode($_SESSION['idatelier']);
     $nomatelier = $atelier->getName($conn, $idatelier);
+    $infoAtelierss = $atelier->getAtelierById($conn, $idatelier);
+    $idusinebyatlier = $infoAtelierss['idusine'];
 }
 
 // $nomatelier = $atelier->getName($conn,$idatelier);
@@ -45,6 +39,7 @@ foreach ($danger_ids as $key) {
     $nomdanger .= $req['nomdanger'] . ", ";
 }
 // var_dump($prod);
+// var_dump(IdEncryptor::encode($idusinebyatlier));
 // die();
 
 ?>
@@ -109,7 +104,7 @@ foreach ($danger_ids as $key) {
                                         <u><a class="text-primary fw-bold fs-5" href="/dashboard">Tableau de
                                                 bord</a></u>
                                         <i class="bi bi-caret-right-fill"></i>
-                                        <u><a href="/workshop/all-workshop" class="text-primary fw-bold fs-5">Nos
+                                        <u><a href="/workshop/all-workshop/<?=IdEncryptor::encode($idusinebyatlier) ?>" class="text-primary fw-bold fs-5">Nos
                                                 Ateliers</a></u>
                                         <?php if (isset($_SESSION['idatelier'])) { ?>
                                             <i class="bi bi-caret-right-fill"></i>

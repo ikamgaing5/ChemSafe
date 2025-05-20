@@ -19,14 +19,6 @@ if ($current_page == 'workshop/all-workshop' && Auth::user()->role == 'superadmi
 
 
 
-require_once __DIR__ . '/../../models/atelier.php';
-require_once __DIR__ . '/../../models/package.php';
-require_once __DIR__ . '/../../models/produit.php';
-require_once __DIR__ . '/../../models/user.php';
-require_once __DIR__ . '/../../models/contenir.php';
-require_once __DIR__ . '/../../utilities/session.php';
-
-
 $atelier = new Atelier();
 $produit = new Produit();
 $user = new User();
