@@ -1,13 +1,7 @@
 <?php
-// require_once __DIR__. '/../../utilities/session.php';
+
 $nom = "";
 
-
-
-// require_once __DIR__. '/../../utilities/session.php';
-// require_once __DIR__. '/../../models/produit.php';
-// require_once __DIR__. '/../../models/package.php';
-// require_once __DIR__. '/../../models/connexion.php';
 $conn = Database::getInstance()->getConnection();
 
 
@@ -20,6 +14,7 @@ $current_page = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
 if (strpos($current_page, 'info-fds/new-info-fds') === 0) {
     $message = "Informations de la FDS du produit $nom.";
+    $chemin = "/info-fds/new-info-fds/".IdEncryptor::encode($idprod);
 }
 
 ?>
@@ -169,6 +164,7 @@ if (strpos($current_page, 'info-fds/new-info-fds') === 0) {
                                                 <!-- Colonne gauche -->
                                                 <div class="col-md-6">
                                                     <div class="mb-3">
+                                                        <input type="hidden" name="chemin" value="<?=$chemin?>">
                                                         <input type="hidden" name="idprod" value="<?= $idprod ?>">
                                                         <label class="form-label text-primary fw-bold">Danger Physique
                                                             <span class="required">*</span></label>

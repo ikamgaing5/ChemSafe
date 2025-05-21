@@ -29,10 +29,11 @@ class FdsController
             $manipulation = $this->package->filtrer($_POST['manipulation']);
             $secours = $this->package->filtrer($_POST['secours']);
             $epi = $this->package->filtrer($_POST['epi']);
+            $chemin = $_POST['chemin'];
             $result = $this->fds->create(conn: $this->conn, idprod: $idprod, physique: $physique, sante: $sante, ppt: $ppt, stabilite: $stabilite, eviter: $eviter, incompatible: $incompatible, reactivite: $reactivite, stockage: $manipulation, secours: $secours, epi: $epi);
             if ($result == 1) {
                 $_SESSION['insertinfoFDS'] = true;
-                Route::redirect('/' . $_SESSION['chemin']);
+                Route::redirect($chemin);
             } elseif ($result == 0) {
                 echo "insertion pas ok";
             } elseif ($result == -1) {
